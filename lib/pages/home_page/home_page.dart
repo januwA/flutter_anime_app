@@ -1,9 +1,7 @@
-import 'dart:convert';
-
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/models/week_dto.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   ];
   bool _isLoading = false;
   int _currentWeekDay = DateTime.now().weekday;
-  List<dynamic> weekData;
+  BuiltList<Data> weekData;
 
   @override
   void initState() {
@@ -53,7 +51,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 body: TabBarView(
                   children: [
-                    for (var data in weekData) _list(data),
+                    for (Data data in weekData) _list(data),
                   ],
                 ),
               ),
@@ -61,18 +59,43 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _gridItem(LiData li) {
+    return Card(
+      key: ValueKey(li.id),
+      child: InkWell(
+        onTap: () {
+          print(li.id);
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Expanded(
+              child: Image.network(
+                li.img,
+                fit: BoxFit.fill,
+                height: 95,
+                width: double.infinity,
+              ),
+            ),
+            ListTile(
+              title: Text(li.title),
+              subtitle: Text(li.current),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   /// 更具数据返回list列表
-  Widget _list(data) {
-    return ListView(
-      children: <Widget>[
-        for (var li in data['liData'])
-          ListTile(
-            key: ValueKey(li['id']),
-            leading: Image.network(li['img']),
-            title: Text(li['title']),
-            subtitle: Text(li['current']),
-          ),
-      ],
+  Widget _list(Data data) {
+    return GridView.count(
+      crossAxisCount: 2, // 每行显示几列
+      mainAxisSpacing: 2.0, // 每行的上下间距
+      crossAxisSpacing: 2.0, // 每列的间距
+      childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
+      children: <Widget>[for (var li in data.liData) _gridItem(li)],
     );
   }
 
@@ -81,10 +104,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isLoading = true;
     });
-    Response r = await http.get('http://192.168.56.1:3000');
+    var r = await http.get('http://192.168.56.1:3000');
+    WeekDto body = WeekDto.fromJson(r.body);
     setState(() {
       _isLoading = false;
-      weekData = jsonDecode(r.body)['data'];
+      weekData = body.data;
     });
   }
 }
