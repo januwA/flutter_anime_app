@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/models/week_dto.dart';
+import 'package:flutter_video_app/pages/detail_page/deyail_page.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
       home: DefaultTabController(
         length: _week.length,
-        initialIndex: _currentWeekDay - 1,
+        initialIndex: _currentWeekDay,
         child: _isLoading
             ? Center(
                 child: CircularProgressIndicator(),
@@ -64,7 +65,14 @@ class _HomePageState extends State<HomePage> {
       key: ValueKey(li.id),
       child: InkWell(
         onTap: () {
-          print(li.id);
+          String id = li.id;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DetailPage(
+                    id: id,
+                  ),
+            ),
+          );
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
