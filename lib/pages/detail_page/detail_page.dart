@@ -1,3 +1,4 @@
+import 'package:video_player/video_player.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/models/detail_model/detail_dto.dart';
@@ -15,6 +16,7 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  VideoPlayerController _controller;
   bool _isLoading = false;
   Data _detailData;
 
@@ -26,16 +28,20 @@ class _DetailPageState extends State<DetailPage> {
 
   /// cureent video
   PlayUrlTab get _currentVideo => _videos[_currentIndex];
-
-  String testJson = '';
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    _init();
+    _getDetailData();
   }
 
-  _init() async {
+  /// 从服务器获取数据
+  _getDetailData() async {
     setState(() {
       _isLoading = true;
     });
@@ -46,6 +52,7 @@ class _DetailPageState extends State<DetailPage> {
       _isLoading = false;
       _detailData = body.data;
     });
+    _initVideoPlaer();
   }
 
   @override
@@ -59,7 +66,9 @@ class _DetailPageState extends State<DetailPage> {
       ),
       body: ListView(
         children: <Widget>[
-          Text(_currentVideo.src),
+          VideoBox(
+            controller: _controller,
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: Column(
@@ -165,8 +174,69 @@ class _DetailPageState extends State<DetailPage> {
           setState(() {
             _currentIndex = _videos.indexOf(t);
           });
+          _controller.pause();
+          _controller.setVolume(0.0);
+          _initVideoPlaer();
         }
       },
+    );
+  }
+
+  /// 初始化viedo控制器
+  void _initVideoPlaer() {
+    _controller = VideoPlayerController.network(_currentVideo.src)
+      ..initialize().then((_) {
+        setState(() {});
+        _controller.play();
+      });
+    _controller.setVolume(1.0);
+  }
+}
+
+class VideoBox extends StatefulWidget {
+  VideoBox({
+    Key key,
+    @required this.controller,
+  }) : super(key: key);
+
+  final VideoPlayerController controller;
+  @override
+  _VideoBoxState createState() => _VideoBoxState();
+}
+
+class _VideoBoxState extends State<VideoBox> {
+  @override
+  Widget build(BuildContext context) {
+    // if (widget.controller == null) {
+    //   return Container();
+    // }
+    return widget.controller.value.initialized
+        ? AspectRatio(
+            aspectRatio: widget.controller.value.aspectRatio,
+            child: VideoPlayer(widget.controller),
+          )
+        : VideoLoadingWidget();
+  }
+}
+
+/// 在加载video的时候显示loading
+class VideoLoadingWidget extends StatelessWidget {
+  const VideoLoadingWidget({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16.0 / 9.0,
+      child: Container(
+        color: Colors.black,
+        child: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(Colors.white),
+          ),
+        ),
+      ),
     );
   }
 }
