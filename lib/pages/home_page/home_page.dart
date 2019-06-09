@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/models/week_dto.dart';
-import 'package:flutter_video_app/pages/detail_page/deyail_page.dart';
+import 'package:flutter_video_app/models/week_model/week_dto.dart';
+import 'package:flutter_video_app/pages/detail_page/detail_page.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   ];
   bool _isLoading = false;
   int _currentWeekDay = DateTime.now().weekday;
-  BuiltList<Data> weekData;
+  BuiltList<WeekData> weekData;
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
       home: DefaultTabController(
         length: _week.length,
-        initialIndex: _currentWeekDay,
+        initialIndex: _currentWeekDay - 1,
         child: _isLoading
             ? Center(
                 child: CircularProgressIndicator(),
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 body: TabBarView(
                   children: [
-                    for (Data data in weekData) _list(data),
+                    for (WeekData data in weekData) _list(data),
                   ],
                 ),
               ),
@@ -97,7 +97,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// 更具数据返回list列表
-  Widget _list(Data data) {
+  Widget _list(WeekData data) {
     return GridView.count(
       crossAxisCount: 2, // 每行显示几列
       mainAxisSpacing: 2.0, // 每行的上下间距

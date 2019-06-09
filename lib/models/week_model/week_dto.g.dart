@@ -7,7 +7,7 @@ part of 'week_dto.dart';
 // **************************************************************************
 
 Serializer<WeekDto> _$weekDtoSerializer = new _$WeekDtoSerializer();
-Serializer<Data> _$dataSerializer = new _$DataSerializer();
+Serializer<WeekData> _$weekDataSerializer = new _$WeekDataSerializer();
 Serializer<LiData> _$liDataSerializer = new _$LiDataSerializer();
 
 class _$WeekDtoSerializer implements StructuredSerializer<WeekDto> {
@@ -25,7 +25,7 @@ class _$WeekDtoSerializer implements StructuredSerializer<WeekDto> {
       'data',
       serializers.serialize(object.data,
           specifiedType:
-              const FullType(BuiltList, const [const FullType(Data)])),
+              const FullType(BuiltList, const [const FullType(WeekData)])),
     ];
 
     return result;
@@ -48,9 +48,8 @@ class _$WeekDtoSerializer implements StructuredSerializer<WeekDto> {
           break;
         case 'data':
           result.data.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltList, const [const FullType(Data)]))
-              as BuiltList);
+              specifiedType: const FullType(
+                  BuiltList, const [const FullType(WeekData)])) as BuiltList);
           break;
       }
     }
@@ -59,14 +58,14 @@ class _$WeekDtoSerializer implements StructuredSerializer<WeekDto> {
   }
 }
 
-class _$DataSerializer implements StructuredSerializer<Data> {
+class _$WeekDataSerializer implements StructuredSerializer<WeekData> {
   @override
-  final Iterable<Type> types = const [Data, _$Data];
+  final Iterable<Type> types = const [WeekData, _$WeekData];
   @override
-  final String wireName = 'Data';
+  final String wireName = 'WeekData';
 
   @override
-  Iterable serialize(Serializers serializers, Data object,
+  Iterable serialize(Serializers serializers, WeekData object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'index',
@@ -81,9 +80,9 @@ class _$DataSerializer implements StructuredSerializer<Data> {
   }
 
   @override
-  Data deserialize(Serializers serializers, Iterable serialized,
+  WeekData deserialize(Serializers serializers, Iterable serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new DataBuilder();
+    final result = new WeekDataBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -171,7 +170,7 @@ class _$WeekDto extends WeekDto {
   @override
   final int err;
   @override
-  final BuiltList<Data> data;
+  final BuiltList<WeekData> data;
 
   factory _$WeekDto([void Function(WeekDtoBuilder) updates]) =>
       (new WeekDtoBuilder()..update(updates)).build();
@@ -219,9 +218,10 @@ class WeekDtoBuilder implements Builder<WeekDto, WeekDtoBuilder> {
   int get err => _$this._err;
   set err(int err) => _$this._err = err;
 
-  ListBuilder<Data> _data;
-  ListBuilder<Data> get data => _$this._data ??= new ListBuilder<Data>();
-  set data(ListBuilder<Data> data) => _$this._data = data;
+  ListBuilder<WeekData> _data;
+  ListBuilder<WeekData> get data =>
+      _$this._data ??= new ListBuilder<WeekData>();
+  set data(ListBuilder<WeekData> data) => _$this._data = data;
 
   WeekDtoBuilder();
 
@@ -268,35 +268,35 @@ class WeekDtoBuilder implements Builder<WeekDto, WeekDtoBuilder> {
   }
 }
 
-class _$Data extends Data {
+class _$WeekData extends WeekData {
   @override
   final int index;
   @override
   final BuiltList<LiData> liData;
 
-  factory _$Data([void Function(DataBuilder) updates]) =>
-      (new DataBuilder()..update(updates)).build();
+  factory _$WeekData([void Function(WeekDataBuilder) updates]) =>
+      (new WeekDataBuilder()..update(updates)).build();
 
-  _$Data._({this.index, this.liData}) : super._() {
+  _$WeekData._({this.index, this.liData}) : super._() {
     if (index == null) {
-      throw new BuiltValueNullFieldError('Data', 'index');
+      throw new BuiltValueNullFieldError('WeekData', 'index');
     }
     if (liData == null) {
-      throw new BuiltValueNullFieldError('Data', 'liData');
+      throw new BuiltValueNullFieldError('WeekData', 'liData');
     }
   }
 
   @override
-  Data rebuild(void Function(DataBuilder) updates) =>
+  WeekData rebuild(void Function(WeekDataBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  DataBuilder toBuilder() => new DataBuilder()..replace(this);
+  WeekDataBuilder toBuilder() => new WeekDataBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Data && index == other.index && liData == other.liData;
+    return other is WeekData && index == other.index && liData == other.liData;
   }
 
   @override
@@ -306,15 +306,15 @@ class _$Data extends Data {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('Data')
+    return (newBuiltValueToStringHelper('WeekData')
           ..add('index', index)
           ..add('liData', liData))
         .toString();
   }
 }
 
-class DataBuilder implements Builder<Data, DataBuilder> {
-  _$Data _$v;
+class WeekDataBuilder implements Builder<WeekData, WeekDataBuilder> {
+  _$WeekData _$v;
 
   int _index;
   int get index => _$this._index;
@@ -325,9 +325,9 @@ class DataBuilder implements Builder<Data, DataBuilder> {
       _$this._liData ??= new ListBuilder<LiData>();
   set liData(ListBuilder<LiData> liData) => _$this._liData = liData;
 
-  DataBuilder();
+  WeekDataBuilder();
 
-  DataBuilder get _$this {
+  WeekDataBuilder get _$this {
     if (_$v != null) {
       _index = _$v.index;
       _liData = _$v.liData?.toBuilder();
@@ -337,23 +337,23 @@ class DataBuilder implements Builder<Data, DataBuilder> {
   }
 
   @override
-  void replace(Data other) {
+  void replace(WeekData other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$Data;
+    _$v = other as _$WeekData;
   }
 
   @override
-  void update(void Function(DataBuilder) updates) {
+  void update(void Function(WeekDataBuilder) updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$Data build() {
-    _$Data _$result;
+  _$WeekData build() {
+    _$WeekData _$result;
     try {
-      _$result = _$v ?? new _$Data._(index: index, liData: liData.build());
+      _$result = _$v ?? new _$WeekData._(index: index, liData: liData.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -361,7 +361,7 @@ class DataBuilder implements Builder<Data, DataBuilder> {
         liData.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'Data', _$failedField, e.toString());
+            'WeekData', _$failedField, e.toString());
       }
       rethrow;
     }
