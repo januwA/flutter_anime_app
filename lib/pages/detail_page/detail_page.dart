@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_video_app/models/detail.dto.dart';
+import 'package:flutter_video_app/models/detail_data_dto/detail_data_dto.dart';
+import 'package:flutter_video_app/shared/globals.dart';
+import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,9 +23,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   /// 页面数据
-  DetailDto detailData;
-  List<PlayUrlTab> get videos =>
-      detailData == null ? List<PlayUrlTab>() : detailData.playUrlTab;
+  DetailData detailData;
   Client client;
   VideoPlayerController videoCtrl;
 
@@ -31,12 +31,12 @@ class _DetailPageState extends State<DetailPage> {
   int currentPlayIndex = 0;
 
   /// 当前播放的视频
-  PlayUrlTab get currentPlayVideo => videos[currentPlayIndex];
+  PlayUrlTab get currentPlayVideo => detailData.playUrlTab[currentPlayIndex];
 
   /// 页面状态
 
   bool isPageLoading = false;
-  bool isGetSrcLoading = false;
+  bool isVideoLoading = false;
 
   /// 当前时长
   Duration position;
@@ -52,26 +52,24 @@ class _DetailPageState extends State<DetailPage> {
   /// 是否为全屏播放
   bool isFullScreen = false;
 
-  /// 是否为播放状态
-  bool get isPlaying => videoCtrl.value.isPlaying;
-
-  /// 00:01 当前时间
+  /// 25:00 总时长
   String get durationText {
     if (duration == null) return '';
     var r = duration.toString().split('.').first.split(':')..removeAt(0);
     return r.join(':');
   }
 
-  /// 25:00 总时长
+  /// 00:01 当前时间
   String get positionText {
-    if (position == null) return '';
-    var r = position.toString().split('.').first.split(':')..removeAt(0);
+    if (videoCtrl.value == null) return '';
+    var r = videoCtrl.value.position.toString().split('.').first.split(':')
+      ..removeAt(0);
     return r.join(':');
   }
 
   double get sliderValue {
     if (position?.inSeconds != null && duration?.inSeconds != null) {
-      return position.inSeconds / duration.inSeconds;
+      return videoCtrl.value.position.inSeconds / duration.inSeconds;
     } else {
       return 0.0;
     }
@@ -86,88 +84,83 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void dispose() {
     super.dispose();
+
     client?.close();
-    videoCtrl.dispose();
+    videoCtrl?.removeListener(videoListenner);
+    videoCtrl?.dispose();
   }
 
-  /// 获取http数据
+  videoListenner() {
+    setState(() {});
+  }
+
+  /// 获取detail数据
   Future<void> getDetailData() async {
-    setState(() {
-      isPageLoading = true;
-    });
+    setState(() => isPageLoading = true);
     try {
       client = http.Client();
-      var url = Uri.http('192.168.56.1:3000', "/detail", {"id": widget.id});
+      var url = Uri.http(baseUrl, detailUrl, {"id": widget.id});
       var r = await client.get(url);
-      setState(() {
-        detailData = DetailDto.fromJson(jsonDecode(r.body)['data']);
-        isPageLoading = false;
-      });
 
-      initVideoPlaer();
+      if (r.statusCode == 200) {
+        setState(() {
+          detailData = DetailDataDto.fromJson(r.body).detailData;
+          isPageLoading = false;
+        });
+        // 设置完数据开始初始化播放器
+        initVideoPlaer();
+      } else {
+        // 服务器没有正确的返回数据
+        alertHttpGetError(
+            context: context,
+            text: r.body,
+            onOk: () {
+              getDetailData();
+            });
+      }
+    } on ClientException catch (e) {
+      print("http异常: $e");
     } catch (e) {
-      print(e);
+      print('Other Error: $e');
     }
   }
 
+  /// 获取指定集的src
   getVideoSrc() async {
-    var i = videos[currentPlayIndex];
-    if (i.isBox || i.src.isNotEmpty) {
-      /// 网盘资源,已经有src的 不做处理
+    var e = detailData.playUrlTab[currentPlayIndex];
+    setState(() => isVideoLoading = true);
+    var url = Uri.http(baseUrl, videoSrcUrl, {"id": e.id});
+    var r = await http.get(url);
+    if (r.statusCode == 200) {
+      var src = jsonDecode(r.body)['src'];
+      setState(() => isVideoLoading = false);
+      initVideoPlaer(src);
     } else {
-      setState(() {
-        isGetSrcLoading = true;
-      });
-      var url = Uri.http('192.168.56.1:3000', "/src", {"id": i.id});
-      var r = await http.get(url);
-      setState(() {
-        detailData.playUrlTab[currentPlayIndex].src = r.body;
-        isGetSrcLoading = false;
-      });
-      initVideoPlaer();
+      alertHttpGetError(context: context, text: r.body);
     }
   }
 
   /// 初始化viedo控制器
-  void initVideoPlaer() {
-    videoCtrl = VideoPlayerController.network(currentPlayVideo.src)
-      ..initialize().then((_) {
-        setState(() {
-          position = Duration(seconds: 0);
-          duration = videoCtrl.value.duration;
-        });
-        videoCtrl.addListener(() {
-          // 监听播放时
-          setState(() {
-            position = videoCtrl.value.position;
-          });
-        });
-      });
+  Future<void> initVideoPlaer([String src]) async {
+    setState(() => isVideoLoading = true);
+    videoCtrl =
+        VideoPlayerController.network(src != null ? src : currentPlayVideo.src);
+
+    await videoCtrl.initialize();
+
     videoCtrl.setVolume(1.0);
-  }
-
-  /// 设置为横屏模式
-  setLandscape() {
     setState(() {
-      isFullScreen = true;
+      position = videoCtrl.value.position;
+      duration = videoCtrl.value.duration;
+      isVideoLoading = false;
     });
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
-  }
 
-  /// 设置为正常模式
-  setPortrait() {
-    setState(() {
-      isFullScreen = false;
-    });
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // 用户点击了切换，加载完后自动播放
+    if (src != null) {
+      videoCtrl.play();
+      setState(() => isShowVideoControllers = false);
+    }
+    videoCtrl.addListener(videoListenner);
   }
 
   @override
@@ -220,7 +213,9 @@ class _DetailPageState extends State<DetailPage> {
               alignment: WrapAlignment.spaceAround,
               spacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[for (PlayUrlTab t in videos) playTab(t)],
+              children: <Widget>[
+                for (PlayUrlTab t in detailData.playUrlTab) playTab(t)
+              ],
             ),
           ),
         ],
@@ -238,12 +233,8 @@ class _DetailPageState extends State<DetailPage> {
       child: Stack(
         alignment: AlignmentDirectional.center,
         children: <Widget>[
-          videoCtrl.value.initialized
+          isVideoLoading
               ? AspectRatio(
-                  aspectRatio: videoCtrl.value.aspectRatio,
-                  child: VideoPlayer(videoCtrl),
-                )
-              : AspectRatio(
                   aspectRatio: 16.0 / 9.0,
                   child: Container(
                     color: Colors.black,
@@ -253,8 +244,12 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                     ),
                   ),
+                )
+              : AspectRatio(
+                  aspectRatio: videoCtrl.value.aspectRatio,
+                  child: VideoPlayer(videoCtrl),
                 ),
-          isGetSrcLoading
+          isVideoLoading
               ? CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation(Colors.white),
                 )
@@ -268,9 +263,11 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     child: IconButton(
                       color: Colors.black,
-                      icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                      icon: Icon(videoCtrl.value.isPlaying
+                          ? Icons.pause
+                          : Icons.play_arrow),
                       onPressed: () {
-                        if (isPlaying) {
+                        if (videoCtrl.value.isPlaying) {
                           videoCtrl.pause();
                           setState(() {
                             isShowVideoControllers = true;
@@ -308,13 +305,22 @@ class _DetailPageState extends State<DetailPage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           Spacer(),
-                          SmallIconButton(
-                            icon: Icon(
-                              Icons.volume_up,
-                              color: Colors.white,
+                          if (!isVideoLoading)
+                            SmallIconButton(
+                              icon: Icon(
+                                videoCtrl.value.volume <= 0
+                                    ? Icons.volume_off
+                                    : Icons.volume_up,
+                                color: Colors.white,
+                              ),
+                              onTap: () {
+                                if (videoCtrl.value.volume > 0) {
+                                  videoCtrl.setVolume(0.0);
+                                } else {
+                                  videoCtrl.setVolume(1.0);
+                                }
+                              },
                             ),
-                            onTap: () {},
-                          ),
                           SmallIconButton(
                             icon: Icon(
                               !isFullScreen
@@ -331,7 +337,9 @@ class _DetailPageState extends State<DetailPage> {
                       inactiveColor: Colors.grey,
                       value: sliderValue,
                       onChanged: (v) {
-                        videoCtrl.seekTo(Duration(seconds: v.toInt()));
+                        var to =
+                            Duration(seconds: (v * duration.inSeconds).toInt());
+                        videoCtrl.seekTo(to);
                       },
                     ),
                   ],
@@ -355,25 +363,50 @@ class _DetailPageState extends State<DetailPage> {
     }
   }
 
+  /// 设置为横屏模式
+  setLandscape() {
+    setState(() {
+      isFullScreen = true;
+    });
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+  }
+
+  /// 设置为正常模式
+  setPortrait() {
+    setState(() {
+      isFullScreen = false;
+    });
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
   /// 每集 tab
   playTab(PlayUrlTab t) {
-    var index = videos.indexOf(t);
+    var index = detailData.playUrlTab.indexOf(t);
     return RaisedButton(
       color: index == currentPlayIndex ? Colors.blue[400] : Colors.grey[300],
       child: Text(t.text),
       onPressed: () async {
         if (t.isBox) {
+          // 网盘资源
           if (await canLaunch(t.src)) {
             await launch(t.src);
           } else {
             throw 'Could not launch ${t.src}';
           }
         } else {
+          // 视频资源,准备切换播放点击的视频
           setState(() {
             currentPlayIndex = index;
             isShowVideoControllers = true;
           });
-          videoCtrl.dispose();
           getVideoSrc();
         }
       },
@@ -396,7 +429,17 @@ class DetailInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text("${detailData.videoName} ${detailData.curentText}"),
+          Text.rich(
+            TextSpan(
+              text: '${detailData.videoName}',
+              style: Theme.of(context).textTheme.title,
+              children: <TextSpan>[
+                TextSpan(
+                    text: '${detailData.curentText}',
+                    style: Theme.of(context).textTheme.subtitle),
+              ],
+            ),
+          ),
           Wrap(
             children: <Widget>[
               Text('主演:'),

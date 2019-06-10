@@ -1,29 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'week_dto.dart';
+part of week_data_dto;
 
 // **************************************************************************
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<WeekDto> _$weekDtoSerializer = new _$WeekDtoSerializer();
+Serializer<WeekDataDto> _$weekDataDtoSerializer = new _$WeekDataDtoSerializer();
 Serializer<WeekData> _$weekDataSerializer = new _$WeekDataSerializer();
 Serializer<LiData> _$liDataSerializer = new _$LiDataSerializer();
 
-class _$WeekDtoSerializer implements StructuredSerializer<WeekDto> {
+class _$WeekDataDtoSerializer implements StructuredSerializer<WeekDataDto> {
   @override
-  final Iterable<Type> types = const [WeekDto, _$WeekDto];
+  final Iterable<Type> types = const [WeekDataDto, _$WeekDataDto];
   @override
-  final String wireName = 'WeekDto';
+  final String wireName = 'WeekDataDto';
 
   @override
-  Iterable serialize(Serializers serializers, WeekDto object,
+  Iterable serialize(Serializers serializers, WeekDataDto object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'err',
-      serializers.serialize(object.err, specifiedType: const FullType(int)),
-      'data',
-      serializers.serialize(object.data,
+      'weekData',
+      serializers.serialize(object.weekData,
           specifiedType:
               const FullType(BuiltList, const [const FullType(WeekData)])),
     ];
@@ -32,9 +30,9 @@ class _$WeekDtoSerializer implements StructuredSerializer<WeekDto> {
   }
 
   @override
-  WeekDto deserialize(Serializers serializers, Iterable serialized,
+  WeekDataDto deserialize(Serializers serializers, Iterable serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new WeekDtoBuilder();
+    final result = new WeekDataDtoBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -42,12 +40,8 @@ class _$WeekDtoSerializer implements StructuredSerializer<WeekDto> {
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
-        case 'err':
-          result.err = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'data':
-          result.data.replace(serializers.deserialize(value,
+        case 'weekData':
+          result.weekData.replace(serializers.deserialize(value,
               specifiedType: const FullType(
                   BuiltList, const [const FullType(WeekData)])) as BuiltList);
           break;
@@ -166,100 +160,89 @@ class _$LiDataSerializer implements StructuredSerializer<LiData> {
   }
 }
 
-class _$WeekDto extends WeekDto {
+class _$WeekDataDto extends WeekDataDto {
   @override
-  final int err;
-  @override
-  final BuiltList<WeekData> data;
+  final BuiltList<WeekData> weekData;
 
-  factory _$WeekDto([void Function(WeekDtoBuilder) updates]) =>
-      (new WeekDtoBuilder()..update(updates)).build();
+  factory _$WeekDataDto([void Function(WeekDataDtoBuilder) updates]) =>
+      (new WeekDataDtoBuilder()..update(updates)).build();
 
-  _$WeekDto._({this.err, this.data}) : super._() {
-    if (err == null) {
-      throw new BuiltValueNullFieldError('WeekDto', 'err');
-    }
-    if (data == null) {
-      throw new BuiltValueNullFieldError('WeekDto', 'data');
+  _$WeekDataDto._({this.weekData}) : super._() {
+    if (weekData == null) {
+      throw new BuiltValueNullFieldError('WeekDataDto', 'weekData');
     }
   }
 
   @override
-  WeekDto rebuild(void Function(WeekDtoBuilder) updates) =>
+  WeekDataDto rebuild(void Function(WeekDataDtoBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  WeekDtoBuilder toBuilder() => new WeekDtoBuilder()..replace(this);
+  WeekDataDtoBuilder toBuilder() => new WeekDataDtoBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is WeekDto && err == other.err && data == other.data;
+    return other is WeekDataDto && weekData == other.weekData;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, err.hashCode), data.hashCode));
+    return $jf($jc(0, weekData.hashCode));
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('WeekDto')
-          ..add('err', err)
-          ..add('data', data))
+    return (newBuiltValueToStringHelper('WeekDataDto')
+          ..add('weekData', weekData))
         .toString();
   }
 }
 
-class WeekDtoBuilder implements Builder<WeekDto, WeekDtoBuilder> {
-  _$WeekDto _$v;
+class WeekDataDtoBuilder implements Builder<WeekDataDto, WeekDataDtoBuilder> {
+  _$WeekDataDto _$v;
 
-  int _err;
-  int get err => _$this._err;
-  set err(int err) => _$this._err = err;
+  ListBuilder<WeekData> _weekData;
+  ListBuilder<WeekData> get weekData =>
+      _$this._weekData ??= new ListBuilder<WeekData>();
+  set weekData(ListBuilder<WeekData> weekData) => _$this._weekData = weekData;
 
-  ListBuilder<WeekData> _data;
-  ListBuilder<WeekData> get data =>
-      _$this._data ??= new ListBuilder<WeekData>();
-  set data(ListBuilder<WeekData> data) => _$this._data = data;
+  WeekDataDtoBuilder();
 
-  WeekDtoBuilder();
-
-  WeekDtoBuilder get _$this {
+  WeekDataDtoBuilder get _$this {
     if (_$v != null) {
-      _err = _$v.err;
-      _data = _$v.data?.toBuilder();
+      _weekData = _$v.weekData?.toBuilder();
       _$v = null;
     }
     return this;
   }
 
   @override
-  void replace(WeekDto other) {
+  void replace(WeekDataDto other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$WeekDto;
+    _$v = other as _$WeekDataDto;
   }
 
   @override
-  void update(void Function(WeekDtoBuilder) updates) {
+  void update(void Function(WeekDataDtoBuilder) updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$WeekDto build() {
-    _$WeekDto _$result;
+  _$WeekDataDto build() {
+    _$WeekDataDto _$result;
     try {
-      _$result = _$v ?? new _$WeekDto._(err: err, data: data.build());
+      _$result = _$v ?? new _$WeekDataDto._(weekData: weekData.build());
     } catch (_) {
       String _$failedField;
       try {
-        _$failedField = 'data';
-        data.build();
+        _$failedField = 'weekData';
+        weekData.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'WeekDto', _$failedField, e.toString());
+            'WeekDataDto', _$failedField, e.toString());
       }
       rethrow;
     }

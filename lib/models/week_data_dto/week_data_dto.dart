@@ -1,30 +1,31 @@
+library week_data_dto;
+
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:flutter_video_app/models/week_model/serializers.dart';
-part 'week_dto.g.dart';
+import 'package:flutter_video_app/models/week_data_dto/serializers.dart';
 
-abstract class WeekDto implements Built<WeekDto, WeekDtoBuilder> {
-  WeekDto._();
+part 'week_data_dto.g.dart';
 
-  factory WeekDto([updates(WeekDtoBuilder b)]) = _$WeekDto;
+abstract class WeekDataDto implements Built<WeekDataDto, WeekDataDtoBuilder> {
+  WeekDataDto._();
 
-  @BuiltValueField(wireName: 'err')
-  int get err;
-  @BuiltValueField(wireName: 'data')
-  BuiltList<WeekData> get data;
+  factory WeekDataDto([updates(WeekDataDtoBuilder b)]) = _$WeekDataDto;
+
+  @BuiltValueField(wireName: 'weekData')
+  BuiltList<WeekData> get weekData;
   String toJson() {
-    return jsonEncode(serializers.serializeWith(WeekDto.serializer, this));
+    return jsonEncode(serializers.serializeWith(WeekDataDto.serializer, this));
   }
 
-  static WeekDto fromJson(String jsonString) {
+  static WeekDataDto fromJson(String jsonString) {
     return serializers.deserializeWith(
-        WeekDto.serializer, jsonDecode(jsonString));
+        WeekDataDto.serializer, jsonDecode(jsonString));
   }
 
-  static Serializer<WeekDto> get serializer => _$weekDtoSerializer;
+  static Serializer<WeekDataDto> get serializer => _$weekDataDtoSerializer;
 }
 
 abstract class WeekData implements Built<WeekData, WeekDataBuilder> {

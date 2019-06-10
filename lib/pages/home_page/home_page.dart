@@ -1,7 +1,9 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/models/week_model/week_dto.dart';
+import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
 import 'package:flutter_video_app/pages/detail_page/detail_page.dart';
+import 'package:flutter_video_app/shared/globals.dart' as globals;
+import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,10 +21,6 @@ class _HomePageState extends State<HomePage> {
   /// 一周的所有数据
   BuiltList<WeekData> _weekData = BuiltList<WeekData>();
 
-  /// 用于http请求，可以被中断
-  Client _client;
-
-  ///
   bool isloading = false;
 
   @override
@@ -34,20 +32,35 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     super.dispose();
-    _client?.close();
   }
 
+  /// 从服务器获取数据
   Future<void> getWeekData() async {
-    setState(() {
-      isloading = true;
-    });
-    _client = http.Client();
-    var r = await _client.get('http://192.168.56.1:3000');
-    WeekDto body = WeekDto.fromJson(r.body);
-    setState(() {
-      _weekData = body.data;
-      isloading = false;
-    });
+    setState(() => isloading = true);
+
+    try {
+      var r = await http.get(Uri.http(globals.baseUrl, globals.weekDataUrl));
+      if (r.statusCode == 200) {
+        WeekDataDto body = WeekDataDto.fromJson(r.body);
+        setState(() {
+          _weekData = body.weekData;
+          isloading = false;
+        });
+      } else {
+        alertHttpGetError(
+          context: context,
+          text: r.body,
+          onOk: () {
+            getWeekData();
+          },
+        );
+        print(r.body);
+      }
+    } on ClientException catch (e) {
+      print('请求中断: $e');
+    } catch (e) {
+      print("Other Error: $e");
+    }
   }
 
   @override
