@@ -7,20 +7,20 @@ class DashPage extends StatefulWidget {
 }
 
 class _DashPageState extends State<DashPage> {
-  int _currentIndex = 0;
-  final PageController _controller = PageController();
+  PageController controller = PageController();
+  int index = 0;
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        onTap: (int index) {
-          setState(() {
-            _currentIndex = index;
-            _controller.jumpToPage(index);
-          });
-        },
+        currentIndex: index,
+        onTap: controller.jumpToPage,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
@@ -31,26 +31,17 @@ class _DashPageState extends State<DashPage> {
               activeIcon: Icon(Icons.search),
               title: Text("Search")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.file_download),
-              activeIcon: Icon(Icons.file_download),
-              title: Text("Download")),
-          BottomNavigationBarItem(
               icon: Icon(Icons.list),
               activeIcon: Icon(Icons.list),
               title: Text("More")),
         ],
       ),
       body: PageView(
-        controller: _controller,
-        onPageChanged: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        controller: controller,
+        onPageChanged: (i) => setState(() => index = i),
         children: <Widget>[
           HomePage(),
           Center(child: Text('Search Page')),
-          Center(child: Text('Download Page')),
           Center(child: Text('More Page')),
         ],
       ),

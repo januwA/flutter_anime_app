@@ -2,7 +2,10 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/models/week_model/week_dto.dart';
 import 'package:flutter_video_app/pages/detail_page/detail_page.dart';
+import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+
+final week = <String>["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,53 +13,85 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _week = const <String>[
-    "周一",
-    "周二",
-    "周三",
-    "周四",
-    "周五",
-    "周六",
-    "周日",
-  ];
-  bool _isLoading = false;
-  int _currentWeekDay = DateTime.now().weekday;
-  BuiltList<WeekData> weekData;
+  /// 默认显示当天的
+  int get currentWeekDay => DateTime.now().weekday;
+
+  /// 一周的所有数据
+  BuiltList<WeekData> _weekData = BuiltList<WeekData>();
+
+  /// 用于http请求，可以被中断
+  Client _client;
+
+  ///
+  bool isloading = false;
 
   @override
   void initState() {
     super.initState();
+    getWeekData();
+  }
 
-    _getWeekData();
+  @override
+  void dispose() {
+    super.dispose();
+    _client?.close();
+  }
+
+  Future<void> getWeekData() async {
+    setState(() {
+      isloading = true;
+    });
+    _client = http.Client();
+    var r = await _client.get('http://192.168.56.1:3000');
+    WeekDto body = WeekDto.fromJson(r.body);
+    setState(() {
+      _weekData = body.data;
+      isloading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: _week.length,
-        initialIndex: _currentWeekDay - 1,
-        child: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Scaffold(
-                appBar: AppBar(
-                  title: const Text('追番表'),
-                  bottom: TabBar(
-                    isScrollable: true,
-                    tabs: [
-                      for (var w in _week) Tab(key: ValueKey(w), text: w),
-                    ],
-                  ),
-                ),
-                body: TabBarView(
-                  children: [
-                    for (WeekData data in weekData) _list(data),
-                  ],
-                ),
-              ),
+    if (isloading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('追番表'),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    return DefaultTabController(
+      length: week.length,
+      initialIndex: currentWeekDay - 1,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('追番表'),
+          bottom: TabBar(
+            isScrollable: true,
+            tabs: [
+              for (var w in week) Tab(key: ValueKey(w), text: w),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            for (WeekData data in _weekData) _gridList(data),
+          ],
+        ),
       ),
+    );
+  }
+
+  /// 更具数据返回list列表
+  Widget _gridList(WeekData data) {
+    return GridView.count(
+      crossAxisCount: 2, // 每行显示几列
+      mainAxisSpacing: 2.0, // 每行的上下间距
+      crossAxisSpacing: 2.0, // 每列的间距
+      childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
+      children: <Widget>[for (var li in data.liData) _gridItem(li)],
     );
   }
 
@@ -65,12 +100,9 @@ class _HomePageState extends State<HomePage> {
       key: ValueKey(li.id),
       child: InkWell(
         onTap: () {
-          String id = li.id;
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => DetailPage(
-                    id: id,
-                  ),
+              builder: (context) => DetailPage(id: li.id),
             ),
           );
         },
@@ -82,7 +114,6 @@ class _HomePageState extends State<HomePage> {
               child: Image.network(
                 li.img,
                 fit: BoxFit.fill,
-                height: 95,
                 width: double.infinity,
               ),
             ),
@@ -94,29 +125,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  /// 更具数据返回list列表
-  Widget _list(WeekData data) {
-    return GridView.count(
-      crossAxisCount: 2, // 每行显示几列
-      mainAxisSpacing: 2.0, // 每行的上下间距
-      crossAxisSpacing: 2.0, // 每列的间距
-      childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
-      children: <Widget>[for (var li in data.liData) _gridItem(li)],
-    );
-  }
-
-  /// 获取http数据
-  void _getWeekData() async {
-    setState(() {
-      _isLoading = true;
-    });
-    var r = await http.get('http://192.168.56.1:3000');
-    WeekDto body = WeekDto.fromJson(r.body);
-    setState(() {
-      _isLoading = false;
-      weekData = body.data;
-    });
   }
 }
