@@ -24,7 +24,7 @@ class _DetailPageState extends State<DetailPage> {
   DetailDto detailData;
   List<PlayUrlTab> get videos =>
       detailData == null ? List<PlayUrlTab>() : detailData.playUrlTab;
-  Client _client;
+  Client client;
   VideoPlayerController videoCtrl;
 
   /// 当前播放位置
@@ -50,7 +50,7 @@ class _DetailPageState extends State<DetailPage> {
   bool isShowVideoControllers = true;
 
   /// 是否为全屏播放
-  bool _isFullScreen = false;
+  bool isFullScreen = false;
 
   /// 是否为播放状态
   bool get isPlaying => videoCtrl.value.isPlaying;
@@ -86,7 +86,8 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void dispose() {
     super.dispose();
-    _client?.close();
+    client?.close();
+    videoCtrl.dispose();
   }
 
   /// 获取http数据
@@ -95,22 +96,21 @@ class _DetailPageState extends State<DetailPage> {
       isPageLoading = true;
     });
     try {
-      _client = http.Client();
+      client = http.Client();
       var url = Uri.http('192.168.56.1:3000', "/detail", {"id": widget.id});
-      var r = await _client.get(url);
+      var r = await client.get(url);
       setState(() {
         detailData = DetailDto.fromJson(jsonDecode(r.body)['data']);
         isPageLoading = false;
       });
 
-      _initVideoPlaer();
+      initVideoPlaer();
     } catch (e) {
       print(e);
     }
   }
 
-  _getVideoSrc() async {
-    if (videos.isEmpty) return false;
+  getVideoSrc() async {
     var i = videos[currentPlayIndex];
     if (i.isBox || i.src.isNotEmpty) {
       /// 网盘资源,已经有src的 不做处理
@@ -119,18 +119,17 @@ class _DetailPageState extends State<DetailPage> {
         isGetSrcLoading = true;
       });
       var url = Uri.http('192.168.56.1:3000', "/src", {"id": i.id});
-      var r = await _client.get(url);
-      print(r.body);
+      var r = await http.get(url);
       setState(() {
         detailData.playUrlTab[currentPlayIndex].src = r.body;
         isGetSrcLoading = false;
       });
-      _initVideoPlaer();
+      initVideoPlaer();
     }
   }
 
   /// 初始化viedo控制器
-  void _initVideoPlaer() {
+  void initVideoPlaer() {
     videoCtrl = VideoPlayerController.network(currentPlayVideo.src)
       ..initialize().then((_) {
         setState(() {
@@ -139,15 +138,18 @@ class _DetailPageState extends State<DetailPage> {
         });
         videoCtrl.addListener(() {
           // 监听播放时
+          setState(() {
+            position = videoCtrl.value.position;
+          });
         });
       });
     videoCtrl.setVolume(1.0);
   }
 
   /// 设置为横屏模式
-  _setLandscape() {
+  setLandscape() {
     setState(() {
-      _isFullScreen = true;
+      isFullScreen = true;
     });
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -156,9 +158,9 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   /// 设置为正常模式
-  _setPortrait() {
+  setPortrait() {
     setState(() {
-      _isFullScreen = false;
+      isFullScreen = false;
     });
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -180,49 +182,83 @@ class _DetailPageState extends State<DetailPage> {
         ),
       );
     }
+
+    if (isFullScreen) {
+      MediaQueryData deviceData = MediaQuery.of(context);
+      return SafeArea(
+        child: Scaffold(
+          body: SizedBox(
+            width: deviceData.size.width,
+            height: deviceData.size.height,
+            child: videoBox(),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(detailData.videoName),
       ),
       body: ListView(
         children: <Widget>[
-          GestureDetector(
-            onTap: () async {
-              // 暂停状态强制显示控制器
-              if (!videoCtrl.value.isPlaying) return false;
+          videoBox(),
+          DetailInfo(detailData: detailData),
+          ExpansionTile(
+            title: Text(
+              detailData.plot,
+              overflow: TextOverflow.ellipsis,
+            ),
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(detailData.plot),
+              ),
+            ],
+          ),
+          Center(
+            child: Wrap(
+              alignment: WrapAlignment.spaceAround,
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[for (PlayUrlTab t in videos) playTab(t)],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-              setState(() {
-                isShowVideoControllers = !isShowVideoControllers;
-              });
-
-              if (isShowVideoControllers) {
-                await Future.delayed(Duration(seconds: 2));
-                setState(() {
-                  isShowVideoControllers = false;
-                });
-              }
-            },
-            child: Stack(
-              alignment: AlignmentDirectional.center,
-              children: <Widget>[
-                if (videoCtrl?.value?.initialized || !isGetSrcLoading)
-                  AspectRatio(
-                    aspectRatio: videoCtrl.value.aspectRatio,
-                    child: VideoPlayer(videoCtrl),
-                  )
-                else
-                  AspectRatio(
-                    aspectRatio: 16.0 / 9.0,
-                    child: Container(
-                      color: Colors.black,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation(Colors.white),
-                        ),
+  GestureDetector videoBox() {
+    return GestureDetector(
+      onTap: () async {
+        setState(() {
+          isShowVideoControllers = !isShowVideoControllers;
+        });
+      },
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: <Widget>[
+          videoCtrl.value.initialized
+              ? AspectRatio(
+                  aspectRatio: videoCtrl.value.aspectRatio,
+                  child: VideoPlayer(videoCtrl),
+                )
+              : AspectRatio(
+                  aspectRatio: 16.0 / 9.0,
+                  child: Container(
+                    color: Colors.black,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
                       ),
                     ),
                   ),
-                AnimatedCrossFade(
+                ),
+          isGetSrcLoading
+              ? CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                )
+              : AnimatedCrossFade(
                   duration: Duration(milliseconds: 300),
                   firstChild: Container(),
                   secondChild: Container(
@@ -252,79 +288,58 @@ class _DetailPageState extends State<DetailPage> {
                       ? CrossFadeState.showSecond
                       : CrossFadeState.showFirst,
                 ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: AnimatedCrossFade(
-                    duration: Duration(milliseconds: 300),
-                    firstChild: Container(),
-                    secondChild: Container(
-                      decoration: BoxDecoration(color: Colors.black45),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        dense: true,
-                        title: Row(
-                          children: <Widget>[
-                            Text(
-                              "$positionText / $durationText",
-                              style: TextStyle(color: Colors.white),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedCrossFade(
+              duration: Duration(milliseconds: 300),
+              firstChild: Container(),
+              secondChild: Container(
+                decoration: BoxDecoration(color: Colors.black45),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "$positionText / $durationText",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Spacer(),
+                          SmallIconButton(
+                            icon: Icon(
+                              Icons.volume_up,
+                              color: Colors.white,
                             ),
-                            Spacer(),
-                            SmallIconButton(
-                              icon: Icon(
-                                Icons.volume_up,
-                                color: Colors.white,
-                              ),
-                              onTap: () {},
+                            onTap: () {},
+                          ),
+                          SmallIconButton(
+                            icon: Icon(
+                              !isFullScreen
+                                  ? Icons.fullscreen
+                                  : Icons.fullscreen_exit,
+                              color: Colors.white,
                             ),
-                            SmallIconButton(
-                              icon: Icon(
-                                !_isFullScreen
-                                    ? Icons.fullscreen
-                                    : Icons.fullscreen_exit,
-                                color: Colors.white,
-                              ),
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                        subtitle: Slider(
-                          inactiveColor: Colors.grey,
-                          value: sliderValue,
-                          onChanged: (v) {
-                            videoCtrl.seekTo(Duration(seconds: v.toInt()));
-                          },
-                        ),
+                            onTap: onFullScreen,
+                          ),
+                        ],
                       ),
                     ),
-                    crossFadeState: isShowVideoControllers
-                        ? CrossFadeState.showSecond
-                        : CrossFadeState.showFirst,
-                  ),
+                    Slider(
+                      inactiveColor: Colors.grey,
+                      value: sliderValue,
+                      onChanged: (v) {
+                        videoCtrl.seekTo(Duration(seconds: v.toInt()));
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          DetailInfo(detailData: detailData),
-          ExpansionTile(
-            title: Text(
-              detailData.plot,
-              overflow: TextOverflow.ellipsis,
-            ),
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(detailData.plot),
               ),
-            ],
-          ),
-          Center(
-            child: Wrap(
-              alignment: WrapAlignment.spaceAround,
-              spacing: 8,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[for (PlayUrlTab t in videos) _playTab(t)],
+              crossFadeState: isShowVideoControllers
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
             ),
           ),
         ],
@@ -332,37 +347,34 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  _onFullScreen() {
-    if (!_isFullScreen) {
-      _setLandscape();
+  onFullScreen() {
+    if (isFullScreen) {
+      setPortrait();
     } else {
-      _setPortrait();
+      setLandscape();
     }
   }
 
   /// 每集 tab
-  _playTab(PlayUrlTab t) {
+  playTab(PlayUrlTab t) {
     var index = videos.indexOf(t);
     return RaisedButton(
       color: index == currentPlayIndex ? Colors.blue[400] : Colors.grey[300],
       child: Text(t.text),
       onPressed: () async {
         if (t.isBox) {
-          print('打开浏览器');
           if (await canLaunch(t.src)) {
             await launch(t.src);
           } else {
             throw 'Could not launch ${t.src}';
           }
         } else {
-          print('播放视频资源');
           setState(() {
             currentPlayIndex = index;
             isShowVideoControllers = true;
           });
-          videoCtrl.pause();
-          videoCtrl.setVolume(0.0);
-          _initVideoPlaer();
+          videoCtrl.dispose();
+          getVideoSrc();
         }
       },
     );
@@ -435,23 +447,6 @@ class DetailInfo extends StatelessWidget {
     );
   }
 }
-
-/// 全屏播放video时需要的页面
-// class FullScreenVideo extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     MediaQueryData deviceData = MediaQuery.of(context);
-//     return SafeArea(
-//       child: Scaffold(
-//         body: SizedBox(
-//           width: deviceData.size.width,
-//           height: deviceData.size.height,
-//           child: VideoBox(),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 /// video 控制器上的按钮
 class SmallIconButton extends StatelessWidget {
