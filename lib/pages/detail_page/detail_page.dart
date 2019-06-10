@@ -35,6 +35,9 @@ class _DetailPageState extends State<DetailPage> {
 
   /// 页面状态
 
+  bool isPageLoading = false;
+  bool isGetSrcLoading = false;
+
   /// 当前时长
   Duration position;
 
@@ -66,6 +69,14 @@ class _DetailPageState extends State<DetailPage> {
     return r.join(':');
   }
 
+  double get sliderValue {
+    if (position?.inSeconds != null && duration?.inSeconds != null) {
+      return position.inSeconds / duration.inSeconds;
+    } else {
+      return 0.0;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -75,17 +86,47 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void dispose() {
     super.dispose();
+    _client?.close();
   }
 
   /// 获取http数据
   Future<void> getDetailData() async {
-    _client = http.Client();
-    var url = Uri.http('192.168.56.1:3000', "/detail", {"id": widget.id});
-    var r = await _client.get(url);
     setState(() {
-      detailData = DetailDto.fromJson(jsonDecode(r.body)['data']);
+      isPageLoading = true;
     });
-    _initVideoPlaer();
+    try {
+      _client = http.Client();
+      var url = Uri.http('192.168.56.1:3000', "/detail", {"id": widget.id});
+      var r = await _client.get(url);
+      setState(() {
+        detailData = DetailDto.fromJson(jsonDecode(r.body)['data']);
+        isPageLoading = false;
+      });
+
+      _initVideoPlaer();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _getVideoSrc() async {
+    if (videos.isEmpty) return false;
+    var i = videos[currentPlayIndex];
+    if (i.isBox || i.src.isNotEmpty) {
+      /// 网盘资源,已经有src的 不做处理
+    } else {
+      setState(() {
+        isGetSrcLoading = true;
+      });
+      var url = Uri.http('192.168.56.1:3000', "/src", {"id": i.id});
+      var r = await _client.get(url);
+      print(r.body);
+      setState(() {
+        detailData.playUrlTab[currentPlayIndex].src = r.body;
+        isGetSrcLoading = false;
+      });
+      _initVideoPlaer();
+    }
   }
 
   /// 初始化viedo控制器
@@ -129,6 +170,16 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isPageLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('数据加载中...'),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(detailData.videoName),
@@ -136,18 +187,41 @@ class _DetailPageState extends State<DetailPage> {
       body: ListView(
         children: <Widget>[
           GestureDetector(
-            onTap: () {
+            onTap: () async {
+              // 暂停状态强制显示控制器
+              if (!videoCtrl.value.isPlaying) return false;
+
               setState(() {
                 isShowVideoControllers = !isShowVideoControllers;
               });
+
+              if (isShowVideoControllers) {
+                await Future.delayed(Duration(seconds: 2));
+                setState(() {
+                  isShowVideoControllers = false;
+                });
+              }
             },
             child: Stack(
               alignment: AlignmentDirectional.center,
               children: <Widget>[
-                AspectRatio(
-                  aspectRatio: videoCtrl.value.aspectRatio,
-                  child: VideoPlayer(videoCtrl),
-                ),
+                if (videoCtrl?.value?.initialized || !isGetSrcLoading)
+                  AspectRatio(
+                    aspectRatio: videoCtrl.value.aspectRatio,
+                    child: VideoPlayer(videoCtrl),
+                  )
+                else
+                  AspectRatio(
+                    aspectRatio: 16.0 / 9.0,
+                    child: Container(
+                      color: Colors.black,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
                 AnimatedCrossFade(
                   duration: Duration(milliseconds: 300),
                   firstChild: Container(),
@@ -193,7 +267,7 @@ class _DetailPageState extends State<DetailPage> {
                         title: Row(
                           children: <Widget>[
                             Text(
-                              "${positionText} / ${durationText}",
+                              "$positionText / $durationText",
                               style: TextStyle(color: Colors.white),
                             ),
                             Spacer(),
@@ -217,7 +291,7 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                         subtitle: Slider(
                           inactiveColor: Colors.grey,
-                          value: position.inMinutes / duration.inMinutes,
+                          value: sliderValue,
                           onChanged: (v) {
                             videoCtrl.seekTo(Duration(seconds: v.toInt()));
                           },
@@ -266,19 +340,6 @@ class _DetailPageState extends State<DetailPage> {
     }
   }
 
-  /// 获取http数据显示loading
-  Scaffold _detailPlaceholder({
-    Widget title,
-    Widget body,
-  }) {
-    return Scaffold(
-      appBar: AppBar(title: title ?? Text('加载数据中...')),
-      body: Center(
-        child: body ?? CircularProgressIndicator(),
-      ),
-    );
-  }
-
   /// 每集 tab
   _playTab(PlayUrlTab t) {
     var index = videos.indexOf(t);
@@ -297,6 +358,7 @@ class _DetailPageState extends State<DetailPage> {
           print('播放视频资源');
           setState(() {
             currentPlayIndex = index;
+            isShowVideoControllers = true;
           });
           videoCtrl.pause();
           videoCtrl.setVolume(0.0);
@@ -410,28 +472,6 @@ class SmallIconButton extends StatelessWidget {
       child: Padding(
         padding: padding,
         child: icon,
-      ),
-    );
-  }
-}
-
-/// 在加载video的时候显示loading
-class VideoLoadingWidget extends StatelessWidget {
-  const VideoLoadingWidget({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16.0 / 9.0,
-      child: Container(
-        color: Colors.black,
-        child: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Colors.white),
-          ),
-        ),
       ),
     );
   }
