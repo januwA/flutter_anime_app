@@ -28,7 +28,7 @@ Future<void> alertHttpGetError({
             },
           ),
           FlatButton(
-            child: Text('确定'),
+            child: Text('重试'),
             onPressed: () {
               Navigator.of(ctx).pop();
               onOk();

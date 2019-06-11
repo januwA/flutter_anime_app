@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_video_app/models/detail_data_dto/detail_data_dto.dart';
 import 'package:flutter_video_app/shared/globals.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -52,19 +54,30 @@ class _DetailPageState extends State<DetailPage> {
   /// 是否为全屏播放
   bool isFullScreen = false;
 
-  /// 25:00 总时长
+  /// 25:00 or 2:00:00 总时长
   String get durationText {
     if (duration == null) return '';
-    var r = duration.toString().split('.').first.split(':')..removeAt(0);
-    return r.join(':');
+    return duration
+        .toString()
+        .split('.')
+        .first
+        .split(':')
+        .where((String e) => e != '0')
+        .toList()
+        .join(':');
   }
 
   /// 00:01 当前时间
   String get positionText {
     if (videoCtrl.value == null) return '';
-    var r = videoCtrl.value.position.toString().split('.').first.split(':')
-      ..removeAt(0);
-    return r.join(':');
+    return videoCtrl.value.position
+        .toString()
+        .split('.')
+        .first
+        .split(':')
+        .where((String e) => e != '0')
+        .toList()
+        .join(':');
   }
 
   double get sliderValue {
@@ -177,14 +190,9 @@ class _DetailPageState extends State<DetailPage> {
     }
 
     if (isFullScreen) {
-      MediaQueryData deviceData = MediaQuery.of(context);
       return SafeArea(
         child: Scaffold(
-          body: SizedBox(
-            width: deviceData.size.width,
-            height: deviceData.size.height,
-            child: videoBox(),
-          ),
+          body: videoBox(),
         ),
       );
     }
@@ -208,22 +216,29 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ],
           ),
+
           Center(
             child: Wrap(
-              alignment: WrapAlignment.spaceAround,
-              spacing: 8,
-              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 14,
               children: <Widget>[
                 for (PlayUrlTab t in detailData.playUrlTab) playTab(t)
               ],
             ),
           ),
+
+          // GridView.count(
+          //   crossAxisCount: 3,
+          //   children: <Widget>[
+          //     for (PlayUrlTab t in detailData.playUrlTab) playTab(t)
+          //   ],
+          // ),
         ],
       ),
     );
   }
 
   GestureDetector videoBox() {
+    MediaQueryData media = MediaQuery.of(context);
     return GestureDetector(
       onTap: () async {
         setState(() {
@@ -245,10 +260,19 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                   ),
                 )
-              : AspectRatio(
-                  aspectRatio: videoCtrl.value.aspectRatio,
-                  child: VideoPlayer(videoCtrl),
-                ),
+              : isFullScreen
+                  ? SizedBox(
+                      width: media.size.width,
+                      height: media.size.height,
+                      child: AspectRatio(
+                        aspectRatio: videoCtrl.value.aspectRatio,
+                        child: VideoPlayer(videoCtrl),
+                      ),
+                    )
+                  : AspectRatio(
+                      aspectRatio: videoCtrl.value.aspectRatio,
+                      child: VideoPlayer(videoCtrl),
+                    ),
           isVideoLoading
               ? CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation(Colors.white),
@@ -293,56 +317,53 @@ class _DetailPageState extends State<DetailPage> {
               duration: Duration(milliseconds: 300),
               firstChild: Container(),
               secondChild: Container(
-                decoration: BoxDecoration(color: Colors.black45),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            "$positionText / $durationText",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Spacer(),
-                          if (!isVideoLoading)
-                            SmallIconButton(
-                              icon: Icon(
-                                videoCtrl.value.volume <= 0
-                                    ? Icons.volume_off
-                                    : Icons.volume_up,
-                                color: Colors.white,
-                              ),
-                              onTap: () {
-                                if (videoCtrl.value.volume > 0) {
-                                  videoCtrl.setVolume(0.0);
-                                } else {
-                                  videoCtrl.setVolume(1.0);
-                                }
-                              },
-                            ),
-                          SmallIconButton(
-                            icon: Icon(
-                              !isFullScreen
-                                  ? Icons.fullscreen
-                                  : Icons.fullscreen_exit,
-                              color: Colors.white,
-                            ),
-                            onTap: onFullScreen,
-                          ),
-                        ],
+                decoration: BoxDecoration(color: Colors.black12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "$positionText/$durationText",
+                        style: TextStyle(color: Colors.white),
                       ),
-                    ),
-                    Slider(
-                      inactiveColor: Colors.grey,
-                      value: sliderValue,
-                      onChanged: (v) {
-                        var to =
-                            Duration(seconds: (v * duration.inSeconds).toInt());
-                        videoCtrl.seekTo(to);
-                      },
-                    ),
-                  ],
+                      Expanded(
+                        child: Slider(
+                          inactiveColor: Colors.grey,
+                          value: sliderValue,
+                          onChanged: (v) {
+                            var to = Duration(
+                                seconds: (v * duration.inSeconds).toInt());
+                            videoCtrl.seekTo(to);
+                          },
+                        ),
+                      ),
+                      if (!isVideoLoading)
+                        IconButton(
+                          color: Colors.white,
+                          icon: Icon(
+                            videoCtrl.value.volume <= 0
+                                ? Icons.volume_off
+                                : Icons.volume_up,
+                          ),
+                          onPressed: () {
+                            if (videoCtrl.value.volume > 0) {
+                              videoCtrl.setVolume(0.0);
+                            } else {
+                              videoCtrl.setVolume(1.0);
+                            }
+                          },
+                        ),
+                      IconButton(
+                        icon: Icon(
+                          !isFullScreen
+                              ? Icons.fullscreen
+                              : Icons.fullscreen_exit,
+                          color: Colors.white,
+                        ),
+                        onPressed: onFullScreen,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               crossFadeState: isShowVideoControllers
@@ -365,9 +386,7 @@ class _DetailPageState extends State<DetailPage> {
 
   /// 设置为横屏模式
   setLandscape() {
-    setState(() {
-      isFullScreen = true;
-    });
+    setState(() => isFullScreen = true);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -376,9 +395,7 @@ class _DetailPageState extends State<DetailPage> {
 
   /// 设置为正常模式
   setPortrait() {
-    setState(() {
-      isFullScreen = false;
-    });
+    setState(() => isFullScreen = false);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -388,7 +405,7 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   /// 每集 tab
-  playTab(PlayUrlTab t) {
+  Widget playTab(PlayUrlTab t) {
     var index = detailData.playUrlTab.indexOf(t);
     return RaisedButton(
       color: index == currentPlayIndex ? Colors.blue[400] : Colors.grey[300],
