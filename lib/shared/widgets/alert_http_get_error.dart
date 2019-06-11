@@ -6,6 +6,7 @@ Future<void> alertHttpGetError({
   @required String text,
   String title = '错误请重试',
   Function onOk,
+  String okText = "重试",
 }) async {
   return showDialog<void>(
     context: context,
@@ -28,7 +29,7 @@ Future<void> alertHttpGetError({
             },
           ),
           FlatButton(
-            child: Text('重试'),
+            child: Text(okText),
             onPressed: () {
               Navigator.of(ctx).pop();
               onOk();

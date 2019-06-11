@@ -1,16 +1,14 @@
 import 'dart:convert';
-
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_video_app/models/detail_data_dto/detail_data_dto.dart';
 import 'package:flutter_video_app/shared/globals.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutter_video_app/shared/widgets/http_error_page.dart';
+import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
 class DetailPage extends StatefulWidget {
@@ -26,7 +24,6 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   /// 页面数据
   DetailData detailData;
-  Client client;
   VideoPlayerController videoCtrl;
 
   /// 当前播放位置
@@ -37,7 +34,6 @@ class _DetailPageState extends State<DetailPage> {
 
   /// 页面状态
 
-  bool isPageLoading = false;
   bool isVideoLoading = false;
 
   /// 当前时长
@@ -69,7 +65,7 @@ class _DetailPageState extends State<DetailPage> {
 
   /// 00:01 当前时间
   String get positionText {
-    if (videoCtrl.value == null) return '';
+    if (videoCtrl == null) return '';
     return videoCtrl.value.position
         .toString()
         .split('.')
@@ -88,17 +84,17 @@ class _DetailPageState extends State<DetailPage> {
     }
   }
 
+  Future<DetailData> _detailDataFuture;
+
   @override
   void initState() {
     super.initState();
-    this.getDetailData();
+    _detailDataFuture = getDetailData();
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    client?.close();
     videoCtrl?.removeListener(videoListenner);
     videoCtrl?.dispose();
   }
@@ -108,48 +104,18 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   /// 获取detail数据
-  Future<void> getDetailData() async {
-    setState(() => isPageLoading = true);
-    try {
-      client = http.Client();
-      var url = Uri.http(baseUrl, detailUrl, {"id": widget.id});
-      var r = await client.get(url);
-
-      if (r.statusCode == 200) {
-        setState(() {
-          detailData = DetailDataDto.fromJson(r.body).detailData;
-          isPageLoading = false;
-        });
-        // 设置完数据开始初始化播放器
-        initVideoPlaer();
-      } else {
-        // 服务器没有正确的返回数据
-        alertHttpGetError(
-            context: context,
-            text: r.body,
-            onOk: () {
-              getDetailData();
-            });
-      }
-    } on ClientException catch (e) {
-      print("http异常: $e");
-    } catch (e) {
-      print('Other Error: $e');
-    }
-  }
-
-  /// 获取指定集的src
-  getVideoSrc() async {
-    var e = detailData.playUrlTab[currentPlayIndex];
-    setState(() => isVideoLoading = true);
-    var url = Uri.http(baseUrl, videoSrcUrl, {"id": e.id});
+  Future<DetailData> getDetailData() async {
+    var url = Uri.http(baseUrl, detailUrl, {"id": widget.id});
     var r = await http.get(url);
     if (r.statusCode == 200) {
-      var src = jsonDecode(r.body)['src'];
-      setState(() => isVideoLoading = false);
-      initVideoPlaer(src);
+      var body = DetailDataDto.fromJson(r.body);
+      setState(() {
+        detailData = body.detailData;
+      });
+      initVideoPlaer();
+      return body.detailData;
     } else {
-      alertHttpGetError(context: context, text: r.body);
+      return Future.error(r.body);
     }
   }
 
@@ -178,17 +144,6 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isPageLoading) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('数据加载中...'),
-        ),
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
     if (isFullScreen) {
       return SafeArea(
         child: Scaffold(
@@ -196,47 +151,63 @@ class _DetailPageState extends State<DetailPage> {
         ),
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(detailData.videoName),
-      ),
-      body: ListView(
-        children: <Widget>[
-          videoBox(),
-          DetailInfo(detailData: detailData),
-          ExpansionTile(
-            title: Text(
-              detailData.plot,
-              overflow: TextOverflow.ellipsis,
-            ),
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(detailData.plot),
+    return FutureBuilder<DetailData>(
+      future: _detailDataFuture,
+      builder: (BuildContext context, AsyncSnapshot<DetailData> snapshot) {
+        switch (snapshot.connectionState) {
+
+          /// loading...
+          case ConnectionState.waiting:
+            return HttpLoadingPage(title: '加载详情...');
+            break;
+          case ConnectionState.done:
+
+            /// error
+            if (snapshot.hasError) {
+              return HttpErrorPage(body: Text('${snapshot.error}'));
+            }
+
+            /// ok
+            DetailData _detailData = snapshot.data;
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(_detailData.videoName),
               ),
-            ],
-          ),
-
-          Center(
-            child: Wrap(
-              spacing: 14,
-              children: <Widget>[
-                for (PlayUrlTab t in detailData.playUrlTab) playTab(t)
-              ],
-            ),
-          ),
-
-          // GridView.count(
-          //   crossAxisCount: 3,
-          //   children: <Widget>[
-          //     for (PlayUrlTab t in detailData.playUrlTab) playTab(t)
-          //   ],
-          // ),
-        ],
-      ),
+              body: ListView(
+                children: <Widget>[
+                  videoBox(),
+                  DetailInfo(detailData: _detailData),
+                  ExpansionTile(
+                    title: Text(
+                      detailData.plot,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text(_detailData.plot),
+                      ),
+                    ],
+                  ),
+                  Center(
+                    child: Wrap(
+                      spacing: 14,
+                      children: <Widget>[
+                        for (PlayUrlTab t in _detailData.playUrlTab) playTab(t)
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+            break;
+          default:
+        }
+      },
     );
   }
 
+  /// video+controller 容器盒子
   GestureDetector videoBox() {
     MediaQueryData media = MediaQuery.of(context);
     return GestureDetector(
@@ -253,10 +224,17 @@ class _DetailPageState extends State<DetailPage> {
                   aspectRatio: 16.0 / 9.0,
                   child: Container(
                     color: Colors.black,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                      ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 )
@@ -273,42 +251,37 @@ class _DetailPageState extends State<DetailPage> {
                       aspectRatio: videoCtrl.value.aspectRatio,
                       child: VideoPlayer(videoCtrl),
                     ),
-          isVideoLoading
-              ? CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
-                )
-              : AnimatedCrossFade(
-                  duration: Duration(milliseconds: 300),
-                  firstChild: Container(),
-                  secondChild: Container(
-                    decoration: new BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      color: Colors.black,
-                      icon: Icon(videoCtrl.value.isPlaying
-                          ? Icons.pause
-                          : Icons.play_arrow),
-                      onPressed: () {
-                        if (videoCtrl.value.isPlaying) {
-                          videoCtrl.pause();
-                          setState(() {
-                            isShowVideoControllers = true;
-                          });
-                        } else {
-                          videoCtrl.play();
-                          setState(() {
-                            isShowVideoControllers = false;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                  crossFadeState: isShowVideoControllers
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                ),
+          AnimatedCrossFade(
+            duration: Duration(milliseconds: 300),
+            firstChild: Container(),
+            secondChild: Container(
+              decoration: new BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                color: Colors.black,
+                icon: Icon(
+                    videoCtrl.value.isPlaying ? Icons.pause : Icons.play_arrow),
+                onPressed: () {
+                  if (videoCtrl.value.isPlaying) {
+                    videoCtrl.pause();
+                    setState(() {
+                      isShowVideoControllers = true;
+                    });
+                  } else {
+                    videoCtrl.play();
+                    setState(() {
+                      isShowVideoControllers = false;
+                    });
+                  }
+                },
+              ),
+            ),
+            crossFadeState: isShowVideoControllers
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+          ),
           Positioned(
             bottom: 0,
             left: 0,
@@ -376,6 +349,7 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
+  /// 全屏播放切换事件
   onFullScreen() {
     if (isFullScreen) {
       setPortrait();
@@ -428,6 +402,21 @@ class _DetailPageState extends State<DetailPage> {
         }
       },
     );
+  }
+
+  /// 获取指定集的src
+  getVideoSrc() async {
+    var e = detailData.playUrlTab[currentPlayIndex];
+    setState(() => isVideoLoading = true);
+    var url = Uri.http(baseUrl, videoSrcUrl, {"id": e.id});
+    var r = await http.get(url);
+    if (r.statusCode == 200) {
+      var src = jsonDecode(r.body)['src'];
+      initVideoPlaer(src);
+    } else {
+      alertHttpGetError(
+          context: context, title: "未获取到播放地址", text: r.body, okText: "确定");
+    }
   }
 }
 
@@ -503,30 +492,6 @@ class DetailInfo extends StatelessWidget {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// video 控制器上的按钮
-class SmallIconButton extends StatelessWidget {
-  SmallIconButton({
-    Key key,
-    this.icon,
-    this.onTap,
-    this.padding = const EdgeInsets.all(4.0),
-  }) : super(key: key);
-  final Widget icon;
-  final EdgeInsetsGeometry padding;
-  final Function onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: padding,
-        child: icon,
       ),
     );
   }
