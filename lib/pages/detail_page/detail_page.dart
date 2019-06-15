@@ -97,6 +97,9 @@ class _DetailPageState extends State<DetailPage> {
     super.dispose();
     videoCtrl?.removeListener(videoListenner);
     videoCtrl?.dispose();
+    if (isFullScreen) {
+      setPortrait();
+    }
   }
 
   videoListenner() {
@@ -209,7 +212,6 @@ class _DetailPageState extends State<DetailPage> {
 
   /// video+controller 容器盒子
   GestureDetector videoBox() {
-    MediaQueryData media = MediaQuery.of(context);
     return GestureDetector(
       onTap: () async {
         setState(() {
@@ -238,19 +240,15 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                   ),
                 )
-              : isFullScreen
-                  ? SizedBox(
-                      width: media.size.width,
-                      height: media.size.height,
-                      child: AspectRatio(
-                        aspectRatio: videoCtrl.value.aspectRatio,
-                        child: VideoPlayer(videoCtrl),
-                      ),
-                    )
-                  : AspectRatio(
+              : Container(
+                  color: Colors.black,
+                  child: Center(
+                    child: AspectRatio(
                       aspectRatio: videoCtrl.value.aspectRatio,
                       child: VideoPlayer(videoCtrl),
                     ),
+                  ),
+                ),
           AnimatedCrossFade(
             duration: Duration(milliseconds: 300),
             firstChild: Container(),

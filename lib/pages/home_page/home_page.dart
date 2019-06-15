@@ -15,8 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  /// 默认显示当天的
-  int get currentWeekDay => DateTime.now().weekday;
   bool isloading = false;
 
   /// 从服务器获取数据
@@ -56,7 +54,7 @@ class _HomePageState extends State<HomePage> {
             BuiltList<WeekData> weekData = snapshot.data;
             return DefaultTabController(
               length: week.length,
-              initialIndex: currentWeekDay - 1,
+              initialIndex: DateTime.now().weekday - 1,
               child: Scaffold(
                 appBar: AppBar(
                   title: Text('追番表'),
