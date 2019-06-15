@@ -96,6 +96,7 @@ class _DetailPageState extends State<DetailPage> {
   void dispose() {
     super.dispose();
     videoCtrl?.removeListener(videoListenner);
+    videoCtrl?.pause();
     videoCtrl?.dispose();
     if (isFullScreen) {
       setPortrait();
@@ -396,6 +397,7 @@ class _DetailPageState extends State<DetailPage> {
             currentPlayIndex = index;
             isShowVideoControllers = true;
           });
+          videoCtrl.pause();
           getVideoSrc();
         }
       },
