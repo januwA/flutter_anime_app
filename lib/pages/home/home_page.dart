@@ -80,7 +80,7 @@ class AnimeCard extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => DetailPage(id: animeData.id))),
+            builder: (context) => DetailPage(animeId: animeData.id))),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
