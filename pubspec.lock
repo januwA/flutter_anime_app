@@ -167,6 +167,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_mobx:
+    dependency: "direct main"
+    description:
+      name: flutter_mobx
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.3+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -277,6 +284,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.9.6+3"
+  mobx:
+    dependency: "direct main"
+    description:
+      name: mobx
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.1+1"
+  mobx_codegen:
+    dependency: "direct dev"
+    description:
+      name: mobx_codegen
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.1+2"
   package_config:
     dependency: transitive
     description:

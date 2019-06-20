@@ -86,6 +86,8 @@ class _DetailPageState extends State<DetailPage> {
 
   Future<DetailData> _detailDataFuture;
 
+  var client = http.Client();
+
   @override
   void initState() {
     super.initState();
@@ -94,13 +96,14 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   void dispose() {
-    super.dispose();
     videoCtrl?.removeListener(videoListenner);
     videoCtrl?.pause();
     videoCtrl?.dispose();
+    client?.close();
     if (isFullScreen) {
       setPortrait();
     }
+    super.dispose();
   }
 
   videoListenner() {
@@ -110,16 +113,20 @@ class _DetailPageState extends State<DetailPage> {
   /// 获取detail数据
   Future<DetailData> getDetailData() async {
     var url = Uri.http(baseUrl, detailUrl, {"id": widget.id});
-    var r = await http.get(url);
-    if (r.statusCode == 200) {
-      var body = DetailDataDto.fromJson(r.body);
-      setState(() {
-        detailData = body.detailData;
-      });
-      initVideoPlaer();
-      return body.detailData;
-    } else {
-      return Future.error(r.body);
+    try {
+      var r = await client.get(url);
+      if (r.statusCode == 200) {
+        var body = DetailDataDto.fromJson(r.body);
+        setState(() {
+          detailData = body.detailData;
+        });
+        initVideoPlaer();
+        return body.detailData;
+      } else {
+        return Future.error(r.body);
+      }
+    } catch (_) {
+      // 中断http
     }
   }
 

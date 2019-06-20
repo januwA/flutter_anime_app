@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/pages/dash_page/dash_page.dart';
+import 'package:flutter_video_app/pages/dash/dash_page.dart';
 
 void main() => runApp(MyApp());
 
