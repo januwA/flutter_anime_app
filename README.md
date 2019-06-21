@@ -16,3 +16,11 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 服务器端 [https://github.com/januwA/nest-pptr](https://github.com/januwA/nest-pptr)
+
+
+## mobx build
+```
+flutter packages pub run build_runner build   // 执行一次build命令
+flutter packages pub run build_runner watch  // 文件更改自动打包
+flutter packages pub run build_runner watch --delete-conflicting-outputs  // 删除旧文件在打包
+```

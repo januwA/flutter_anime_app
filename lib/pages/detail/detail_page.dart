@@ -42,17 +42,6 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        if (detailStore.isFullScreen) {
-          return SafeArea(
-            child: Scaffold(
-              body: MultiProvider(
-                providers: [Provider<DetailStore>.value(value: detailStore)],
-                child: VideoBox(),
-              ),
-            ),
-          );
-        }
-
         if (!isNull(detailStore.weekDataerror)) {
           return HttpErrorPage(
             body: Text(detailStore.weekDataerror),
@@ -183,75 +172,10 @@ class VideoBox extends StatelessWidget {
                 Observer(
                   builder: (_) => playButton(detailStore),
                 ),
-                Observer(
-                  builder: (_) => videoBottomCtrl(detailStore),
-                ),
+                VideoBottomCtrl(),
               ],
             ),
           ),
-    );
-  }
-
-  Positioned videoBottomCtrl(DetailStore detailStore) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: AnimatedCrossFade(
-        duration: Duration(milliseconds: 300),
-        firstChild: Container(),
-        secondChild: Container(
-          decoration: BoxDecoration(color: Colors.black12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: <Widget>[
-                Text(
-                  detailStore.isVideoLoading
-                      ? '00:00/00:00'
-                      : "${detailStore.positionText}/${detailStore.durationText}",
-                  style: TextStyle(color: Colors.white),
-                ),
-                Expanded(
-                  child: Slider(
-                    inactiveColor: Colors.grey,
-                    activeColor: Colors.white,
-                    value: detailStore.sliderValue,
-                    onChanged: detailStore.seekTo,
-                  ),
-                ),
-                detailStore.isVideoLoading
-                    ? IconButton(
-                        color: Colors.white,
-                        icon: Icon(Icons.volume_up),
-                        onPressed: () {},
-                      )
-                    : IconButton(
-                        color: Colors.white,
-                        icon: Icon(
-                          detailStore.videoCtrl.value.volume <= 0
-                              ? Icons.volume_off
-                              : Icons.volume_up,
-                        ),
-                        onPressed: detailStore.setVolume,
-                      ),
-                IconButton(
-                  icon: Icon(
-                    !detailStore.isFullScreen
-                        ? Icons.fullscreen
-                        : Icons.fullscreen_exit,
-                    color: Colors.white,
-                  ),
-                  onPressed: detailStore.onFullScreen,
-                ),
-              ],
-            ),
-          ),
-        ),
-        crossFadeState: detailStore.isShowVideoCtrl
-            ? CrossFadeState.showSecond
-            : CrossFadeState.showFirst,
-      ),
     );
   }
 
@@ -277,6 +201,107 @@ class VideoBox extends StatelessWidget {
       crossFadeState: detailStore.isShowVideoCtrl
           ? CrossFadeState.showSecond
           : CrossFadeState.showFirst,
+    );
+  }
+}
+
+class VideoBottomCtrl extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final detailStore = Provider.of<DetailStore>(context);
+    return Observer(
+      builder: (_) => Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedCrossFade(
+              duration: Duration(milliseconds: 300),
+              firstChild: Container(),
+              secondChild: Container(
+                decoration: BoxDecoration(color: Colors.black12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        detailStore.isVideoLoading
+                            ? '00:00/00:00'
+                            : "${detailStore.positionText}/${detailStore.durationText}",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Expanded(
+                        child: Slider(
+                          inactiveColor: Colors.grey[300],
+                          activeColor: Colors.white,
+                          value: detailStore.sliderValue,
+                          onChanged: detailStore.seekTo,
+                        ),
+                      ),
+                      detailStore.isVideoLoading
+                          ? IconButton(
+                              color: Colors.white,
+                              icon: Icon(Icons.volume_up),
+                              onPressed: () {},
+                            )
+                          : IconButton(
+                              color: Colors.white,
+                              icon: Icon(
+                                detailStore.videoCtrl.value.volume <= 0
+                                    ? Icons.volume_off
+                                    : Icons.volume_up,
+                              ),
+                              onPressed: detailStore.setVolume,
+                            ),
+                      IconButton(
+                        icon: Icon(
+                          !detailStore.isFullScreen
+                              ? Icons.fullscreen
+                              : Icons.fullscreen_exit,
+                          color: Colors.white,
+                        ),
+                        onPressed: () async {
+                          if (detailStore.isFullScreen) {
+                            // detailStore.setIsFullScreen(false);
+                            Navigator.of(context).pop();
+                            detailStore.setPortrait();
+                          } else {
+                            // detailStore.setIsFullScreen(true);
+                            detailStore.setLandscape();
+                            final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return SafeArea(
+                                    child: Scaffold(
+                                      body: MultiProvider(
+                                        providers: [
+                                          Provider<DetailStore>.value(
+                                              value: detailStore)
+                                        ],
+                                        child: VideoBox(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+
+                            /// 用户按下了返回键，关闭了全屏
+                            if (result == null) {
+                              // detailStore.setIsFullScreen(false);
+                              detailStore.setPortrait();
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              crossFadeState: detailStore.isShowVideoCtrl
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+            ),
+          ),
     );
   }
 }

@@ -294,6 +294,16 @@ mixin _$DetailStore on _DetailStore, Store {
   }
 
   @override
+  void setIsFullScreen(bool full) {
+    final _$actionInfo = _$_DetailStoreActionController.startAction();
+    try {
+      return super.setIsFullScreen(full);
+    } finally {
+      _$_DetailStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic setLandscape() {
     final _$actionInfo = _$_DetailStoreActionController.startAction();
     try {

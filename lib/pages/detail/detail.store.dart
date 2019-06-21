@@ -220,6 +220,11 @@ abstract class _DetailStore with Store {
     }
   }
 
+  @action
+  void setIsFullScreen(bool full) {
+    isFullScreen = full;
+  }
+
   /// 设置为横屏模式
   @action
   setLandscape() {
