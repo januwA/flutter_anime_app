@@ -5,8 +5,8 @@ import 'package:flutter_video_app/pages/detail/detail.store.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/shared/widgets/http_error_page.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
+import 'package:flutter_video_app/shared/widgets/video_box/video.dart';
 import 'package:validators/validators.dart';
-import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +62,9 @@ class _DetailPageState extends State<DetailPage> {
             ),
             body: ListView(
               children: <Widget>[
-                VideoBox(),
+                Observer(
+                  builder: (_) => VideoBox(src: detailStore.src),
+                ),
 
                 /// anime的信息资料
                 DetailInfo(),
@@ -125,10 +127,9 @@ class PlayTab extends StatelessWidget {
                   throw 'Could not launch ${t.src}';
                 }
               } else {
+                detailStore.setSrc('');
                 // 视频资源,准备切换播放点击的视频
                 detailStore.setCurrentPlayIndex(index);
-                detailStore.showVideoCtrl(true);
-                detailStore.videoCtrl.pause();
                 detailStore.getVideoSrc(() {
                   alertHttpGetError(
                     context: context,
@@ -140,196 +141,6 @@ class PlayTab extends StatelessWidget {
               }
             },
           ),
-    );
-  }
-}
-
-/// video+controller 容器盒子
-class VideoBox extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final detailStore = Provider.of<DetailStore>(context);
-
-    return Observer(
-      builder: (_) => GestureDetector(
-            onTap: () =>
-                detailStore.showVideoCtrl(!detailStore.isShowVideoCtrl),
-            child: Stack(
-              alignment: AlignmentDirectional.center,
-              children: <Widget>[
-                detailStore.isVideoLoading
-                    ? VideoLoading()
-                    : Container(
-                        color: Colors.black,
-                        child: Center(
-                          child: AspectRatio(
-                            aspectRatio:
-                                detailStore.videoCtrl.value.aspectRatio,
-                            child: VideoPlayer(detailStore.videoCtrl),
-                          ),
-                        ),
-                      ),
-                Observer(
-                  builder: (_) => playButton(detailStore),
-                ),
-                VideoBottomCtrl(),
-              ],
-            ),
-          ),
-    );
-  }
-
-  AnimatedCrossFade playButton(DetailStore detailStore) {
-    return AnimatedCrossFade(
-      duration: const Duration(milliseconds: 300),
-      firstChild: Container(),
-      secondChild: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-        ),
-        child: IconButton(
-          color: Colors.black,
-          icon: Icon(
-            detailStore.videoCtrl.value.isPlaying
-                ? Icons.pause
-                : Icons.play_arrow,
-          ),
-          onPressed: detailStore.togglePlay,
-        ),
-      ),
-      crossFadeState: detailStore.isShowVideoCtrl
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-    );
-  }
-}
-
-class VideoBottomCtrl extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final detailStore = Provider.of<DetailStore>(context);
-    return Observer(
-      builder: (_) => Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: AnimatedCrossFade(
-              duration: Duration(milliseconds: 300),
-              firstChild: Container(),
-              secondChild: Container(
-                decoration: BoxDecoration(color: Colors.black12),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        detailStore.isVideoLoading
-                            ? '00:00/00:00'
-                            : "${detailStore.positionText}/${detailStore.durationText}",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      Expanded(
-                        child: Slider(
-                          inactiveColor: Colors.grey[300],
-                          activeColor: Colors.white,
-                          value: detailStore.sliderValue,
-                          onChanged: detailStore.seekTo,
-                        ),
-                      ),
-                      detailStore.isVideoLoading
-                          ? IconButton(
-                              color: Colors.white,
-                              icon: Icon(Icons.volume_up),
-                              onPressed: () {},
-                            )
-                          : IconButton(
-                              color: Colors.white,
-                              icon: Icon(
-                                detailStore.videoCtrl.value.volume <= 0
-                                    ? Icons.volume_off
-                                    : Icons.volume_up,
-                              ),
-                              onPressed: detailStore.setVolume,
-                            ),
-                      IconButton(
-                        icon: Icon(
-                          !detailStore.isFullScreen
-                              ? Icons.fullscreen
-                              : Icons.fullscreen_exit,
-                          color: Colors.white,
-                        ),
-                        onPressed: () async {
-                          if (detailStore.isFullScreen) {
-                            // detailStore.setIsFullScreen(false);
-                            Navigator.of(context).pop();
-                            detailStore.setPortrait();
-                          } else {
-                            // detailStore.setIsFullScreen(true);
-                            detailStore.setLandscape();
-                            final result = await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return SafeArea(
-                                    child: Scaffold(
-                                      body: MultiProvider(
-                                        providers: [
-                                          Provider<DetailStore>.value(
-                                              value: detailStore)
-                                        ],
-                                        child: VideoBox(),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-
-                            /// 用户按下了返回键，关闭了全屏
-                            if (result == null) {
-                              // detailStore.setIsFullScreen(false);
-                              detailStore.setPortrait();
-                            }
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              crossFadeState: detailStore.isShowVideoCtrl
-                  ? CrossFadeState.showSecond
-                  : CrossFadeState.showFirst,
-            ),
-          ),
-    );
-  }
-}
-
-class VideoLoading extends StatelessWidget {
-  const VideoLoading({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16.0 / 9.0,
-      child: Container(
-        color: Colors.black,
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: 50,
-              width: 50,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.white),
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }
