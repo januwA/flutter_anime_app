@@ -19,6 +19,7 @@ dependencies:
   flutter_mobx:
   validators:
   provider: ^3.0.0+1
+  screen: ^0.0.5
 
 dev_dependencies:
   flutter_test:

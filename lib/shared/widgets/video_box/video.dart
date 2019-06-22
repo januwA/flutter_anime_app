@@ -5,6 +5,7 @@ import 'package:flutter_video_app/shared/widgets/video_box/video.store.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 import 'package:video_player/video_player.dart';
+import 'package:screen/screen.dart';
 
 /// video+controller 容器盒子
 class VideoBox extends StatefulWidget {
@@ -57,7 +58,9 @@ class _VideoBoxState extends State<VideoBox> {
                     videoStore.isVideoLoading
                         ? VideoLoading()
                         : Container(
-                            color: Colors.black,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                            ),
                             child: Center(
                               child: AspectRatio(
                                 aspectRatio:
@@ -170,23 +173,12 @@ class VideoBottomCtrl extends StatelessWidget {
                             Navigator.of(context).pop();
                           } else {
                             /// 开启全屏
-                            /// 改变屏幕方向，不销毁控制器
                             videoStore.setLandscape();
-
-                            /// 关闭系统叠加层
-                            SystemChrome.setEnabledSystemUIOverlays([]);
                             await Navigator.of(context).push(MaterialPageRoute(
                                 builder: (_) => FullScreenVideo(
                                       videoStore: videoStore,
                                     )));
-
-                            /// 用户结束了全屏
-                            /// 按下icon或者手机返回键
                             videoStore.setPortrait();
-
-                            /// 显示系统叠加层
-                            SystemChrome.setEnabledSystemUIOverlays(
-                                SystemUiOverlay.values);
                           }
                         },
                       ),
@@ -233,16 +225,42 @@ class VideoLoading extends StatelessWidget {
 }
 
 /// 全屏播放view
-class FullScreenVideo extends StatelessWidget {
+class FullScreenVideo extends StatefulWidget {
   FullScreenVideo({this.videoStore});
   final VideoStore videoStore;
+
+  @override
+  _FullScreenVideoState createState() => _FullScreenVideoState();
+}
+
+class _FullScreenVideoState extends State<FullScreenVideo> {
+  @override
+  void initState() {
+    super.initState();
+
+    /// 防止屏幕进入随眠
+    Screen.keepOn(true);
+
+    /// 关闭系统叠加层
+    SystemChrome.setEnabledSystemUIOverlays([]);
+  }
+
+  @override
+  void dispose() {
+    Screen.keepOn(false);
+
+    /// 显示系统叠加层
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Center(
           child: VideoBox(
-            store: videoStore,
+            store: widget.videoStore,
             isDispose: false,
           ),
         ),
