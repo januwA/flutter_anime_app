@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/shared/widgets/video_box/video.store.dart';
 import 'package:provider/provider.dart';
@@ -171,6 +172,9 @@ class VideoBottomCtrl extends StatelessWidget {
                             /// 开启全屏
                             /// 改变屏幕方向，不销毁控制器
                             videoStore.setLandscape();
+
+                            /// 关闭系统叠加层
+                            SystemChrome.setEnabledSystemUIOverlays([]);
                             await Navigator.of(context).push(MaterialPageRoute(
                                 builder: (_) => FullScreenVideo(
                                       videoStore: videoStore,
@@ -179,6 +183,10 @@ class VideoBottomCtrl extends StatelessWidget {
                             /// 用户结束了全屏
                             /// 按下icon或者手机返回键
                             videoStore.setPortrait();
+
+                            /// 显示系统叠加层
+                            SystemChrome.setEnabledSystemUIOverlays(
+                                SystemUiOverlay.values);
                           }
                         },
                       ),
