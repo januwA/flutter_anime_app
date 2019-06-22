@@ -26,11 +26,7 @@ abstract class _DetailStore with Store {
     getDetailData();
   }
 
-  @observable
-  String weekDataerror = '';
-
-  @observable
-  String videoSrcerror = '';
+  final ErrorState error = ErrorState();
 
   @observable
   DetailData detailData;
@@ -45,7 +41,11 @@ abstract class _DetailStore with Store {
   @observable
   bool isPageLoading = true;
 
-  var client = http.Client();
+  /// get detail
+  http.Client client = http.Client();
+
+  /// get video src
+  http.Client clientSrc;
 
   @action
   void setSrc(String s) {
@@ -66,7 +66,7 @@ abstract class _DetailStore with Store {
         isPageLoading = false;
         // initVideoPlaer();
       } else {
-        weekDataerror = r.body.toString();
+        error.detail = r.body.toString();
         isPageLoading = false;
       }
     } catch (_) {
@@ -76,17 +76,26 @@ abstract class _DetailStore with Store {
 
   /// 获取指定集的src
   @action
-  Future<void> getVideoSrc(Function onErrorCb) async {
-    var e = detailData.playUrlTab[currentPlayIndex];
+  Future<void> getVideoSrc({
+    String id,
+    Function onError,
+  }) async {
     src = '';
-    var url = Uri.http(baseUrl, videoSrcUrl, {"id": e.id});
-    var r = await http.get(url);
-    if (r.statusCode == 200) {
-      src = jsonDecode(r.body)['src'];
-    } else {
-      // error
-      videoSrcerror = r.body.toString();
-      onErrorCb();
+    try {
+      clientSrc?.close();
+      src = '';
+      var url = Uri.http(baseUrl, videoSrcUrl, {"id": id});
+      clientSrc = http.Client();
+      var r = await clientSrc.get(url);
+      if (r.statusCode == HttpStatus.ok) {
+        src = jsonDecode(r.body)['src'];
+      } else {
+        // error
+        error.src = r.body.toString();
+        onError();
+      }
+    } on http.ClientException catch (_) {
+      /// 抓取中断错误
     }
   }
 
@@ -98,6 +107,20 @@ abstract class _DetailStore with Store {
   @override
   void dispose() {
     client?.close();
+    clientSrc?.close();
     super.dispose();
   }
+}
+
+/// error model
+class ErrorState = _ErrorState with _$ErrorState;
+
+abstract class _ErrorState with Store {
+  /// 获取detail数据时错误
+  @observable
+  String detail;
+
+  /// 获取video src时错误
+  @observable
+  String src;
 }

@@ -24,38 +24,6 @@ mixin _$DetailStore on _DetailStore, Store {
     _$animeIdAtom.reportChanged();
   }
 
-  final _$weekDataerrorAtom = Atom(name: '_DetailStore.weekDataerror');
-
-  @override
-  String get weekDataerror {
-    _$weekDataerrorAtom.reportObserved();
-    return super.weekDataerror;
-  }
-
-  @override
-  set weekDataerror(String value) {
-    _$weekDataerrorAtom.context
-        .checkIfStateModificationsAreAllowed(_$weekDataerrorAtom);
-    super.weekDataerror = value;
-    _$weekDataerrorAtom.reportChanged();
-  }
-
-  final _$videoSrcerrorAtom = Atom(name: '_DetailStore.videoSrcerror');
-
-  @override
-  String get videoSrcerror {
-    _$videoSrcerrorAtom.reportObserved();
-    return super.videoSrcerror;
-  }
-
-  @override
-  set videoSrcerror(String value) {
-    _$videoSrcerrorAtom.context
-        .checkIfStateModificationsAreAllowed(_$videoSrcerrorAtom);
-    super.videoSrcerror = value;
-    _$videoSrcerrorAtom.reportChanged();
-  }
-
   final _$detailDataAtom = Atom(name: '_DetailStore.detailData');
 
   @override
@@ -136,8 +104,9 @@ mixin _$DetailStore on _DetailStore, Store {
   final _$getVideoSrcAsyncAction = AsyncAction('getVideoSrc');
 
   @override
-  Future<void> getVideoSrc(Function onErrorCb) {
-    return _$getVideoSrcAsyncAction.run(() => super.getVideoSrc(onErrorCb));
+  Future<void> getVideoSrc({String id, Function onError}) {
+    return _$getVideoSrcAsyncAction
+        .run(() => super.getVideoSrc(id: id, onError: onError));
   }
 
   final _$_DetailStoreActionController = ActionController(name: '_DetailStore');
@@ -160,5 +129,39 @@ mixin _$DetailStore on _DetailStore, Store {
     } finally {
       _$_DetailStoreActionController.endAction(_$actionInfo);
     }
+  }
+}
+
+// ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars
+
+mixin _$ErrorState on _ErrorState, Store {
+  final _$detailAtom = Atom(name: '_ErrorState.detail');
+
+  @override
+  String get detail {
+    _$detailAtom.reportObserved();
+    return super.detail;
+  }
+
+  @override
+  set detail(String value) {
+    _$detailAtom.context.checkIfStateModificationsAreAllowed(_$detailAtom);
+    super.detail = value;
+    _$detailAtom.reportChanged();
+  }
+
+  final _$srcAtom = Atom(name: '_ErrorState.src');
+
+  @override
+  String get src {
+    _$srcAtom.reportObserved();
+    return super.src;
+  }
+
+  @override
+  set src(String value) {
+    _$srcAtom.context.checkIfStateModificationsAreAllowed(_$srcAtom);
+    super.src = value;
+    _$srcAtom.reportChanged();
   }
 }

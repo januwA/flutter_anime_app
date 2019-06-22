@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
+import 'package:validators/validators.dart';
 import 'package:video_player/video_player.dart';
 part 'video.store.g.dart';
 
@@ -10,10 +11,14 @@ abstract class _VideoStore with Store {
     initVideoPlaer();
   }
 
+  /// 播放地址
   @observable
   String src;
+
   @observable
   VideoPlayerController videoCtrl;
+
+  /// 加载视频中...
   @observable
   bool isVideoLoading = true;
 
@@ -80,10 +85,11 @@ abstract class _VideoStore with Store {
   /// 初始化viedo控制器
   @action
   Future<void> initVideoPlaer() async {
+    if (isNull(src)) return;
     // 尝试关闭上一个video
     videoCtrl?.pause();
     videoCtrl?.setVolume(0.0);
-    
+
     isVideoLoading = true;
     videoCtrl = VideoPlayerController.network(src);
 
@@ -96,6 +102,7 @@ abstract class _VideoStore with Store {
     videoCtrl.addListener(videoListenner);
   }
 
+  /// 开启声音或关闭
   void setVolume() {
     if (videoCtrl.value.volume > 0) {
       videoCtrl.setVolume(0.0);
@@ -104,10 +111,12 @@ abstract class _VideoStore with Store {
     }
   }
 
+  /// 快进
   void seekTo(double v) {
     videoCtrl.seekTo(Duration(seconds: (v * duration.inSeconds).toInt()));
   }
 
+  /// 播放或暂停
   @action
   void togglePlay() {
     if (videoCtrl.value.isPlaying) {

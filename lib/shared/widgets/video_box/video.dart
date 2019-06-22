@@ -26,36 +26,42 @@ class _VideoBoxState extends State<VideoBox> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (isNull(widget.src)) return VideoLoading();
+  void dispose() {
+    videoStore.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Observer(
-      builder: (_) => MultiProvider(
-            providers: [Provider<VideoStore>.value(value: videoStore)],
-            child: GestureDetector(
-              onTap: () =>
-                  videoStore.showVideoCtrl(!videoStore.isShowVideoCtrl),
-              child: Stack(
-                alignment: AlignmentDirectional.center,
-                children: <Widget>[
-                  videoStore.isVideoLoading
-                      ? VideoLoading()
-                      : Container(
-                          color: Colors.black,
-                          child: Center(
-                            child: AspectRatio(
-                              aspectRatio:
-                                  videoStore.videoCtrl.value.aspectRatio,
-                              child: VideoPlayer(videoStore.videoCtrl),
+      builder: (_) => isNull(videoStore.src)
+          ? VideoLoading()
+          : MultiProvider(
+              providers: [Provider<VideoStore>.value(value: videoStore)],
+              child: GestureDetector(
+                onTap: () =>
+                    videoStore.showVideoCtrl(!videoStore.isShowVideoCtrl),
+                child: Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: <Widget>[
+                    videoStore.isVideoLoading
+                        ? VideoLoading()
+                        : Container(
+                            color: Colors.black,
+                            child: Center(
+                              child: AspectRatio(
+                                aspectRatio:
+                                    videoStore.videoCtrl.value.aspectRatio,
+                                child: VideoPlayer(videoStore.videoCtrl),
+                              ),
                             ),
                           ),
-                        ),
-                  PlayButton(),
-                  VideoBottomCtrl(),
-                ],
+                    PlayButton(),
+                    VideoBottomCtrl(),
+                  ],
+                ),
               ),
             ),
-          ),
     );
   }
 }

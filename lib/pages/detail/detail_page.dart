@@ -42,9 +42,9 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        if (!isNull(detailStore.weekDataerror)) {
+        if (!isNull(detailStore.error.detail)) {
           return HttpErrorPage(
-            body: Text(detailStore.weekDataerror),
+            body: Text(detailStore.error.detail),
           );
         }
 
@@ -63,7 +63,10 @@ class _DetailPageState extends State<DetailPage> {
             body: ListView(
               children: <Widget>[
                 Observer(
-                  builder: (_) => VideoBox(src: detailStore.src),
+                  builder: (_) => VideoBox(
+                        key: ValueKey(detailStore.src),
+                        src: detailStore.src,
+                      ),
                 ),
 
                 /// anime的信息资料
@@ -91,6 +94,7 @@ class _DetailPageState extends State<DetailPage> {
                     children: <Widget>[
                       for (PlayUrlTab t in detailStore.detailData.playUrlTab)
                         Padding(
+                            key: ValueKey(t.id),
                             padding: EdgeInsets.symmetric(horizontal: 4.0),
                             child: PlayTab(t: t)),
                     ],
@@ -111,7 +115,7 @@ class PlayTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final detailStore = Provider.of<DetailStore>(context);
-    var index = detailStore.detailData.playUrlTab.indexOf(t);
+    int index = detailStore.detailData.playUrlTab.indexOf(t);
     return Observer(
       builder: (_) => FlatButton(
             color: index == detailStore.currentPlayIndex
@@ -119,25 +123,32 @@ class PlayTab extends StatelessWidget {
                 : Colors.grey[300],
             child: Text(t.text),
             onPressed: () async {
+              detailStore.setCurrentPlayIndex(index);
               if (t.isBox) {
                 // 网盘资源
                 if (await canLaunch(t.src)) {
                   await launch(t.src);
                 } else {
-                  throw 'Could not launch ${t.src}';
-                }
-              } else {
-                detailStore.setSrc('');
-                // 视频资源,准备切换播放点击的视频
-                detailStore.setCurrentPlayIndex(index);
-                detailStore.getVideoSrc(() {
                   alertHttpGetError(
                     context: context,
                     title: '提示',
-                    text: detailStore.videoSrcerror,
+                    text: '无法启动${t.src}',
                     okText: '确定',
                   );
-                });
+                }
+              } else {
+                // 视频资源,准备切换播放点击的视频
+                detailStore.getVideoSrc(
+                  id: t.id,
+                  onError: () {
+                    alertHttpGetError(
+                      context: context,
+                      title: '提示',
+                      text: detailStore.error.src,
+                      okText: '确定',
+                    );
+                  },
+                );
               }
             },
           ),
