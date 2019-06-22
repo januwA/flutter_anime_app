@@ -7,11 +7,18 @@ import 'package:video_player/video_player.dart';
 
 /// video+controller 容器盒子
 class VideoBox extends StatefulWidget {
-  VideoBox({Key key, this.src, this.store}) : super(key: key);
+  VideoBox({
+    Key key,
+
+    /// 网络播放地址
+    this.src,
+    this.store,
+    this.isDispose = true,
+  }) : super(key: key);
 
   final String src;
   final VideoStore store;
-
+  final bool isDispose;
   @override
   _VideoBoxState createState() => _VideoBoxState();
 }
@@ -27,7 +34,9 @@ class _VideoBoxState extends State<VideoBox> {
 
   @override
   void dispose() {
-    videoStore.dispose();
+    if (widget.isDispose) {
+      videoStore.dispose();
+    }
     super.dispose();
   }
 
@@ -156,28 +165,20 @@ class VideoBottomCtrl extends StatelessWidget {
                         ),
                         onPressed: () async {
                           if (videoStore.isFullScreen) {
+                            /// 退出全屏
                             Navigator.of(context).pop();
-                            videoStore.setPortrait();
                           } else {
+                            /// 开启全屏
+                            /// 改变屏幕方向，不销毁控制器
                             videoStore.setLandscape();
-                            final result = await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return SafeArea(
-                                    child: Scaffold(
-                                      body: VideoBox(
-                                        src: videoStore.src,
-                                        store: videoStore,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
+                            await Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => FullScreenVideo(
+                                      videoStore: videoStore,
+                                    )));
 
-                            if (result == null) {
-                              videoStore.setPortrait();
-                            }
+                            /// 用户结束了全屏
+                            /// 按下icon或者手机返回键
+                            videoStore.setPortrait();
                           }
                         },
                       ),
@@ -217,6 +218,25 @@ class VideoLoading extends StatelessWidget {
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 全屏播放view
+class FullScreenVideo extends StatelessWidget {
+  FullScreenVideo({this.videoStore});
+  final VideoStore videoStore;
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: VideoBox(
+            store: videoStore,
+            isDispose: false,
+          ),
         ),
       ),
     );

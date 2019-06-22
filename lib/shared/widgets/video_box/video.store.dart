@@ -174,9 +174,6 @@ abstract class _VideoStore with Store {
     videoCtrl?.removeListener(videoListenner);
     videoCtrl?.pause();
     videoCtrl?.dispose();
-    if (isFullScreen) {
-      setPortrait();
-    }
     super.dispose();
   }
 }
