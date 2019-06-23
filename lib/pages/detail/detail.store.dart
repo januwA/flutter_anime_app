@@ -5,6 +5,8 @@ import 'package:flutter_video_app/models/detail_data_dto/detail_data_dto.dart';
 import 'package:flutter_video_app/shared/globals.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
+import 'package:video_box/video.store.dart';
+import 'package:video_box/video_box.dart';
 
 part 'detail.store.g.dart';
 
@@ -19,6 +21,9 @@ abstract class _DetailStore with Store {
 
   @observable
   String animeId;
+
+  @observable
+  Video video;
 
   @action
   Future<void> init() async {
@@ -36,9 +41,6 @@ abstract class _DetailStore with Store {
   int currentPlayIndex = 0;
 
   @observable
-  String src = '';
-
-  @observable
   bool isPageLoading = true;
 
   /// get detail
@@ -46,11 +48,6 @@ abstract class _DetailStore with Store {
 
   /// get video src
   http.Client clientSrc;
-
-  @action
-  void setSrc(String s) {
-    src = s;
-  }
 
   /// 获取detail数据
   @action
@@ -62,9 +59,8 @@ abstract class _DetailStore with Store {
       if (r.statusCode == HttpStatus.ok) {
         var body = DetailDataDto.fromJson(r.body);
         detailData = body.detailData;
-        src = detailData.playUrlTab.first.src;
+        video = Video(store: VideoStore(src: detailData.playUrlTab.first.src));
         isPageLoading = false;
-        // initVideoPlaer();
       } else {
         error.detail = r.body.toString();
         isPageLoading = false;
@@ -80,17 +76,17 @@ abstract class _DetailStore with Store {
     String id,
     Function onError,
   }) async {
-    src = '';
+    video.store.setSrc('');
+    clientSrc?.close();
+
     try {
-      clientSrc?.close();
-      src = '';
       var url = Uri.http(baseUrl, videoSrcUrl, {"id": id});
       clientSrc = http.Client();
       var r = await clientSrc.get(url);
       if (r.statusCode == HttpStatus.ok) {
-        src = jsonDecode(r.body)['src'];
+        video.store.setSrc(jsonDecode(r.body)['src']);
+        video.store.play();
       } else {
-        // error
         error.src = r.body.toString();
         onError();
       }
@@ -108,6 +104,7 @@ abstract class _DetailStore with Store {
   void dispose() {
     client?.close();
     clientSrc?.close();
+    video.dispose();
     super.dispose();
   }
 }

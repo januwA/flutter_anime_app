@@ -5,7 +5,6 @@ import 'package:flutter_video_app/pages/detail/detail.store.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/shared/widgets/http_error_page.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
-import 'package:flutter_video_app/shared/widgets/video_box/video.dart';
 import 'package:validators/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -62,12 +61,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
             body: ListView(
               children: <Widget>[
-                Observer(
-                  builder: (_) => VideoBox(
-                        key: ValueKey(detailStore.src),
-                        src: detailStore.src,
-                      ),
-                ),
+                detailStore.video.videoBox,
 
                 /// anime的信息资料
                 DetailInfo(),

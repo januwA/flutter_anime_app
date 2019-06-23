@@ -20,6 +20,7 @@ dependencies:
   validators:
   provider: ^3.0.0+1
   screen: ^0.0.5
+  video_box: 0.0.3
 
 dev_dependencies:
   flutter_test:

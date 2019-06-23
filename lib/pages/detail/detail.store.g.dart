@@ -24,6 +24,21 @@ mixin _$DetailStore on _DetailStore, Store {
     _$animeIdAtom.reportChanged();
   }
 
+  final _$videoAtom = Atom(name: '_DetailStore.video');
+
+  @override
+  Video get video {
+    _$videoAtom.reportObserved();
+    return super.video;
+  }
+
+  @override
+  set video(Video value) {
+    _$videoAtom.context.checkIfStateModificationsAreAllowed(_$videoAtom);
+    super.video = value;
+    _$videoAtom.reportChanged();
+  }
+
   final _$detailDataAtom = Atom(name: '_DetailStore.detailData');
 
   @override
@@ -54,21 +69,6 @@ mixin _$DetailStore on _DetailStore, Store {
         .checkIfStateModificationsAreAllowed(_$currentPlayIndexAtom);
     super.currentPlayIndex = value;
     _$currentPlayIndexAtom.reportChanged();
-  }
-
-  final _$srcAtom = Atom(name: '_DetailStore.src');
-
-  @override
-  String get src {
-    _$srcAtom.reportObserved();
-    return super.src;
-  }
-
-  @override
-  set src(String value) {
-    _$srcAtom.context.checkIfStateModificationsAreAllowed(_$srcAtom);
-    super.src = value;
-    _$srcAtom.reportChanged();
   }
 
   final _$isPageLoadingAtom = Atom(name: '_DetailStore.isPageLoading');
@@ -110,16 +110,6 @@ mixin _$DetailStore on _DetailStore, Store {
   }
 
   final _$_DetailStoreActionController = ActionController(name: '_DetailStore');
-
-  @override
-  void setSrc(String s) {
-    final _$actionInfo = _$_DetailStoreActionController.startAction();
-    try {
-      return super.setSrc(s);
-    } finally {
-      _$_DetailStoreActionController.endAction(_$actionInfo);
-    }
-  }
 
   @override
   void setCurrentPlayIndex(int i) {
