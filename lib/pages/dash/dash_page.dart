@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/dash/dash.store.dart';
 import 'package:flutter_video_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 
 class DashPage extends StatefulWidget {
   @override
@@ -30,14 +31,6 @@ class _DashPageState extends State<DashPage> {
                     icon: Icon(Icons.home),
                     activeIcon: Icon(Icons.home),
                     title: Text("Home")),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.search),
-                    activeIcon: Icon(Icons.search),
-                    title: Text("Search")),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.list),
-                    activeIcon: Icon(Icons.list),
-                    title: Text("More")),
               ],
             ),
       ),
@@ -47,8 +40,6 @@ class _DashPageState extends State<DashPage> {
               onPageChanged: dashStore.onPageChanged,
               children: <Widget>[
                 HomePage(),
-                Center(child: Text('Search Page')),
-                Center(child: Text('More Page')),
               ],
             ),
       ),

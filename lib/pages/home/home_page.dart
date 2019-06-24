@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
 import 'package:flutter_video_app/pages/home/home.store.dart';
 import 'package:flutter_video_app/pages/list_search/list_search.dart';
+import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -63,7 +64,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         },
                       );
                     },
-                  )
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.live_tv),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => NicotvPage()));
+                    },
+                  ),
                 ],
                 bottom: TabBar(
                   controller: tabController,
@@ -92,4 +100,3 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 }
-
