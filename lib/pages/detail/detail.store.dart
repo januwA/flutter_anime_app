@@ -5,6 +5,7 @@ import 'package:flutter_video_app/models/detail_data_dto/detail_data_dto.dart';
 import 'package:flutter_video_app/shared/globals.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
+import 'package:validators/validators.dart';
 import 'package:video_box/video.store.dart';
 import 'package:video_box/video_box.dart';
 
@@ -59,7 +60,13 @@ abstract class _DetailStore with Store {
       if (r.statusCode == HttpStatus.ok) {
         var body = DetailDataDto.fromJson(r.body);
         detailData = body.detailData;
-        video = Video(store: VideoStore(src: detailData.playUrlTab.first.src));
+        String src = detailData.playUrlTab.first.src;
+        if (!isNull(src)) {
+          video = Video(
+              store: VideoStore(videoDataSource: VideoDataSource.network(src)));
+        } else {
+          // 后台肯定出现什么意外情况没有抓取到src
+        }
         isPageLoading = false;
       } else {
         error.detail = r.body.toString();
@@ -76,15 +83,21 @@ abstract class _DetailStore with Store {
     String id,
     Function onError,
   }) async {
-    video.store.setSrc('');
+    if (video == null) {
+      video = Video(store: VideoStore());
+    } else {
+      video.store.setSource();
+    }
     clientSrc?.close();
 
     try {
       var url = Uri.http(baseUrl, videoSrcUrl, {"id": id});
       clientSrc = http.Client();
       var r = await clientSrc.get(url);
-      if (r.statusCode == HttpStatus.ok) {
-        video.store.setSrc(jsonDecode(r.body)['src']);
+      print(r.statusCode);
+      if (r.statusCode == HttpStatus.ok && jsonDecode(r.body)['src'] != '') {
+        video.store
+            .setSource(VideoDataSource.network(jsonDecode(r.body)['src']));
         video.store.play();
       } else {
         error.src = r.body.toString();

@@ -32,7 +32,7 @@ Future<void> alertHttpGetError({
             child: Text(okText),
             onPressed: () {
               Navigator.of(ctx).pop();
-              onOk();
+              onOk != null && onOk();
             },
           ),
         ],

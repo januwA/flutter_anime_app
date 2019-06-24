@@ -61,7 +61,20 @@ class _DetailPageState extends State<DetailPage> {
             ),
             body: ListView(
               children: <Widget>[
-                detailStore.video.videoBox,
+                detailStore.video == null
+                    ? Column(
+                        children: <Widget>[
+                          Image.network(
+                            detailStore.detailData.cover,
+                            height: 200,
+                            fit: BoxFit.cover,
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Text('未获取到播放地址'))
+                        ],
+                      )
+                    : detailStore.video.videoBox,
 
                 /// anime的信息资料
                 DetailInfo(),
