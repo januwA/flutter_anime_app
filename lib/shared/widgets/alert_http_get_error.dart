@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// 从服务器获取数据失败时，弹出提示框，提醒用户
 Future<void> alertHttpGetError({
-  @required context,
+  @required BuildContext context,
   @required String text,
   String title = '错误请重试',
   Function onOk,

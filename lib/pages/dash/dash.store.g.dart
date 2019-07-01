@@ -13,15 +13,17 @@ mixin _$DashStore on _DashStore, Store {
 
   @override
   int get index {
+    _$indexAtom.context.enforceReadPolicy(_$indexAtom);
     _$indexAtom.reportObserved();
     return super.index;
   }
 
   @override
   set index(int value) {
-    _$indexAtom.context.checkIfStateModificationsAreAllowed(_$indexAtom);
-    super.index = value;
-    _$indexAtom.reportChanged();
+    _$indexAtom.context.conditionallyRunInAction(() {
+      super.index = value;
+      _$indexAtom.reportChanged();
+    }, _$indexAtom, name: '${_$indexAtom.name}_set');
   }
 
   final _$_DashStoreActionController = ActionController(name: '_DashStore');

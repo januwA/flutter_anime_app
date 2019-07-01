@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/dash/dash.store.dart';
 import 'package:flutter_video_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 
 class DashPage extends StatefulWidget {
   @override

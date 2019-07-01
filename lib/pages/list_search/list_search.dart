@@ -6,12 +6,16 @@ import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html;
-import 'package:html/dom.dart' as htmlDom;
+import 'package:html/dom.dart' as dom;
 
 class ListSearchPage extends SearchDelegate<String> {
   @override
   appBarTheme(BuildContext context) {
-    return Theme.of(context);
+    return Theme.of(context).copyWith(
+      textTheme: TextTheme(
+        title: TextStyle(color: Colors.white),
+      ),
+    );
   }
 
   @override
@@ -39,13 +43,17 @@ class ListSearchPage extends SearchDelegate<String> {
   /// 用户从搜索页面提交搜索后显示的结果
   @override
   Widget buildResults(BuildContext context) {
+    if (query.isEmpty)
+      return Center(
+        child: Text('搜索关键词'),
+      );
     return FutureBuilder<http.Response>(
       future: http.get(Uri.http('www.nicotv.me', '/video/search/$query.html')),
       builder: (_, snapshot) {
         if (!snapshot.hasData) {
           return Text('loading...');
         }
-        List<htmlDom.Element> list = _getList(snapshot.data.body);
+        List<dom.Element> list = _getList(snapshot.data.body);
         if (list == null || list.length == 0) {
           return Center(
             child: Text('$query共有0个视频!'),
@@ -95,29 +103,26 @@ class ListSearchPage extends SearchDelegate<String> {
     );
   }
 
-  List<htmlDom.Element> _getList(String body) {
-    htmlDom.Document document = html.parse(body);
-    htmlDom.Element ul = document.querySelector('ul.list-unstyled');
-    List<htmlDom.Element> list = ul.querySelectorAll('li');
+  List<dom.Element> _getList(String body) {
+    dom.Document document = html.parse(body);
+    dom.Element ul = document.querySelector('ul.list-unstyled');
+    List<dom.Element> list = ul.querySelectorAll('li');
     return list;
   }
 
-  BuiltList<LiData> _animeList(List<htmlDom.Element> list) {
+  BuiltList<LiData> _animeList(List<dom.Element> list) {
     BuiltList<LiData> animeList = BuiltList.of(
       list.map<LiData>(
-        (htmlDom.Element li) {
+        (dom.Element li) {
           var link = li.querySelector('p a').attributes['href'];
           RegExp exp = new RegExp(r"(\d+)(?=\.html$)");
           return LiData.fromJson(
-            jsonEncode(
-              {
-                "id": exp.stringMatch(link),
-                "title": li.querySelector('h2 a').attributes['title'],
-                "img": li.querySelector('p a img').attributes['data-original'],
-                "current":
-                    li.querySelector('p a span.continu').innerHtml.trim(),
-              },
-            ),
+            jsonEncode({
+              "id": exp.stringMatch(link),
+              "title": li.querySelector('h2 a').attributes['title'],
+              "img": li.querySelector('p a img').attributes['data-original'],
+              "current": li.querySelector('p a span.continu').innerHtml.trim(),
+            }),
           );
         },
       ),

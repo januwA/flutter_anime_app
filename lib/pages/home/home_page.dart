@@ -37,66 +37,59 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Observer(
-      builder: (_) => homeStore.isLoading
-          ? HttpLoadingPage(title: '追番表 ')
-          : Scaffold(
-              appBar: AppBar(
-                title: Text('追番表'),
-                actions: <Widget>[
-                  Builder(
-                    builder: (context) {
-                      return IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () async {
-                          String r = await showSearch<String>(
-                            context: context,
-                            delegate: ListSearchPage(),
-                          );
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(r),
-                              action: SnackBarAction(
-                                label: 'CLOSE',
-                                onPressed: () {},
-                              ),
-                            ),
-                          );
-                        },
+      builder: (_) {
+        if (homeStore.isLoading) return HttpLoadingPage(title: '追番表');
+        if (homeStore.weekData.isEmpty) return Center(child: Text('Not Data.'));
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('追番表'),
+            actions: <Widget>[
+              Builder(
+                builder: (context) {
+                  return IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () async {
+                      showSearch<String>(
+                        context: context,
+                        delegate: ListSearchPage(),
                       );
                     },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.live_tv),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => NicotvPage()));
-                    },
-                  ),
-                ],
-                bottom: TabBar(
-                  controller: tabController,
-                  isScrollable: true,
-                  tabs: homeStore.week.map((w) => Tab(text: w)).toList(),
-                ),
+                  );
+                },
               ),
-              body: TabBarView(
-                controller: tabController,
-                children: [
-                  for (WeekData data in homeStore.weekData)
-                    GridView.count(
-                      // PageStorageKey: 保存页面的滚动状态，nice
-                      key: PageStorageKey<int>(data.index),
-                      crossAxisCount: 2, // 每行显示几列
-                      mainAxisSpacing: 2.0, // 每行的上下间距
-                      crossAxisSpacing: 2.0, // 每列的间距
-                      childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
-                      children: <Widget>[
-                        for (var li in data.liData) AnimeCard(animeData: li),
-                      ],
-                    ),
-                ],
+              IconButton(
+                icon: Icon(Icons.live_tv),
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => NicotvPage()));
+                },
               ),
+            ],
+            bottom: TabBar(
+              controller: tabController,
+              isScrollable: true,
+              tabs: homeStore.week.map((w) => Tab(text: w)).toList(),
             ),
+          ),
+          body: TabBarView(
+            controller: tabController,
+            children: [
+              for (WeekData data in homeStore.weekData)
+                GridView.count(
+                  // PageStorageKey: 保存页面的滚动状态，nice
+                  key: PageStorageKey<int>(data.index),
+                  crossAxisCount: 2, // 每行显示几列
+                  mainAxisSpacing: 2.0, // 每行的上下间距
+                  crossAxisSpacing: 2.0, // 每列的间距
+                  childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
+                  children: <Widget>[
+                    for (var li in data.liData) AnimeCard(animeData: li),
+                  ],
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

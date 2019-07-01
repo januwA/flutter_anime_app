@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_video_app/models/detail_data_dto/detail_data_dto.dart';
 import 'package:flutter_video_app/shared/globals.dart';
+import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
 import 'package:validators/validators.dart';
@@ -80,14 +82,14 @@ abstract class _DetailStore with Store {
   /// 获取指定集的src
   @action
   Future<void> getVideoSrc({
+    BuildContext context,
     String id,
-    Function onError,
   }) async {
     if (video == null) {
       video = Video(store: VideoStore());
-    } else {
-      video.store.setSource();
     }
+    video?.store?.pause();
+    video?.store?.setVideoLoading(true);
     clientSrc?.close();
 
     try {
@@ -96,12 +98,15 @@ abstract class _DetailStore with Store {
       var r = await clientSrc.get(url);
       print(r.statusCode);
       if (r.statusCode == HttpStatus.ok && jsonDecode(r.body)['src'] != '') {
-        video.store
-            .setSource(VideoDataSource.network(jsonDecode(r.body)['src']));
-        video.store.play();
+        String src = jsonDecode(r.body)['src'];
+        video.store.setSource(VideoDataSource.network(src));
       } else {
-        error.src = r.body.toString();
-        onError();
+        alertHttpGetError(
+          context: context,
+          title: '提示',
+          text: r.body.toString(),
+          okText: '确定',
+        );
       }
     } on http.ClientException catch (_) {
       /// 抓取中断错误
