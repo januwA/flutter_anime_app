@@ -6,14 +6,27 @@ import 'package:rxdart/rxdart.dart';
 
 String jsStr = """
 function getPV(el, prop) {
-  return document.defaultView.getComputedStyle(el, null).getPropertyValue(prop);
+  return document.defaultView
+    .getComputedStyle(el, null)
+    .getPropertyValue(prop);
+}
+
+function clearAllTimer() {
+  for (var i = 1; i < 1000; i++) {
+    if (setIntervalCtrl == i) continue;
+    clearInterval(i);
+  }
 }
 
 function removePopUpsEvent() {
   let allElement = document.body.querySelectorAll("*");
   for (let i = 0; i < allElement.length; i++) {
     const el = allElement[i];
-    if (el.classList.contains("ff-ads")) {
+    if (
+      el.classList.contains("ff-ads") ||
+      el.classList.contains("lqgq882j") ||
+      el.classList.contains("zed-wrap")
+    ) {
       el.remove();
     }
     const position = getPV(el, "position");
@@ -23,20 +36,24 @@ function removePopUpsEvent() {
       position === "static" ||
       !Number.isFinite(Number(zIndex)) ||
       !zIndex ||
-      zIndex < 10000
+      zIndex < 5000
     ) {
       continue;
     }
     el.remove();
   }
 }
-
+let setIntervalCtrl;
 function startRemovePopUpsEvent() {
   removePopUpsEvent();
-  setIntervalCtrl = setInterval(removePopUpsEvent, 1000*5);
+  setIntervalCtrl = setInterval(removePopUpsEvent, 1000 * 5);
 }
 startRemovePopUpsEvent();
+clearAllTimer();
 
+// let sss = document.createElement('script');
+// sss.src = "https://unpkg.com/vconsole@3.3.1/dist/vconsole.min.js";
+// document.body.appendChild(sss);
 """;
 
 class NicotvPage extends StatefulWidget {
