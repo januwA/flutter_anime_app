@@ -122,7 +122,7 @@ abstract class _DetailStore with Store {
   void dispose() {
     client?.close();
     clientSrc?.close();
-    video.dispose();
+    video?.dispose();
     super.dispose();
   }
 }

@@ -5,27 +5,23 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 
 String jsStr = """
+for (var i = 1; i < 1000; i++) {
+  clearInterval(i);
+}
+
 function getPV(el, prop) {
   return document.defaultView
     .getComputedStyle(el, null)
     .getPropertyValue(prop);
 }
 
-function clearAllTimer() {
-  for (var i = 1; i < 1000; i++) {
-    if (setIntervalCtrl == i) continue;
-    clearInterval(i);
-  }
-}
 
 function removePopUpsEvent() {
   let allElement = document.body.querySelectorAll("*");
   for (let i = 0; i < allElement.length; i++) {
     const el = allElement[i];
     if (
-      el.classList.contains("ff-ads") ||
-      el.classList.contains("lqgq882j") ||
-      el.classList.contains("zed-wrap")
+      el.classList.contains("ff-ads")
     ) {
       el.remove();
     }
@@ -36,7 +32,7 @@ function removePopUpsEvent() {
       position === "static" ||
       !Number.isFinite(Number(zIndex)) ||
       !zIndex ||
-      zIndex < 5000
+      zIndex < 2000
     ) {
       continue;
     }
@@ -49,7 +45,6 @@ function startRemovePopUpsEvent() {
   setIntervalCtrl = setInterval(removePopUpsEvent, 1000 * 5);
 }
 startRemovePopUpsEvent();
-clearAllTimer();
 
 // let sss = document.createElement('script');
 // sss.src = "https://unpkg.com/vconsole@3.3.1/dist/vconsole.min.js";
@@ -91,7 +86,7 @@ class NnicotvPageState extends State<NicotvPage> {
 
             /// 如果在创建Web视图后未调用null。
             /// 视图创建完毕
-            onWebViewCreated: (WebViewController webViewController) {
+            onWebViewCreated: (WebViewController webViewController) async {
               _controller.complete(webViewController);
             },
 
@@ -118,7 +113,7 @@ class NnicotvPageState extends State<NicotvPage> {
               var c = await _controller.future;
               String t = await c.evaluateJavascript('document.title');
               title$.add(t);
-              await c.evaluateJavascript(jsStr);
+              c.evaluateJavascript(jsStr);
             },
 
             /// Web视图应使用哪些手势。

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/dash/dash.store.dart';
 import 'package:flutter_video_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_video_app/pages/recently_updated/recently_updated_page.dart';
 
 class DashPage extends StatefulWidget {
   @override
@@ -26,10 +27,8 @@ class _DashPageState extends State<DashPage> {
               currentIndex: dashStore.index,
               onTap: dashStore.controller.jumpToPage,
               items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    activeIcon: Icon(Icons.home),
-                    title: Text("Home")),
+                _navBtn(title: '首页', icon: Icons.home),
+                _navBtn(title: '最近', icon: Icons.fiber_new),
               ],
             ),
       ),
@@ -39,9 +38,17 @@ class _DashPageState extends State<DashPage> {
               onPageChanged: dashStore.onPageChanged,
               children: <Widget>[
                 HomePage(),
+                RecentlyUpdatedPage(),
               ],
             ),
       ),
     );
+  }
+
+  BottomNavigationBarItem _navBtn({String title, IconData icon}) {
+    return BottomNavigationBarItem(
+        icon: Icon(icon),
+        activeIcon: Icon(icon),
+        title: Text(title));
   }
 }
