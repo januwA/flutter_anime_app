@@ -4,11 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 
+/// 移除页面广告的js脚本
 String jsStr = """
-for (var i = 1; i < 1000; i++) {
-  clearInterval(i);
-}
-
 function getPV(el, prop) {
   return document.defaultView
     .getComputedStyle(el, null)
@@ -32,7 +29,7 @@ function removePopUpsEvent() {
       position === "static" ||
       !Number.isFinite(Number(zIndex)) ||
       !zIndex ||
-      zIndex < 2000
+      zIndex < 5000
     ) {
       continue;
     }
@@ -42,9 +39,13 @@ function removePopUpsEvent() {
 let setIntervalCtrl;
 function startRemovePopUpsEvent() {
   removePopUpsEvent();
-  setIntervalCtrl = setInterval(removePopUpsEvent, 1000 * 5);
+  setIntervalCtrl = setInterval(removePopUpsEvent, 1000 * 2.5);
 }
+// for (var i = 1; i < 100; i++) {
+//   clearInterval(i);
+// }
 startRemovePopUpsEvent();
+
 
 // let sss = document.createElement('script');
 // sss.src = "https://unpkg.com/vconsole@3.3.1/dist/vconsole.min.js";
@@ -52,6 +53,10 @@ startRemovePopUpsEvent();
 """;
 
 class NicotvPage extends StatefulWidget {
+  final String url;
+
+  const NicotvPage({Key key, this.url = 'http://www.nicotv.me'})
+      : super(key: key);
   @override
   NnicotvPageState createState() => NnicotvPageState();
 }
@@ -65,60 +70,22 @@ class NnicotvPageState extends State<NicotvPage> {
     return Scaffold(
       appBar: AppBar(
         title: StreamBuilder<String>(
-          stream: title$.stream,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active &&
-                snapshot.hasData)
-              return Text(snapshot.data);
-            else
-              return Text('loading...');
-          },
-        ),
-        actions: <Widget>[
-          NavigationControls(_controller.future),
-        ],
+            stream: title$.stream,
+            builder: (context, snapshot) =>
+                Text(snapshot.hasData ? snapshot.data : 'loading...')),
+        actions: <Widget>[NavigationControls(_controller.future)],
       ),
-      body: Builder(
-        builder: (context) {
-          return WebView(
-            initialUrl: 'http://www.nicotv.me',
-            javascriptMode: JavascriptMode.unrestricted,
-
-            /// 如果在创建Web视图后未调用null。
-            /// 视图创建完毕
-            onWebViewCreated: (WebViewController webViewController) async {
-              _controller.complete(webViewController);
-            },
-
-            /// 可以在Web视图中运行的JavaScript代码的[JavascriptChannel]集合。
-            // javascriptChannels: <JavascriptChannel>[
-            //   _toasterJavascriptChannel(context),
-            // ].toSet(),
-
-            /// 委托函数，用于决定如何处理导航操作。
-            // navigationDelegate: (NavigationRequest request) {
-            //   if (request.url.startsWith('https://www.youtube.com/')) {
-            //     print('阻止导航到 $request}');
-            //     // 防止导航发生
-            //     return NavigationDecision.prevent;
-            //   }
-            //   print('允许导航到 $request');
-            //   return NavigationDecision.navigate;
-            // },
-
-            /// 页面加载完成后调用。
-            onPageFinished: (String url) async {
-              print('Page finished loading: $url');
-
-              var c = await _controller.future;
-              String t = await c.evaluateJavascript('document.title');
-              title$.add(t);
-              c.evaluateJavascript(jsStr);
-            },
-
-            /// Web视图应使用哪些手势。
-            // gestureRecognizers: null,
-          );
+      body: WebView(
+        initialUrl: widget.url,
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController webViewController) {
+          _controller.complete(webViewController);
+        },
+        onPageFinished: (String url) async {
+          var c = await _controller.future;
+          String t = await c.evaluateJavascript('document.title');
+          title$.add(t);
+          c?.evaluateJavascript(jsStr);
         },
       ),
     );

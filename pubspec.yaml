@@ -20,7 +20,7 @@ dependencies:
   validators:
   provider: ^3.0.0+1
   screen: ^0.0.5
-  video_box: ^0.2.1
+  video_box: ^0.2.2
   html: ^0.14.0+1
   webview_flutter:
 

@@ -3,10 +3,14 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
+import 'package:flutter_video_app/pages/detail/detail_page.dart';
+import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html;
 import 'package:html/dom.dart' as dom;
+
+List<Map<String, dynamic>> _listData;
 
 class ListSearchPage extends SearchDelegate<String> {
   @override
@@ -98,9 +102,33 @@ class ListSearchPage extends SearchDelegate<String> {
   /// 当用户在搜索字段中键入查询时，在搜索页面正文中显示的建议
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Center(
-      child: Text('搜索关键词'),
-    );
+    if (_listData == null) {
+      return FutureBuilder<http.Response>(
+        future: http.get('http://www.nicotv.me/ajax-search.html'),
+        builder: (context, snap) {
+          if (snap.hasData) {
+            var body = snap.data.body;
+            dom.Document document = html.parse(body);
+            List<dom.Element> aEls = document.querySelectorAll('dd a');
+            List<Map<String, dynamic>> listData = aEls
+                .map(
+                  (dom.Element a) => {
+                    'id': RegExp(r"\d+").stringMatch(a.attributes['href']),
+                    'text': a.innerHtml.trim(),
+                    'href': a.attributes['href'],
+                  },
+                )
+                .toList();
+            _listData = listData;
+            return _popularSearches(context, _listData);
+          } else {
+            return Container();
+          }
+        },
+      );
+    } else {
+      return _popularSearches(context, _listData);
+    }
   }
 
   List<dom.Element> _getList(String body) {
@@ -115,10 +143,9 @@ class ListSearchPage extends SearchDelegate<String> {
       list.map<LiData>(
         (dom.Element li) {
           var link = li.querySelector('p a').attributes['href'];
-          RegExp exp = new RegExp(r"(\d+)(?=\.html$)");
           return LiData.fromJson(
             jsonEncode({
-              "id": exp.stringMatch(link),
+              "id": _queryId(link),
               "title": li.querySelector('h2 a').attributes['title'],
               "img": li.querySelector('p a img').attributes['data-original'],
               "current": li.querySelector('p a span.continu').innerHtml.trim(),
@@ -128,5 +155,45 @@ class ListSearchPage extends SearchDelegate<String> {
       ),
     );
     return animeList;
+  }
+
+  _queryId(String str) {
+    RegExp exp = RegExp(r"(\d+)(?=\.html$)");
+    return exp.stringMatch(str);
+  }
+
+  _popularSearches(context, List<Map<String, dynamic>> listdata) {
+    return ListView(
+      children: [
+        ListTile(
+          title: Text(
+            '热门搜索：',
+            style: Theme.of(context).textTheme.title,
+          ),
+        ),
+        ...listdata
+            .map(
+              (Map data) => ListTile(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => DetailPage(animeId: data['id'])));
+                },
+                title: Text(data['text']),
+                trailing: IconButton(
+                  onPressed: () {
+                    String url = 'http://www.nicotv.me${data['href']}';
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => NicotvPage(
+                              url: url,
+                            )));
+                  },
+                  color: Theme.of(context).primaryColor,
+                  icon: Icon(Icons.open_in_new),
+                ),
+              ),
+            )
+            .toList(),
+      ],
+    );
   }
 }

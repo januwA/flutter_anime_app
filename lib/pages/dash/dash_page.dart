@@ -3,6 +3,7 @@ import 'package:flutter_video_app/pages/dash/dash.store.dart';
 import 'package:flutter_video_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/pages/recently_updated/recently_updated_page.dart';
+import 'package:flutter_video_app/pages/recommend/recommend_page.dart';
 
 class DashPage extends StatefulWidget {
   @override
@@ -23,32 +24,32 @@ class _DashPageState extends State<DashPage> {
     return Scaffold(
       bottomNavigationBar: Observer(
         builder: (_) => BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              currentIndex: dashStore.index,
-              onTap: dashStore.controller.jumpToPage,
-              items: <BottomNavigationBarItem>[
-                _navBtn(title: '首页', icon: Icons.home),
-                _navBtn(title: '最近', icon: Icons.fiber_new),
-              ],
-            ),
+          type: BottomNavigationBarType.fixed,
+          currentIndex: dashStore.index,
+          onTap: dashStore.controller.jumpToPage,
+          items: <BottomNavigationBarItem>[
+            _navBtn(title: '首页', icon: Icons.home),
+            _navBtn(title: '最近', icon: Icons.fiber_new),
+            _navBtn(title: '推荐', icon: Icons.thumb_up),
+          ],
+        ),
       ),
       body: Observer(
         builder: (_) => PageView(
-              controller: dashStore.controller,
-              onPageChanged: dashStore.onPageChanged,
-              children: <Widget>[
-                HomePage(),
-                RecentlyUpdatedPage(),
-              ],
-            ),
+          controller: dashStore.controller,
+          onPageChanged: dashStore.onPageChanged,
+          children: <Widget>[
+            HomePage(),
+            RecentlyUpdatedPage(),
+            RecommendPage(),
+          ],
+        ),
       ),
     );
   }
 
   BottomNavigationBarItem _navBtn({String title, IconData icon}) {
     return BottomNavigationBarItem(
-        icon: Icon(icon),
-        activeIcon: Icon(icon),
-        title: Text(title));
+        icon: Icon(icon), activeIcon: Icon(icon), title: Text(title));
   }
 }
