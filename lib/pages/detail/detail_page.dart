@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:video_box/video.store.dart';
 import 'package:video_box/video_box.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class DetailPage extends StatefulWidget {
   DetailPage({
@@ -29,6 +32,11 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
   Video video;
   TabController _tabController;
   Map<String, dynamic> currentPlayVideo;
+  bool haokanBaidu = true;
+  String iframe = '';
+  String get iframeUrl => 'data:text/html,$iframe';
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
 
   @override
   void dispose() {
@@ -135,14 +143,32 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
 
     var r2 = await http.get('http://www.nicotv.me$scriptSrc');
     String jsonData = r2.body
-        .replaceFirst('var cms_player = ', '')
+        .replaceFirst('var cms_player =', '')
         .replaceAll(RegExp(r";document\.write.*"), '');
 
-    // print(jsonData);
-    String url = jsonDecode(jsonData)['url'];
-    String videoUrl = Uri.parse(url).queryParameters['url'];
-    // print(videoUrl);
-    return videoUrl;
+    Map<String, dynamic> jsonMap = jsonDecode(jsonData);
+    if (jsonMap['name'].trim() == 'haokan_baidu') {
+      setState(() {
+        haokanBaidu = true;
+      });
+      String url = jsonMap['url'];
+      print(url);
+      String videoUrl = Uri.parse(url).queryParameters['url'];
+      return videoUrl;
+    } else if (jsonMap['name'].trim() == '360biaofan') {
+      setState(() {
+        haokanBaidu = false;
+      });
+      var cms = jsonMap;
+      String src =
+          """${cms['jiexi']}${cms['url']}&time=${cms['time']}&auth_key=${cms['auth_key']}""";
+      String iframeHtml = """
+  <iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
+  """;
+      return iframeHtml;
+    } else {
+      return '';
+    }
   }
 
   @override
@@ -156,18 +182,46 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text(detailData['videoName']),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.open_in_new),
+            onPressed: () {
+              String url =
+                  'http://www.nicotv.me/video/detail/${widget.animeId}.html';
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => NicotvPage(url: url)));
+            },
+          )
+        ],
       ),
       body: ListView(
         children: <Widget>[
-          Hero(
-            tag: detailData['cover'],
-            child: video == null
-                ? Image.network(
-                    detailData['cover'],
-                    fit: BoxFit.fill,
-                  )
-                : video.videoBox,
-          ),
+          haokanBaidu
+              ? Hero(
+                  tag: detailData['cover'],
+                  child: video == null
+                      ? Image.network(
+                          detailData['cover'],
+                          fit: BoxFit.fill,
+                        )
+                      : video.videoBox)
+              : Container(
+                  height: 220,
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: WebView(
+                      initialUrl: iframe.isEmpty
+                          ? 'data:text/html,<h4>Loading...<h4>'
+                          : iframeUrl,
+                      javascriptMode: JavascriptMode.unrestricted,
+                      onWebViewCreated: (WebViewController webViewController) {
+                        if (!_controller.isCompleted) {
+                          _controller.complete(webViewController);
+                        }
+                      },
+                    ),
+                  ),
+                ),
           _detailInfo(),
           ExpansionTile(
             title: Text(
@@ -211,7 +265,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                           padding: EdgeInsets.symmetric(horizontal: 4.0),
                           child: RaisedButton(
                             color: t == currentPlayVideo
-                                ? Colors.blue
+                                ? Theme.of(context).primaryColor
                                 : Colors.grey[300],
                             onPressed: () async {
                               setState(() {
@@ -242,9 +296,18 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                                     );
                                     return;
                                   }
-                                  t['vSrc'] = vSrc;
+                                  if (haokanBaidu) {
+                                    t['vSrc'] = vSrc;
+                                  } else {
+                                    setState(() {
+                                      iframe = vSrc;
+                                    });
+                                    _controller.future.then((c) {
+                                      c.loadUrl(iframeUrl);
+                                    });
+                                  }
                                 }
-                                if (t['vSrc'] == '') return;
+                                if (t['vSrc'] == '' || !haokanBaidu) return;
                                 var source = VideoDataSource.network(t['vSrc']);
                                 if (video == null) {
                                   setState(() {
