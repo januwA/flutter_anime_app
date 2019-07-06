@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html;
 import 'package:html/dom.dart' as dom;
 import 'package:video_box/video.store.dart';
 import 'package:video_box/video_box.dart';
@@ -56,21 +56,19 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
   }
 
   Future<Map<String, dynamic>> getDetailData(String id) async {
-    var r = await http.get('http://www.nicotv.me/video/detail/$id.html');
-    dom.Document document = html.parse(r.body);
+    dom.Document document =
+        await $document('http://www.nicotv.me/video/detail/$id.html');
 
-    dom.Element ul = document.querySelector('.nav.nav-tabs.ff-playurl-tab');
-    List<dom.Element> ulLis = ul.querySelectorAll('li');
-    List<String> tabs =
-        ulLis.map((dom.Element el) => el.querySelector('a').text).toList();
+    dom.Element ul = $(document, '.nav.nav-tabs.ff-playurl-tab');
+    List<dom.Element> ulLis = $$(ul, 'li');
+    List<String> tabs = ulLis.map((dom.Element el) => $(el, 'a').text).toList();
 
-    dom.Element ffPlayurlTab =
-        document.querySelector('.tab-content.ff-playurl-tab');
-    List<dom.Element> ffPlayurlTabUls = ffPlayurlTab.querySelectorAll('ul');
+    dom.Element ffPlayurlTab = $(document, '.tab-content.ff-playurl-tab');
+    List<dom.Element> ffPlayurlTabUls = $$(ffPlayurlTab, 'ul');
     List<List<Map>> tabsValues = ffPlayurlTabUls.map((dom.Element ul) {
-      List<dom.Element> lis = ul.querySelectorAll('li');
+      List<dom.Element> lis = $$(ul, 'li');
       return lis.map((dom.Element li) {
-        dom.Element a = li.querySelector('a');
+        dom.Element a = $(li, 'a');
         bool isBox = a.attributes['target'] == '_blank' ? true : false;
         return {
           'id': li.attributes['data-id'],
@@ -80,42 +78,37 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
       }).toList();
     }).toList();
 
-    dom.Element mediaBody = document.querySelector('.media-body');
-    List<dom.Element> dds = mediaBody.querySelectorAll('dd');
+    dom.Element mediaBody = $(document, '.media-body');
+    List<dom.Element> dds = $$(mediaBody, 'dd');
     return {
       /// 封面
-      'cover':
-          document.querySelector('.media-left img').attributes['data-original'],
+      'cover': $(document, '.media-left img').attributes['data-original'],
 
       /// video name
-      'videoName': mediaBody.querySelector('h2 a').innerHtml.trim(),
+      'videoName': $(mediaBody, 'h2 a').innerHtml.trim(),
 
       /// 多少集
-      'curentText': mediaBody.querySelector('h2 small').innerHtml.trim(),
+      'curentText': $(mediaBody, 'h2 small').innerHtml.trim(),
 
       /// 主演
-      'starring': dds[0]
-          .querySelectorAll('a')
-          .map((dom.Element a) => a.innerHtml.trim())
-          .toList(),
+      'starring':
+          $$(dds[0], 'a').map((dom.Element a) => a.innerHtml.trim()).toList(),
 
       /// 导演
-      'director': dds[1].querySelector('a').innerHtml.trim(),
+      'director': $(dds[1], 'a').innerHtml.trim(),
 
       /// 类型
-      'types': dds[2]
-          .querySelectorAll('a')
-          .map((dom.Element a) => a.innerHtml.trim())
-          .toList(),
+      'types':
+          $$(dds[2], 'a').map((dom.Element a) => a.innerHtml.trim()).toList(),
 
       /// 地区
-      'area': dds[3].querySelector('a').innerHtml.trim(),
+      'area': $(dds[3], 'a').innerHtml.trim(),
 
       /// 年份
-      'years': dds[4].querySelector('a').innerHtml.trim(),
+      'years': $(dds[4], 'a').innerHtml.trim(),
 
       /// 剧情介绍
-      'plot': dds[5].querySelector('span').innerHtml.trim(),
+      'plot': $(dds[5], 'span').innerHtml.trim(),
 
       /// 资源类型，资源来源
       'tabs': tabs,
@@ -128,9 +121,9 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
   /// 先获取所有的script的src
   /// 找到合适的src发起请求，处理返回的数据
   Future<String> idGetSrc(String id) async {
-    var r = await http.get('http://www.nicotv.me/video/play/$id.html');
-    dom.Document document = html.parse(r.body);
-    List<dom.Element> ss = document.querySelectorAll('script');
+    dom.Document document =
+        await $document('http://www.nicotv.me/video/play/$id.html');
+    List<dom.Element> ss = $$(document, 'script');
     String scriptSrc;
     for (var s in ss) {
       String src = s.attributes['src'];

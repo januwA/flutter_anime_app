@@ -1,11 +1,11 @@
-import 'dart:convert';
-
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
+import 'package:flutter_video_app/utils/anime_list.dart' show createAnimeList;
+import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html;
 import 'package:html/dom.dart' as dom;
@@ -63,7 +63,7 @@ class ListSearchPage extends SearchDelegate<String> {
             child: Text('$query共有0个视频!'),
           );
         }
-        BuiltList<LiData> animeList = _animeList(list);
+        BuiltList<LiData> animeList = createAnimeList(list);
         return CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(
@@ -109,7 +109,7 @@ class ListSearchPage extends SearchDelegate<String> {
           if (snap.hasData) {
             var body = snap.data.body;
             dom.Document document = html.parse(body);
-            List<dom.Element> aEls = document.querySelectorAll('dd a');
+            List<dom.Element> aEls = $$(document, 'dd a');
             List<Map<String, dynamic>> listData = aEls
                 .map(
                   (dom.Element a) => {
@@ -133,33 +133,9 @@ class ListSearchPage extends SearchDelegate<String> {
 
   List<dom.Element> _getList(String body) {
     dom.Document document = html.parse(body);
-    dom.Element ul = document.querySelector('ul.list-unstyled');
-    List<dom.Element> list = ul.querySelectorAll('li');
+    dom.Element ul = $(document, 'ul.list-unstyled');
+    List<dom.Element> list = $$(ul, 'li');
     return list;
-  }
-
-  BuiltList<LiData> _animeList(List<dom.Element> list) {
-    BuiltList<LiData> animeList = BuiltList.of(
-      list.map<LiData>(
-        (dom.Element li) {
-          var link = li.querySelector('p a').attributes['href'];
-          return LiData.fromJson(
-            jsonEncode({
-              "id": _queryId(link),
-              "title": li.querySelector('h2 a').attributes['title'],
-              "img": li.querySelector('p a img').attributes['data-original'],
-              "current": li.querySelector('p a span.continu').innerHtml.trim(),
-            }),
-          );
-        },
-      ),
-    );
-    return animeList;
-  }
-
-  _queryId(String str) {
-    RegExp exp = RegExp(r"(\d+)(?=\.html$)");
-    return exp.stringMatch(str);
   }
 
   _popularSearches(context, List<Map<String, dynamic>> listdata) {
@@ -183,9 +159,7 @@ class ListSearchPage extends SearchDelegate<String> {
                   onPressed: () {
                     String url = 'http://www.nicotv.me${data['href']}';
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => NicotvPage(
-                              url: url,
-                            )));
+                        builder: (context) => NicotvPage(url: url)));
                   },
                   color: Theme.of(context).primaryColor,
                   icon: Icon(Icons.open_in_new),
