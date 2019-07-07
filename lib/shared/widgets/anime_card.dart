@@ -6,8 +6,9 @@ import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 /// 每个anime的展示卡片
 class AnimeCard extends StatelessWidget {
   AnimeCard({
+    Key key,
     @required this.animeData,
-  });
+  }) : super(key: key);
 
   final LiData animeData;
   @override

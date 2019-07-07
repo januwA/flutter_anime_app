@@ -41,7 +41,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     video?.dispose();
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 

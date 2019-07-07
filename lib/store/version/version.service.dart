@@ -68,6 +68,7 @@ abstract class _VersionService with Store {
 
   /// 显示提示弹窗
   Future<void> showDialogView(BuildContext context) async {
+    if (context == null) return;
     String v1 = await localVersion;
     String v2 = await latestVertion;
     showDialog(

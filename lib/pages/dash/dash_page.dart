@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/pages/anime_types/anime_types_page.dart';
 import 'package:flutter_video_app/pages/dash/dash.store.dart';
 import 'package:flutter_video_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -38,6 +39,7 @@ class _DashPageState extends State<DashPage> {
             _navBtn(title: '首页', icon: Icons.home),
             _navBtn(title: '最近', icon: Icons.fiber_new),
             _navBtn(title: '推荐', icon: Icons.thumb_up),
+            _navBtn(title: '分类', icon: Icons.toys),
           ],
         ),
       ),
@@ -49,6 +51,7 @@ class _DashPageState extends State<DashPage> {
             HomePage(),
             RecentlyUpdatedPage(),
             RecommendPage(),
+            AnimeTypesPage(),
           ],
         ),
       ),

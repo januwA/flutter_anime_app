@@ -83,7 +83,7 @@ class NnicotvPageState extends State<NicotvPage> {
         },
         onPageFinished: (String url) async {
           var c = await _controller.future;
-          String t = await c.evaluateJavascript('document.title');
+          String t = await c?.evaluateJavascript('document.title');
           title$.add(t);
           c?.evaluateJavascript(jsStr);
         },
