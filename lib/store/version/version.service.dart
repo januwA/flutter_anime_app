@@ -19,11 +19,25 @@ abstract class _VersionService with Store {
   @observable
   bool permissisonReady = false;
 
+  @observable
+  Map<String, dynamic> _latestData;
+
+  @action
+  setLatestData(Map<String, dynamic> data) {
+    _latestData = data;
+  }
+
   /// github 上最新版本的数据
+  @computed
   Future<Map<String, dynamic>> get latestData async {
-    var r = await http.get(
-        'https://api.github.com/repos/januwA/flutter_anime_app/releases/latest');
-    return jsonDecode(r.body);
+    if (_latestData == null) {
+      var r = await http.get(
+          'https://api.github.com/repos/januwA/flutter_anime_app/releases/latest');
+      setLatestData(jsonDecode(r.body));
+      return _latestData;
+    } else {
+      return _latestData;
+    }
   }
 
   /// 用户本地版本
