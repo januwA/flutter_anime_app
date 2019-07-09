@@ -1,9 +1,9 @@
 name: flutter_video_app
-description: A new Flutter project.
-version: 0.2.4
+description: a play anime app
+version: 0.2.5
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: '>=2.2.2 <3.0.0'
 
 dependencies:
   flutter:
@@ -20,7 +20,7 @@ dependencies:
   validators:
   provider: ^3.0.0+1
   screen: ^0.0.5
-  video_box: ^0.2.3
+  video_box: ^0.2.4
   html: ^0.14.0+1
   webview_flutter:
   package_info: ^0.4.0+4
