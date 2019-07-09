@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
@@ -29,10 +30,10 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
   bool loading = true;
-  Map<String, dynamic> detailData;
+  DetailDto detailData;
   Video video;
   TabController _tabController;
-  Map<String, dynamic> currentPlayVideo;
+  TabsValueDto currentPlayVideo;
   bool haokanBaidu = true;
   String iframe = '';
   String get iframeUrl => 'data:text/html,$iframe';
@@ -59,7 +60,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
       loading = false;
     });
     _tabController = TabController(
-      length: detailData['tabs'].length,
+      length: detailData.tabs.length,
       vsync: this,
     );
     _controller$.listen((c) {
@@ -67,7 +68,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
     });
   }
 
-  Future<Map<String, dynamic>> getDetailData(String id) async {
+  Future<DetailDto> getDetailData(String id) async {
     dom.Document document =
         await $document('http://www.nicotv.me/video/detail/$id.html');
 
@@ -77,22 +78,25 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
 
     dom.Element ffPlayurlTab = $(document, '.tab-content.ff-playurl-tab');
     List<dom.Element> ffPlayurlTabUls = $$(ffPlayurlTab, 'ul');
-    List<List<Map>> tabsValues = ffPlayurlTabUls.map((dom.Element ul) {
+    var tabsValues = ffPlayurlTabUls.map((dom.Element ul) {
       List<dom.Element> lis = $$(ul, 'li');
-      return lis.map((dom.Element li) {
-        dom.Element a = $(li, 'a');
-        bool isBox = a.attributes['target'] == '_blank' ? true : false;
-        return {
-          'id': li.attributes['data-id'],
-          'text': a.innerHtml.trim(),
-          'boxUrl': isBox ? a.attributes['href'] : '',
-        };
-      }).toList();
+      return {
+        "tabs": lis.map((dom.Element li) {
+          dom.Element a = $(li, 'a');
+          String boxUrl =
+              a.attributes['target'] == '_blank' ? a.attributes['href'] : "";
+          return {
+            'id': li?.attributes['data-id'],
+            'text': a?.innerHtml?.trim(),
+            'boxUrl': boxUrl,
+          };
+        }).toList()
+      };
     }).toList();
 
     dom.Element mediaBody = $(document, '.media-body');
     List<dom.Element> dds = $$(mediaBody, 'dd');
-    return {
+    return DetailDto.fromJson(jsonEncode({
       /// 封面
       'cover': $(document, '.media-left img').attributes['data-original'],
 
@@ -127,7 +131,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
 
       /// 对应[tabs]每个资源下所有的视频资源
       'tabsValues': tabsValues,
-    };
+    }));
   }
 
   /// 先获取所有的script的src
@@ -184,7 +188,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(detailData['videoName']),
+        title: Text(detailData.videoName),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.open_in_new),
@@ -201,10 +205,10 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
         children: <Widget>[
           haokanBaidu
               ? Hero(
-                  tag: detailData['cover'],
+                  tag: detailData.cover,
                   child: video == null
                       ? Image.network(
-                          detailData['cover'],
+                          detailData.cover,
                           fit: BoxFit.fill,
                         )
                       : video.videoBox)
@@ -226,13 +230,13 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
           _detailInfo(),
           ExpansionTile(
             title: Text(
-              detailData['plot'],
+              detailData.plot,
               overflow: TextOverflow.ellipsis,
             ),
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(8),
-                child: Text(detailData['plot']),
+                child: Text(detailData.plot),
               ),
             ],
           ),
@@ -242,7 +246,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               unselectedLabelColor: Colors.grey,
               labelColor: Theme.of(context).primaryColor,
               controller: _tabController,
-              tabs: detailData['tabs']
+              tabs: detailData.tabs
                   .map<Widget>((el) => Tab(
                         child: Text(el),
                       ))
@@ -257,11 +261,11 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
             child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                for (var tv in detailData['tabsValues'])
+                for (var tv in detailData.tabsValues)
                   ListView(
                     scrollDirection: Axis.horizontal,
                     children: <Widget>[
-                      for (var t in tv)
+                      for (var t in tv.tabs)
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.0),
                           child: RaisedButton(
@@ -272,7 +276,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                               setState(() {
                                 currentPlayVideo = t;
                               });
-                              String boxUrl = t['boxUrl'];
+                              String boxUrl = t.boxUrl;
                               if (boxUrl.isNotEmpty) {
                                 // 网盘资源
                                 if (await canLaunch(boxUrl)) {
@@ -287,7 +291,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                                 }
                               } else {
                                 // 视频资源,准备切换播放点击的视频
-                                String vSrc = await idGetSrc(t['id']);
+                                String vSrc = await idGetSrc(t.id);
                                 if (vSrc == null || vSrc == '') {
                                   alertHttpGetError(
                                     context: context,
@@ -316,7 +320,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                                 }
                               }
                             },
-                            child: Text(t['text']),
+                            child: Text(t.text),
                           ),
                         ),
                     ],
@@ -337,11 +341,11 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
         children: <Widget>[
           Text.rich(
             TextSpan(
-              text: '${detailData["videoName"]}',
+              text: '${detailData.videoName}',
               style: Theme.of(context).textTheme.title,
               children: <TextSpan>[
                 TextSpan(
-                    text: '${detailData["curentText"]}',
+                    text: '${detailData.curentText}',
                     style: Theme.of(context).textTheme.subtitle),
               ],
             ),
@@ -349,7 +353,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
           Wrap(
             children: <Widget>[
               Text('主演:'),
-              for (String name in detailData['starring'])
+              for (String name in detailData.starring)
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
                     child: Text(name)),
@@ -361,13 +365,13 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               Text('导演:'),
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(detailData['director'])),
+                  child: Text(detailData.director)),
             ],
           ),
           Wrap(
             children: <Widget>[
               Text('类型:'),
-              for (String name in detailData['types'])
+              for (String name in detailData.types)
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
                     child: Text(name)),
@@ -379,7 +383,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               Text('地区:'),
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(detailData['area'])),
+                  child: Text(detailData.area)),
             ],
           ),
           Row(
@@ -388,7 +392,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               Text('年份:'),
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(detailData['years'])),
+                  child: Text(detailData.years)),
             ],
           ),
         ],
