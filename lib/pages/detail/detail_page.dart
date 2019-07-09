@@ -7,6 +7,7 @@ import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
+import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
@@ -35,13 +36,13 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
   bool haokanBaidu = true;
   String iframe = '';
   String get iframeUrl => 'data:text/html,$iframe';
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  final _controller$ = BehaviorSubject<WebViewController>();
 
   @override
   void dispose() {
     video?.dispose();
     _tabController?.dispose();
+    _controller$?.close();
     super.dispose();
   }
 
@@ -61,6 +62,9 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
       length: detailData['tabs'].length,
       vsync: this,
     );
+    _controller$.listen((c) {
+      c.loadUrl(iframeUrl);
+    });
   }
 
   Future<Map<String, dynamic>> getDetailData(String id) async {
@@ -152,7 +156,6 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
         haokanBaidu = true;
       });
       String url = jsonMap['url'];
-      print(url);
       String videoUrl = Uri.parse(url).queryParameters['url'];
       return videoUrl;
     } else if (jsonMap['name'].trim() == '360biaofan') {
@@ -215,9 +218,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                           : iframeUrl,
                       javascriptMode: JavascriptMode.unrestricted,
                       onWebViewCreated: (WebViewController webViewController) {
-                        if (!_controller.isCompleted) {
-                          _controller.complete(webViewController);
-                        }
+                        _controller$.add(webViewController);
                       },
                     ),
                   ),
@@ -286,38 +287,32 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                                 }
                               } else {
                                 // 视频资源,准备切换播放点击的视频
-                                if (t['vSrc'] == null || t['vSrc'] == '') {
-                                  String vSrc = await idGetSrc(t['id']);
-                                  if (vSrc == null || vSrc == '') {
-                                    alertHttpGetError(
-                                      context: context,
-                                      text: '获取播放地址错误',
-                                      okText: '确定',
-                                    );
-                                    return;
-                                  }
-                                  if (haokanBaidu) {
-                                    t['vSrc'] = vSrc;
-                                  } else {
-                                    setState(() {
-                                      iframe = vSrc;
-                                    });
-                                    _controller.future.then((c) {
-                                      c.loadUrl(iframeUrl);
-                                    });
-                                  }
+                                String vSrc = await idGetSrc(t['id']);
+                                if (vSrc == null || vSrc == '') {
+                                  alertHttpGetError(
+                                    context: context,
+                                    text: '获取播放地址错误',
+                                    okText: '确定',
+                                  );
+                                  return;
                                 }
-                                if (t['vSrc'] == '' || !haokanBaidu) return;
-                                var source = VideoDataSource.network(t['vSrc']);
-                                if (video == null) {
-                                  setState(() {
-                                    video = Video(
-                                      store:
-                                          VideoStore(videoDataSource: source),
-                                    );
-                                  });
+                                if (haokanBaidu) {
+                                  var source = VideoDataSource.network(vSrc);
+                                  if (video == null) {
+                                    setState(() {
+                                      video = Video(
+                                        store:
+                                            VideoStore(videoDataSource: source),
+                                      );
+                                    });
+                                  } else {
+                                    video.store.setSource(source);
+                                  }
                                 } else {
-                                  video.store.setSource(source);
+                                  setState(() {
+                                    iframe = vSrc;
+                                  });
+                                  video?.store?.pause();
                                 }
                               }
                             },
