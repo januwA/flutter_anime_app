@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
 import 'package:flutter_video_app/pages/home/home.store.dart';
 import 'package:flutter_video_app/pages/list_search/list_search.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
@@ -75,7 +74,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               : TabBarView(
                   controller: tabController,
                   children: [
-                    for (WeekData data in homeStore.weekData)
+                    for (var data in homeStore.weekData)
                       GridView.count(
                         // PageStorageKey: 保存页面的滚动状态，nice
                         key: PageStorageKey<int>(data.index),

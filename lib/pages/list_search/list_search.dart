@@ -1,6 +1,5 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
@@ -63,7 +62,7 @@ class ListSearchPage extends SearchDelegate<String> {
             child: Text('$query共有0个视频!'),
           );
         }
-        BuiltList<LiData> animeList = createAnimeList(list);
+        var animeList = createAnimeList(list);
         return CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(

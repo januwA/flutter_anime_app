@@ -1,5 +1,5 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:flutter_video_app/models/week_data_dto/week_data_dto.dart';
+import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/utils/anime_list.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:html/dom.dart' as dom;

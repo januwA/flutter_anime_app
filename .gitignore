@@ -1,3 +1,6 @@
+# built_value
+**/lib/**.g.dart
+
 # Miscellaneous
 *.class
 *.log
