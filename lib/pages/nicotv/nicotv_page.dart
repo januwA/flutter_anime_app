@@ -29,7 +29,7 @@ function removePopUpsEvent() {
       position === "static" ||
       !Number.isFinite(Number(zIndex)) ||
       !zIndex ||
-      zIndex < 5000
+      zIndex < 2000
     ) {
       continue;
     }
@@ -41,15 +41,10 @@ function startRemovePopUpsEvent() {
   removePopUpsEvent();
   setIntervalCtrl = setInterval(removePopUpsEvent, 1000 * 2.5);
 }
-// for (var i = 1; i < 100; i++) {
-//   clearInterval(i);
-// }
+for (var i = 1; i < 100; i++) {
+  clearInterval(i);
+}
 startRemovePopUpsEvent();
-
-
-// let sss = document.createElement('script');
-// sss.src = "https://unpkg.com/vconsole@3.3.1/dist/vconsole.min.js";
-// document.body.appendChild(sss);
 """;
 
 class NicotvPage extends StatefulWidget {
