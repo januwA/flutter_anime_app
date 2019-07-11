@@ -1,4 +1,3 @@
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';

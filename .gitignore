@@ -1,5 +1,5 @@
 # built_value
-**/lib/**.g.dart
+**/lib/**/*.g.dart
 
 # Miscellaneous
 *.class
