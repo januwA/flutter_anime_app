@@ -176,8 +176,10 @@ abstract class _VersionService with Store {
     );
     FlutterDownloader.registerCallback((id, status, progress) async {
       if (taskId == id && status == DownloadTaskStatus.complete) {
-        File df = File(path.joinAll([_localPath, 'app-release.apk']));
-        _installApk(df.path);
+        File df = File(path.joinAll([_localPath, apkName]));
+        if (await df.exists()) {
+          _installApk(df.path);
+        }
       }
     });
   }

@@ -5,7 +5,7 @@ import 'package:flutter_video_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/pages/recently_updated/recently_updated_page.dart';
 import 'package:flutter_video_app/pages/recommend/recommend_page.dart';
-// import 'package:flutter_video_app/store/main/main.store.dart';
+import 'package:flutter_video_app/store/main/main.store.dart';
 
 class DashPage extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class _DashPageState extends State<DashPage> {
   @override
   void initState() {
     super.initState();
-    // mainStore.versionService.checkVersion(context);
+    mainStore.versionService.checkVersion(context);
   }
 
   @override
