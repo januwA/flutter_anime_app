@@ -17,7 +17,7 @@ class _$WeekDataDtoSerializer implements StructuredSerializer<WeekDataDto> {
   final String wireName = 'WeekDataDto';
 
   @override
-  Iterable serialize(Serializers serializers, WeekDataDto object,
+  Iterable<Object> serialize(Serializers serializers, WeekDataDto object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'weekData',
@@ -30,7 +30,7 @@ class _$WeekDataDtoSerializer implements StructuredSerializer<WeekDataDto> {
   }
 
   @override
-  WeekDataDto deserialize(Serializers serializers, Iterable serialized,
+  WeekDataDto deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new WeekDataDtoBuilder();
 
@@ -42,8 +42,9 @@ class _$WeekDataDtoSerializer implements StructuredSerializer<WeekDataDto> {
       switch (key) {
         case 'weekData':
           result.weekData.replace(serializers.deserialize(value,
-              specifiedType: const FullType(
-                  BuiltList, const [const FullType(WeekData)])) as BuiltList);
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(WeekData)]))
+              as BuiltList<dynamic>);
           break;
       }
     }
@@ -59,7 +60,7 @@ class _$WeekDataSerializer implements StructuredSerializer<WeekData> {
   final String wireName = 'WeekData';
 
   @override
-  Iterable serialize(Serializers serializers, WeekData object,
+  Iterable<Object> serialize(Serializers serializers, WeekData object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'index',
@@ -74,7 +75,7 @@ class _$WeekDataSerializer implements StructuredSerializer<WeekData> {
   }
 
   @override
-  WeekData deserialize(Serializers serializers, Iterable serialized,
+  WeekData deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new WeekDataBuilder();
 
@@ -92,7 +93,7 @@ class _$WeekDataSerializer implements StructuredSerializer<WeekData> {
           result.liData.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(LiData)]))
-              as BuiltList);
+              as BuiltList<dynamic>);
           break;
       }
     }
@@ -108,7 +109,7 @@ class _$LiDataSerializer implements StructuredSerializer<LiData> {
   final String wireName = 'LiData';
 
   @override
-  Iterable serialize(Serializers serializers, LiData object,
+  Iterable<Object> serialize(Serializers serializers, LiData object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'id',
@@ -127,7 +128,7 @@ class _$LiDataSerializer implements StructuredSerializer<LiData> {
   }
 
   @override
-  LiData deserialize(Serializers serializers, Iterable serialized,
+  LiData deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new LiDataBuilder();
 

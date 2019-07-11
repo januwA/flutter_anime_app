@@ -18,7 +18,7 @@ class _$DetailDtoSerializer implements StructuredSerializer<DetailDto> {
   final String wireName = 'DetailDto';
 
   @override
-  Iterable serialize(Serializers serializers, DetailDto object,
+  Iterable<Object> serialize(Serializers serializers, DetailDto object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'cover',
@@ -62,7 +62,7 @@ class _$DetailDtoSerializer implements StructuredSerializer<DetailDto> {
   }
 
   @override
-  DetailDto deserialize(Serializers serializers, Iterable serialized,
+  DetailDto deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new DetailDtoBuilder();
 
@@ -88,7 +88,7 @@ class _$DetailDtoSerializer implements StructuredSerializer<DetailDto> {
           result.starring.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(String)]))
-              as BuiltList);
+              as BuiltList<dynamic>);
           break;
         case 'director':
           result.director = serializers.deserialize(value,
@@ -98,7 +98,7 @@ class _$DetailDtoSerializer implements StructuredSerializer<DetailDto> {
           result.types.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(String)]))
-              as BuiltList);
+              as BuiltList<dynamic>);
           break;
         case 'area':
           result.area = serializers.deserialize(value,
@@ -116,12 +116,13 @@ class _$DetailDtoSerializer implements StructuredSerializer<DetailDto> {
           result.tabs.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(String)]))
-              as BuiltList);
+              as BuiltList<dynamic>);
           break;
         case 'tabsValues':
           result.tabsValues.replace(serializers.deserialize(value,
-              specifiedType: const FullType(
-                  BuiltList, const [const FullType(TabsDto)])) as BuiltList);
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(TabsDto)]))
+              as BuiltList<dynamic>);
           break;
       }
     }
@@ -137,7 +138,7 @@ class _$TabsDtoSerializer implements StructuredSerializer<TabsDto> {
   final String wireName = 'TabsDto';
 
   @override
-  Iterable serialize(Serializers serializers, TabsDto object,
+  Iterable<Object> serialize(Serializers serializers, TabsDto object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'tabs',
@@ -150,7 +151,7 @@ class _$TabsDtoSerializer implements StructuredSerializer<TabsDto> {
   }
 
   @override
-  TabsDto deserialize(Serializers serializers, Iterable serialized,
+  TabsDto deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new TabsDtoBuilder();
 
@@ -164,7 +165,7 @@ class _$TabsDtoSerializer implements StructuredSerializer<TabsDto> {
           result.tabs.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(TabsValueDto)]))
-              as BuiltList);
+              as BuiltList<dynamic>);
           break;
       }
     }
@@ -180,7 +181,7 @@ class _$TabsValueDtoSerializer implements StructuredSerializer<TabsValueDto> {
   final String wireName = 'TabsValueDto';
 
   @override
-  Iterable serialize(Serializers serializers, TabsValueDto object,
+  Iterable<Object> serialize(Serializers serializers, TabsValueDto object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'id',
@@ -196,7 +197,7 @@ class _$TabsValueDtoSerializer implements StructuredSerializer<TabsValueDto> {
   }
 
   @override
-  TabsValueDto deserialize(Serializers serializers, Iterable serialized,
+  TabsValueDto deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
     final result = new TabsValueDtoBuilder();
 

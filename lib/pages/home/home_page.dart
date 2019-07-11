@@ -4,6 +4,7 @@ import 'package:flutter_video_app/pages/list_search/list_search.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_video_app/store/main/main.store.dart';
 
 final HomeStore store = HomeStore();
 
@@ -17,6 +18,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     store.initState(this);
+    mainStore.versionService.checkVersion(context);
   }
 
   @override
