@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
@@ -8,7 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html;
 import 'package:html/dom.dart' as dom;
 
-List<Map<String, dynamic>> _listData;
+List<ListSearchDto> _listData;
 
 class ListSearchPage extends SearchDelegate<String> {
   @override
@@ -108,13 +111,13 @@ class ListSearchPage extends SearchDelegate<String> {
             var body = snap.data.body;
             dom.Document document = html.parse(body);
             List<dom.Element> aEls = $$(document, 'dd a');
-            List<Map<String, dynamic>> listData = aEls
+            List<ListSearchDto> listData = aEls
                 .map(
-                  (dom.Element a) => {
+                  (dom.Element a) => ListSearchDto.fromJson(jsonEncode({
                     'id': RegExp(r"\d+").stringMatch(a.attributes['href']),
                     'text': a.innerHtml.trim(),
                     'href': a.attributes['href'],
-                  },
+                  })),
                 )
                 .toList();
             _listData = listData;
@@ -136,7 +139,7 @@ class ListSearchPage extends SearchDelegate<String> {
     return list;
   }
 
-  _popularSearches(context, List<Map<String, dynamic>> listdata) {
+  _popularSearches(context, List<ListSearchDto> listdata) {
     return ListView(
       children: [
         ListTile(
@@ -147,15 +150,15 @@ class ListSearchPage extends SearchDelegate<String> {
         ),
         ...listdata
             .map(
-              (Map data) => ListTile(
+              (ListSearchDto data) => ListTile(
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => DetailPage(animeId: data['id'])));
+                      builder: (context) => DetailPage(animeId: data.id)));
                 },
-                title: Text(data['text']),
+                title: Text(data.text),
                 trailing: IconButton(
                   onPressed: () {
-                    String url = 'http://www.nicotv.me${data['href']}';
+                    String url = 'http://www.nicotv.me${data.href}';
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => NicotvPage(url: url)));
                   },

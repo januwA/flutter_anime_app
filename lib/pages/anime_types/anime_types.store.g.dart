@@ -168,6 +168,16 @@ mixin _$AnimeTypesStore on _AnimeTypesStore, Store {
       ActionController(name: '_AnimeTypesStore');
 
   @override
+  dynamic initState(dynamic ctx) {
+    final _$actionInfo = _$_AnimeTypesStoreActionController.startAction();
+    try {
+      return super.initState(ctx);
+    } finally {
+      _$_AnimeTypesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic setPageCount(int page) {
     final _$actionInfo = _$_AnimeTypesStoreActionController.startAction();
     try {

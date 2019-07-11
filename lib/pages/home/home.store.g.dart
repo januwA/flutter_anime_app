@@ -67,14 +67,24 @@ mixin _$HomeStore on _HomeStore, Store {
     return _$initAsyncAction.run(() => super.init());
   }
 
-  final _$getWeekDataAsyncAction = AsyncAction('getWeekData');
+  final _$_getWeekDataAsyncAction = AsyncAction('_getWeekData');
 
   @override
-  Future<void> getWeekData() {
-    return _$getWeekDataAsyncAction.run(() => super.getWeekData());
+  Future<void> _getWeekData() {
+    return _$_getWeekDataAsyncAction.run(() => super._getWeekData());
   }
 
   final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
+
+  @override
+  dynamic initState(dynamic ctx) {
+    final _$actionInfo = _$_HomeStoreActionController.startAction();
+    try {
+      return super.initState(ctx);
+    } finally {
+      _$_HomeStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void setInitialIndex(int i) {

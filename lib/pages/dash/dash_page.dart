@@ -18,7 +18,7 @@ class _DashPageState extends State<DashPage> {
   @override
   void initState() {
     super.initState();
-    mainStore.version.checkVersion(context);
+    mainStore.versionService.checkVersion(context);
   }
 
   @override

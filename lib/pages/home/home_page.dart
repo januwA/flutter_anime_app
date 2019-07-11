@@ -5,7 +5,7 @@ import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-final homeStore = HomeStore();
+final HomeStore store = HomeStore();
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,22 +13,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  TabController tabController;
   @override
   void initState() {
     super.initState();
-    tabController = new TabController(
-        vsync: this,
-        initialIndex: homeStore.initialIndex,
-        length: homeStore.week.length);
-    tabController.addListener(() {
-      homeStore.setInitialIndex(tabController.index);
-    });
+    store.initState(this);
   }
 
   @override
   void dispose() {
-    tabController.dispose();
+    store.dispose();
     super.dispose();
   }
 
@@ -62,19 +55,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ],
             bottom: TabBar(
-              controller: tabController,
+              controller: store.tabController,
               isScrollable: true,
-              tabs: homeStore.week.map((w) => Tab(text: w)).toList(),
+              tabs: store.week.map((w) => Tab(text: w)).toList(),
             ),
           ),
-          body: homeStore.isLoading
+          body: store.isLoading
               ? Center(
                   child: CircularProgressIndicator(),
                 )
               : TabBarView(
-                  controller: tabController,
+                  controller: store.tabController,
                   children: [
-                    for (var data in homeStore.weekData)
+                    for (var data in store.weekData)
                       GridView.count(
                         // PageStorageKey: 保存页面的滚动状态，nice
                         key: PageStorageKey<int>(data.index),

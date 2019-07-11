@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
@@ -17,10 +18,22 @@ abstract class _HomeStore with Store {
 
   @action
   Future<void> init() async {
-    getWeekData();
+    _getWeekData();
+  }
+
+  @action
+  initState(ctx) {
+    tabController = TabController(
+      vsync: ctx,
+      initialIndex: initialIndex,
+      length: week.length,
+    )..addListener(() {
+        setInitialIndex(tabController.index);
+      });
   }
 
   final week = <String>["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+  TabController tabController;
   @observable
   bool isLoading = true;
 
@@ -36,7 +49,7 @@ abstract class _HomeStore with Store {
   }
 
   @action
-  Future<void> getWeekData() async {
+  Future<void> _getWeekData() async {
     isLoading = true;
     weekData = await _getHomeData();
     isLoading = false;
@@ -70,5 +83,11 @@ abstract class _HomeStore with Store {
       });
     }
     return BuiltList.of(data.map((w) => WeekData.fromJson(jsonEncode(w))));
+  }
+
+  @override
+  void dispose() {
+    tabController?.dispose();
+    super.dispose();
   }
 }

@@ -13,51 +13,15 @@ class AnimeTypesPage extends StatefulWidget {
 
 class _AnimeTypesPageState extends State<AnimeTypesPage>
     with TickerProviderStateMixin {
-  TabController _tabTypesCtrl;
-  TabController _tabAreasCtrl;
-  TabController _tabErasCtrl;
-  TabController _tabClassifyCtrl;
-  ScrollController _strollCtrl = ScrollController();
   @override
   void initState() {
     super.initState();
-    _tabTypesCtrl = TabController(
-      vsync: this,
-      length: store.types.length,
-      initialIndex: store.typesCurrent,
-    );
-    _tabAreasCtrl = TabController(
-      vsync: this,
-      length: store.areas.length,
-      initialIndex: store.areasCurrent,
-    );
-
-    _tabErasCtrl = TabController(
-      vsync: this,
-      length: store.eras.length,
-      initialIndex: store.erasCurrent,
-    );
-    _tabClassifyCtrl = TabController(
-      vsync: this,
-      length: store.classify.length,
-      initialIndex: store.classifyCurrent,
-    );
-    _strollCtrl.addListener(() {
-      if (_strollCtrl.position.pixels == _strollCtrl.position.maxScrollExtent) {
-        if (store.loading) return;
-        store.setPageCount(store.pageCount + 1);
-        store.getData();
-      }
-    });
+    store.initState(this);
   }
 
   @override
   void dispose() {
-    _tabTypesCtrl.dispose();
-    _tabAreasCtrl.dispose();
-    _tabClassifyCtrl.dispose();
-    _tabErasCtrl.dispose();
-    _strollCtrl.dispose();
+    store.dispose();
     super.dispose();
   }
 
@@ -79,7 +43,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
     return Scaffold(
       body: CustomScrollView(
         key: PageStorageKey('anime_types'),
-        controller: _strollCtrl,
+        controller: store.strollCtrl,
         slivers: <Widget>[
           SliverSafeArea(
             sliver: SliverAppBar(
@@ -91,25 +55,25 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     _createTab(
-                      _tabTypesCtrl,
+                      store.tabTypesCtrl,
                       store.types,
                       onTap: debounce(store.setTypesCurrent),
                     ),
                     SizedBox(height: 10),
                     _createTab(
-                      _tabAreasCtrl,
+                      store.tabAreasCtrl,
                       store.areas,
                       onTap: debounce(store.setAreasCurrent),
                     ),
                     SizedBox(height: 10),
                     _createTab(
-                      _tabErasCtrl,
+                      store.tabErasCtrl,
                       store.eras,
                       onTap: debounce(store.setErasCurrent),
                     ),
                     SizedBox(height: 10),
                     _createTab(
-                      _tabClassifyCtrl,
+                      store.tabClassifyCtrl,
                       store.classify.map((c) => c.text).toList(),
                       onTap: debounce(store.setClassifyCurrent),
                     ),

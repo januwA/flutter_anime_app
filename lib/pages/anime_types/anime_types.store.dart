@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/utils/anime_list.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
@@ -15,7 +16,48 @@ abstract class _AnimeTypesStore with Store {
     getData();
   }
 
+  @action
+  initState(ctx) {
+    tabTypesCtrl = TabController(
+      vsync: ctx,
+      length: types.length,
+      initialIndex: typesCurrent,
+    );
+    tabAreasCtrl = TabController(
+      vsync: ctx,
+      length: areas.length,
+      initialIndex: areasCurrent,
+    );
+
+    tabErasCtrl = TabController(
+      vsync: ctx,
+      length: eras.length,
+      initialIndex: erasCurrent,
+    );
+    tabClassifyCtrl = TabController(
+      vsync: ctx,
+      length: classify.length,
+      initialIndex: classifyCurrent,
+    );
+
+    /// 监听页面滚动
+    strollCtrl = ScrollController()
+      ..addListener(() {
+        if (strollCtrl.position.pixels == strollCtrl.position.maxScrollExtent) {
+          if (loading) return;
+          setPageCount(pageCount + 1);
+          getData();
+        }
+      });
+  }
+
   http.Client _client;
+
+  TabController tabTypesCtrl;
+  TabController tabAreasCtrl;
+  TabController tabErasCtrl;
+  TabController tabClassifyCtrl;
+  ScrollController strollCtrl;
 
   @observable
   bool loading = true;
@@ -197,6 +239,11 @@ abstract class _AnimeTypesStore with Store {
   @override
   void dispose() {
     _client?.close();
+    tabTypesCtrl?.dispose();
+    tabAreasCtrl?.dispose();
+    tabClassifyCtrl?.dispose();
+    tabErasCtrl?.dispose();
+    strollCtrl?.dispose();
     super.dispose();
   }
 }
