@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
+import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
+import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
+import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
 import 'package:rxdart/rxdart.dart';
@@ -20,6 +23,8 @@ class DetailStore = _DetailStore with _$DetailStore;
 abstract class _DetailStore with Store {
   @action
   Future<void> initState(ctx, animeId) async {
+    this.animeId = animeId;
+    isCollections = mainStore.collectionsService.exist(animeId);
     var data = await _getDetailData(animeId);
     detailData = data;
     loading = false;
@@ -31,6 +36,9 @@ abstract class _DetailStore with Store {
       c.loadUrl(iframeUrl);
     });
   }
+
+  @observable
+  String animeId;
 
   @observable
   bool loading = true;
@@ -52,6 +60,9 @@ abstract class _DetailStore with Store {
 
   @observable
   String iframe = '';
+
+  @observable
+  bool isCollections = false;
 
   @computed
   String get iframeUrl => 'data:text/html,$iframe';
@@ -133,6 +144,12 @@ abstract class _DetailStore with Store {
 
     dom.Element mediaBody = $(document, '.media-body');
     List<dom.Element> dds = $$(mediaBody, 'dd');
+
+    /// 导演,有可能没有a标签
+    dom.Element directorEl = $(dds[1], 'a');
+    String director = directorEl != null
+        ? directorEl.innerHtml.trim()
+        : dds[1].innerHtml.trim();
     return DetailDto.fromJson(jsonEncode({
       /// 封面
       'cover': $(document, '.media-left img').attributes['data-original'],
@@ -148,7 +165,7 @@ abstract class _DetailStore with Store {
           $$(dds[0], 'a').map((dom.Element a) => a.innerHtml.trim()).toList(),
 
       /// 导演
-      'director': $(dds[1], 'a').innerHtml.trim(),
+      'director': director,
 
       /// 类型
       'types':
@@ -210,6 +227,47 @@ abstract class _DetailStore with Store {
     } else {
       return '';
     }
+  }
+
+  /// webview 打开
+  void openInWebview(context) {
+    String url = 'http://www.nicotv.me/video/detail/$animeId.html';
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => NicotvPage(url: url)));
+  }
+
+  /// 收藏 or 取消收藏
+  @action
+  Future<void> collections(BuildContext context) async {
+    var saveData = LiData(
+      (b) => b
+        ..id = animeId
+        ..current = detailData.curentText
+        ..img = detailData.cover
+        ..title = detailData.videoName,
+    );
+    if (!isCollections) {
+      await mainStore.collectionsService.addOne(saveData);
+      isCollections = true;
+      _showSnackbar(context, '已收藏!');
+    } else {
+      await mainStore.collectionsService.remove(saveData);
+      isCollections = false;
+      _showSnackbar(context, '已取消收藏!');
+    }
+  }
+
+  void _showSnackbar(BuildContext context, String content) {
+    ScaffoldFeatureController<SnackBar, SnackBarClosedReason> ctrl;
+    ctrl = Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(content),
+      action: SnackBarAction(
+        label: '确定',
+        onPressed: () {
+          ctrl.close();
+        },
+      ),
+    ));
   }
 
   @override

@@ -1,10 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/pages/detail/detail.store.dart';
-import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+enum MenuOptions {
+  openInBrowser,
+  collections,
+}
 
 class DetailPage extends StatefulWidget {
   DetailPage({
@@ -46,15 +50,35 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
           appBar: AppBar(
             title: Text(store.detailData.videoName),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.open_in_new),
-                onPressed: () {
-                  String url =
-                      'http://www.nicotv.me/video/detail/${widget.animeId}.html';
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => NicotvPage(url: url)));
-                },
-              )
+              Builder(
+                builder: (context) => PopupMenuButton(
+                  onSelected: (MenuOptions value) {
+                    switch (value) {
+                      case MenuOptions.openInBrowser:
+                        store.openInWebview(context);
+                        break;
+                      case MenuOptions.collections:
+                        store.collections(context);
+                        break;
+                      default:
+                    }
+                  },
+                  itemBuilder: (context) => <PopupMenuEntry<MenuOptions>>[
+                    PopupMenuItem(
+                      value: MenuOptions.openInBrowser,
+                      child: ListTile(
+                          leading: Icon(Icons.open_in_new),
+                          title: Text('浏览器打开')),
+                    ),
+                    PopupMenuItem(
+                      value: MenuOptions.collections,
+                      child: ListTile(
+                          leading: Icon(Icons.collections),
+                          title: Text(!store.isCollections ? '收藏' : '取消收藏')),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           body: ListView(

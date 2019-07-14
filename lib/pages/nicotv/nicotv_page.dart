@@ -77,10 +77,12 @@ class NnicotvPageState extends State<NicotvPage> {
           _controller.complete(webViewController);
         },
         onPageFinished: (String url) async {
-          var c = await _controller.future;
-          String t = await c?.evaluateJavascript('document.title');
-          title$.add(t);
-          c?.evaluateJavascript(jsStr);
+          try {
+            var c = await _controller.future;
+            String t = await c?.evaluateJavascript('document.title');
+            title$.add(t);
+            c?.evaluateJavascript(jsStr);
+          } catch (_) {}
         },
       ),
     );

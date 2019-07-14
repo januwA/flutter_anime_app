@@ -44,11 +44,11 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
     super.build(context);
     return Scaffold(
       body: CustomScrollView(
-        key: PageStorageKey('anime_types'),
         controller: store.strollCtrl,
         slivers: <Widget>[
           SliverSafeArea(
             sliver: SliverAppBar(
+              automaticallyImplyLeading: false,
               expandedHeight: 230,
               floating: true,
               backgroundColor: Colors.grey[100],

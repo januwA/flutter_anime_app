@@ -78,9 +78,18 @@ abstract class _VersionService with Store {
   /// 是否需要更新
   /// 当用户版本与最新版本不符合即可更新
   Future<bool> get isNeedUpdate async {
-    String v1 = await localVersion;
-    String v2 = await latestVertion;
-    return v1 != v2;
+    // 0.1.12 => x.y.z
+    String local = await localVersion;
+    String latest = await latestVertion;
+    List<int> localXyz = local.split('.').map<int>((s) => int.parse(s)).toList();
+    List<int> latestXyz = latest.split('.').map<int>((s) => int.parse(s)).toList();
+    if (latestXyz[0] > localXyz[0] ||
+        latestXyz[1] > localXyz[1] ||
+        latestXyz[2] > localXyz[2]) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @action

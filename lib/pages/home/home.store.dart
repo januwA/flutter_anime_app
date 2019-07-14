@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
+import 'package:flutter_video_app/shared/globals.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:url_launcher/url_launcher.dart';
 
 part 'home.store.g.dart';
 
@@ -58,5 +60,11 @@ abstract class _HomeStore with Store {
       'img': img,
       "current": current,
     };
+  }
+
+  Future<void> toGithubRepo() async {
+    if (await canLaunch(githubAddress)) {
+      await launch(githubAddress);
+    }
   }
 }
