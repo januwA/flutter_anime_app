@@ -4,19 +4,20 @@ import 'package:flutter_video_app/pages/recently_updated/recently_updated.store.
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/shared/widgets/sliver_loading.dart';
 
-RecentlyUpdatedStore recentlyUpdatedStore = RecentlyUpdatedStore();
-
 class RecentlyUpdatedPage extends StatefulWidget {
   @override
   _RecentlyUpdatedPageState createState() => _RecentlyUpdatedPageState();
 }
 
-class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage> {
+class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage>
+    with AutomaticKeepAliveClientMixin<RecentlyUpdatedPage> {
+  RecentlyUpdatedStore recentlyUpdatedStore = RecentlyUpdatedStore();
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: CustomScrollView(
-        key: PageStorageKey('recently_updated'),
         slivers: <Widget>[
           SliverAppBar(
             title: Text('最近更新'),
@@ -42,4 +43,7 @@ class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

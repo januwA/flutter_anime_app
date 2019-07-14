@@ -13,19 +13,19 @@ class AnimeCard extends StatelessWidget {
   final LiData animeData;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Stack(
-        children: [
-          InkWell(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => DetailPage(animeId: animeData.id))),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Expanded(
-                  child: Hero(
-                    tag: animeData.img,
+    return Hero(
+      tag: animeData.img,
+      child: Card(
+        child: Stack(
+          children: [
+            InkWell(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DetailPage(animeId: animeData.id))),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4.0),
                       child: Image.network(
@@ -35,41 +35,41 @@ class AnimeCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  ListTile(
+                    title: Text(
+                      animeData.title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    subtitle: Text(animeData.current),
+                  )
+                ],
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white70,
+                  shape: BoxShape.circle,
                 ),
-                ListTile(
-                  title: Text(
-                    animeData.title,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  subtitle: Text(animeData.current),
-                )
-              ],
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white70,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                color: Colors.green,
-                icon: Icon(Icons.open_in_new),
-                onPressed: () {
-                  String url =
-                      'http://www.nicotv.me/video/detail/${animeData.id}.html';
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => NicotvPage(
-                            url: url,
-                          )));
-                },
+                child: IconButton(
+                  color: Colors.green,
+                  icon: Icon(Icons.open_in_new),
+                  onPressed: () {
+                    String url =
+                        'http://www.nicotv.me/video/detail/${animeData.id}.html';
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => NicotvPage(
+                              url: url,
+                            )));
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

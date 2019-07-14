@@ -4,15 +4,16 @@ import 'package:flutter_video_app/pages/anime_types/anime_types.store.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/utils/debounce.dart';
 
-AnimeTypesStore store = AnimeTypesStore();
-
 class AnimeTypesPage extends StatefulWidget {
   @override
   _AnimeTypesPageState createState() => _AnimeTypesPageState();
 }
 
 class _AnimeTypesPageState extends State<AnimeTypesPage>
-    with TickerProviderStateMixin {
+    with
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<AnimeTypesPage> {
+  AnimeTypesStore store = AnimeTypesStore();
   @override
   void initState() {
     super.initState();
@@ -40,6 +41,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: CustomScrollView(
         key: PageStorageKey('anime_types'),
@@ -124,4 +126,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

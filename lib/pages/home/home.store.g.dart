@@ -46,14 +46,14 @@ mixin _$HomeStore on _HomeStore, Store {
   final _$weekDataAtom = Atom(name: '_HomeStore.weekData');
 
   @override
-  BuiltList<WeekData> get weekData {
+  List<WeekData> get weekData {
     _$weekDataAtom.context.enforceReadPolicy(_$weekDataAtom);
     _$weekDataAtom.reportObserved();
     return super.weekData;
   }
 
   @override
-  set weekData(BuiltList<WeekData> value) {
+  set weekData(List<WeekData> value) {
     _$weekDataAtom.context.conditionallyRunInAction(() {
       super.weekData = value;
       _$weekDataAtom.reportChanged();
@@ -72,27 +72,5 @@ mixin _$HomeStore on _HomeStore, Store {
   @override
   Future<void> _getWeekData() {
     return _$_getWeekDataAsyncAction.run(() => super._getWeekData());
-  }
-
-  final _$_HomeStoreActionController = ActionController(name: '_HomeStore');
-
-  @override
-  dynamic initState(dynamic ctx) {
-    final _$actionInfo = _$_HomeStoreActionController.startAction();
-    try {
-      return super.initState(ctx);
-    } finally {
-      _$_HomeStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setInitialIndex(int i) {
-    final _$actionInfo = _$_HomeStoreActionController.startAction();
-    try {
-      return super.setInitialIndex(i);
-    } finally {
-      _$_HomeStoreActionController.endAction(_$actionInfo);
-    }
   }
 }

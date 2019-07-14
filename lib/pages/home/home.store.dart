@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:built_collection/built_collection.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
@@ -21,19 +19,7 @@ abstract class _HomeStore with Store {
     _getWeekData();
   }
 
-  @action
-  initState(ctx) {
-    tabController = TabController(
-      vsync: ctx,
-      initialIndex: initialIndex,
-      length: week.length,
-    )..addListener(() {
-        setInitialIndex(tabController.index);
-      });
-  }
-
   final week = <String>["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
-  TabController tabController;
   @observable
   bool isLoading = true;
 
@@ -41,17 +27,20 @@ abstract class _HomeStore with Store {
   int initialIndex = DateTime.now().weekday - 1;
 
   @observable
-  BuiltList<WeekData> weekData = BuiltList<WeekData>();
-
-  @action
-  void setInitialIndex(int i) {
-    initialIndex = i;
-  }
+  List<WeekData> weekData = List<WeekData>();
 
   @action
   Future<void> _getWeekData() async {
     isLoading = true;
-    weekData = await _getHomeData();
+    dom.Document document = await $document('http://www.nicotv.me');
+    List<dom.Element> weekList = $$(document, '.weekDayContent');
+    weekData = weekList.map((dom.Element w) {
+      List<dom.Element> list = $$(w, 'div.ff-col ul li');
+      return WeekData.fromJson(jsonEncode({
+        "index": weekList.indexOf(w),
+        "liData": list.map((dom.Element li) => _queryLi(li)).toList(),
+      }));
+    }).toList();
     isLoading = false;
   }
 
@@ -62,32 +51,12 @@ abstract class _HomeStore with Store {
     String title = $(li, 'h2 a').attributes['title'];
     String img = $(li, 'p a img').attributes['data-original'];
     String current = $(li, 'p a span.continu').innerHtml.trim();
-    return ({
+    return {
       'link': link,
       'id': id,
       'title': title,
       'img': img,
       "current": current,
-    });
-  }
-
-  Future<BuiltList<WeekData>> _getHomeData() async {
-    dom.Document document = await $document('http://www.nicotv.me');
-    List<dom.Element> weekList = $$(document, '.weekDayContent');
-    List<Map<String, dynamic>> data = [];
-    for (dom.Element w in weekList) {
-      List<dom.Element> list = $$(w, 'div.ff-col ul li');
-      data.add({
-        "index": weekList.indexOf(w),
-        "liData": list.map((dom.Element li) => _queryLi(li)).toList(),
-      });
-    }
-    return BuiltList.of(data.map((w) => WeekData.fromJson(jsonEncode(w))));
-  }
-
-  @override
-  void dispose() {
-    tabController?.dispose();
-    super.dispose();
+    };
   }
 }
