@@ -423,7 +423,7 @@ packages:
     source: hosted
     version: "0.22.0"
   screen:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: screen
       url: "https://pub.flutter-io.cn"
@@ -540,7 +540,7 @@ packages:
     source: hosted
     version: "5.0.5"
   validators:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: validators
       url: "https://pub.flutter-io.cn"
@@ -561,7 +561,7 @@ packages:
     source: hosted
     version: "0.2.4"
   video_player:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: video_player
       url: "https://pub.flutter-io.cn"
