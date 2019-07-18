@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
+import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:html/dom.dart' as dom;
 
 part 'collections.service.g.dart';
 
@@ -16,6 +18,10 @@ abstract class _CollectionsService with Store {
   _CollectionsService() {
     _init();
   }
+
+  @observable
+  bool isLoading = true;
+
   Future<Database> database;
 
   /// 所有收藏的数据
@@ -31,10 +37,8 @@ abstract class _CollectionsService with Store {
         return db.execute(
           """
           CREATE TABLE $tablename (
-              title   VARCHAR NOT NULL,
-              img     VARCHAR NOT NULL,
-              current VARCHAR NOT NULL,
-              id VARCHAR NOT NULL
+              id      INTEGER  PRIMARY KEY AUTOINCREMENT,
+              animeId VARCHAR NOT NULL
           );
           """,
         );
@@ -47,30 +51,41 @@ abstract class _CollectionsService with Store {
   /// 查询所有
   @action
   queryAll() async {
+    isLoading = true;
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(tablename);
-    collections = ObservableList.of(
-      maps.map(
-        (m) => LiData(
-          (b) => b
-            ..id = m['id']
-            ..current = m['current']
-            ..img = m['img']
-            ..title = m['title'],
+    for (var m in maps) {
+      String animeId = m['animeId'];
+      dom.Document document =
+          await $document('http://www.nicotv.me/video/detail/$animeId.html');
+      dom.Element mediaBody = $(document, '.media-body');
+      collections.add(
+        LiData.fromJson(
+          jsonEncode(
+            {
+              "id": animeId,
+              "title": $(mediaBody, 'h2 a').innerHtml.trim(),
+              "img": $(document, '.media-left img').attributes['data-original'],
+              "current": $(mediaBody, 'h2 small').innerHtml.trim(),
+            },
+          ),
         ),
-      ),
-    );
+      );
+    }
+    // print('collections length: ${collections.length}');
+    isLoading = false;
   }
 
   /// 添加一个收藏
   @action
   Future<void> addOne(LiData c) async {
     final Database db = await database;
-    Map value = jsonDecode(c.toJson());
-    print(value);
     db.insert(
       tablename,
-      value,
+      {
+        'id': null,
+        'animeId': c.id,
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     collections.add(c);
@@ -82,7 +97,7 @@ abstract class _CollectionsService with Store {
     final db = await database;
     await db.delete(
       tablename,
-      where: "id = ?",
+      where: "animeId = ?",
       whereArgs: [c.id],
     );
     collections.removeWhere((x) => x == c);

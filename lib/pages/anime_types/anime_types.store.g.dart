@@ -188,6 +188,16 @@ mixin _$AnimeTypesStore on _AnimeTypesStore, Store {
   }
 
   @override
+  void _addNextPageData() {
+    final _$actionInfo = _$_AnimeTypesStoreActionController.startAction();
+    try {
+      return super._addNextPageData();
+    } finally {
+      _$_AnimeTypesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic setAreasCurrent(int index) {
     final _$actionInfo = _$_AnimeTypesStoreActionController.startAction();
     try {

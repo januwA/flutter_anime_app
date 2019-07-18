@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Anime",
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.deepPurple,
       ),
       home: DashPage(),
       routes: <String, WidgetBuilder>{

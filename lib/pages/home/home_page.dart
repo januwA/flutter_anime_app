@@ -118,9 +118,9 @@ class _HomePageState extends State<HomePage>
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('版本跟新'),
+                  Text('版本更新'),
                   Text(
-                    snap.data ? '有新版本可跟新' : '已是最新版本',
+                    snap.data ? '有新版本可更新' : '已是最新版本',
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ],

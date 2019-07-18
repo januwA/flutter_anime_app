@@ -44,9 +44,7 @@ abstract class _AnimeTypesStore with Store {
     strollCtrl = ScrollController()
       ..addListener(() {
         if (strollCtrl.position.pixels == strollCtrl.position.maxScrollExtent) {
-          if (loading) return;
-          setPageCount(pageCount + 1);
-          getData();
+          _addNextPageData();
         }
       });
   }
@@ -116,6 +114,8 @@ abstract class _AnimeTypesStore with Store {
   @observable
   int classifyCurrent = 1;
 
+  final int _initPageCount = 1;
+
   /// 查询页面的分页
   @observable
   int pageCount = 1;
@@ -144,10 +144,18 @@ abstract class _AnimeTypesStore with Store {
   String get url =>
       'http://www.nicotv.me/video/type3/$type-$area-$era----$cify$pageUrl.html';
 
+  /// 滚动到底部，加载下一页数据
+  @action
+  void _addNextPageData() {
+    if (loading) return;
+    pageCount += 1;
+    getData();
+  }
+
   @action
   setAreasCurrent(int index) {
     areasCurrent = index;
-    pageCount = 0;
+    pageCount = _initPageCount;
     animeData.clear();
     getData();
   }
@@ -155,14 +163,14 @@ abstract class _AnimeTypesStore with Store {
   @action
   setTypesCurrent(int index) {
     typesCurrent = index;
-    pageCount = 0;
+    pageCount = _initPageCount;
     animeData.clear();
     getData();
   }
 
   @action
   setErasCurrent(int index) {
-    pageCount = 0;
+    pageCount = _initPageCount;
     erasCurrent = index;
     animeData.clear();
     getData();
@@ -171,7 +179,7 @@ abstract class _AnimeTypesStore with Store {
   @action
   setClassifyCurrent(int index) {
     classifyCurrent = index;
-    pageCount = 0;
+    pageCount = _initPageCount;
     animeData.clear();
     getData();
   }
@@ -201,7 +209,6 @@ abstract class _AnimeTypesStore with Store {
       int allPageCount = 1;
       List<dom.Element> pagination = $$(document, '.pagination li');
       if (pagination != null && pagination.isNotEmpty) {
-        print('获取分页量');
         String pageLen = pagination
             .map((dom.Element li) => $(li, 'a').innerHtml)
             .where((String s) => s != "»" && s != '«')
@@ -209,6 +216,7 @@ abstract class _AnimeTypesStore with Store {
             .last;
         allPageCount = int.parse(pageLen);
       }
+      print('current page index: $pageCount, allPageCount: $allPageCount');
 
       /// 分页达到最大
       if (pageCount > allPageCount) {

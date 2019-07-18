@@ -49,44 +49,14 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
         return Scaffold(
           appBar: AppBar(
             title: Text(store.detailData.videoName),
-            actions: <Widget>[
-              Builder(
-                builder: (context) => PopupMenuButton(
-                  onSelected: (MenuOptions value) {
-                    switch (value) {
-                      case MenuOptions.openInBrowser:
-                        store.openInWebview(context);
-                        break;
-                      case MenuOptions.collections:
-                        store.collections(context);
-                        break;
-                      default:
-                    }
-                  },
-                  itemBuilder: (context) => <PopupMenuEntry<MenuOptions>>[
-                    PopupMenuItem(
-                      value: MenuOptions.openInBrowser,
-                      child: ListTile(
-                          leading: Icon(Icons.open_in_new),
-                          title: Text('浏览器打开')),
-                    ),
-                    PopupMenuItem(
-                      value: MenuOptions.collections,
-                      child: ListTile(
-                          leading: Icon(Icons.collections),
-                          title: Text(!store.isCollections ? '收藏' : '取消收藏')),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            actions: _buildActions(),
           ),
           body: ListView(
             children: <Widget>[
               Observer(
                 builder: (_) => store.haokanBaidu
                     ? Hero(
-                        tag: store.detailData.cover,
+                        tag: store.detailData.videoName,
                         child: store.video == null
                             ? Image.network(
                                 store.detailData.cover,
@@ -165,6 +135,39 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
         );
       },
     );
+  }
+
+  List<Widget> _buildActions() {
+    return <Widget>[
+      Builder(
+        builder: (context) => PopupMenuButton(
+          onSelected: (MenuOptions value) {
+            switch (value) {
+              case MenuOptions.openInBrowser:
+                store.openInWebview(context);
+                break;
+              case MenuOptions.collections:
+                store.collections(context);
+                break;
+              default:
+            }
+          },
+          itemBuilder: (context) => <PopupMenuEntry<MenuOptions>>[
+            PopupMenuItem(
+              value: MenuOptions.openInBrowser,
+              child: ListTile(
+                  leading: Icon(Icons.open_in_new), title: Text('浏览器打开')),
+            ),
+            PopupMenuItem(
+              value: MenuOptions.collections,
+              child: ListTile(
+                  leading: Icon(Icons.collections),
+                  title: Text(!store.isCollections ? '收藏' : '取消收藏')),
+            ),
+          ],
+        ),
+      ),
+    ];
   }
 
   _detailInfo() {

@@ -14,7 +14,7 @@ class AnimeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: animeData.img,
+      tag: animeData.title,
       child: Card(
         child: Stack(
           children: [

@@ -18,28 +18,33 @@ class _CollectionsPageState extends State<CollectionsPage> {
         slivers: <Widget>[
           SliverAppBar(
             title: Text('我的收藏'),
+            floating: true,
           ),
           Observer(
-            builder: (_) => mainStore.collectionsService.collections.isEmpty
-                ? SliverPadding(
-                    padding: EdgeInsets.all(18.0),
-                    sliver: SliverToBoxAdapter(
-                      child: Center(
-                        child: Text('空落落的收藏夹~~~'),
-                      ),
-                    ),
+            builder: (_) => mainStore.collectionsService.isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
                   )
-                : SliverGrid.count(
-                    crossAxisCount: 2, // 每行显示几列
-                    mainAxisSpacing: 2.0, // 每行的上下间距
-                    crossAxisSpacing: 2.0, // 每列的间距
-                    childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
-                    children: <Widget>[
-                      for (var anime
-                          in mainStore.collectionsService.collections)
-                        AnimeCard(animeData: anime),
-                    ],
-                  ),
+                : mainStore.collectionsService.collections.isEmpty
+                    ? SliverPadding(
+                        padding: EdgeInsets.all(18.0),
+                        sliver: SliverToBoxAdapter(
+                          child: Center(
+                            child: Text('空落落的收藏夹~~~'),
+                          ),
+                        ),
+                      )
+                    : SliverGrid.count(
+                        crossAxisCount: 2, // 每行显示几列
+                        mainAxisSpacing: 2.0, // 每行的上下间距
+                        crossAxisSpacing: 2.0, // 每列的间距
+                        childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
+                        children: <Widget>[
+                          for (var anime
+                              in mainStore.collectionsService.collections)
+                            AnimeCard(animeData: anime),
+                        ],
+                      ),
           ),
         ],
       ),
