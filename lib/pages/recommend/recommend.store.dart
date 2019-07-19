@@ -10,7 +10,7 @@ class RecommendStore = _RecommendStore with _$RecommendStore;
 
 abstract class _RecommendStore with Store {
   _RecommendStore() {
-    getData();
+    _getData();
   }
 
   @observable
@@ -21,7 +21,7 @@ abstract class _RecommendStore with Store {
   /// 在获取兄弟节点
 
   @action
-  Future<void> getData() async {
+  Future<void> _getData() async {
     dom.Document document = await $document('http://www.nicotv.me');
 
     /// 获取所有标题元素
@@ -37,5 +37,11 @@ abstract class _RecommendStore with Store {
     List<dom.Element> list = $$(dataEles, 'li');
     BuiltList<LiData> aList = createAnimeList(list);
     animeList = aList;
+  }
+
+  @action
+  Future<void> refresh() async {
+    animeList = null;
+    _getData();
   }
 }

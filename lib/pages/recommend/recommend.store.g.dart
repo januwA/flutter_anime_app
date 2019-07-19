@@ -26,10 +26,17 @@ mixin _$RecommendStore on _RecommendStore, Store {
     }, _$animeListAtom, name: '${_$animeListAtom.name}_set');
   }
 
-  final _$getDataAsyncAction = AsyncAction('getData');
+  final _$_getDataAsyncAction = AsyncAction('_getData');
 
   @override
-  Future<void> getData() {
-    return _$getDataAsyncAction.run(() => super.getData());
+  Future<void> _getData() {
+    return _$_getDataAsyncAction.run(() => super._getData());
+  }
+
+  final _$refreshAsyncAction = AsyncAction('refresh');
+
+  @override
+  Future<void> refresh() {
+    return _$refreshAsyncAction.run(() => super.refresh());
   }
 }

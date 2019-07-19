@@ -4,40 +4,46 @@ import 'package:flutter_video_app/pages/recently_updated/recently_updated.store.
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/shared/widgets/sliver_loading.dart';
 
-RecentlyUpdatedStore store = RecentlyUpdatedStore();
+final RecentlyUpdatedStore store = RecentlyUpdatedStore();
 
 class RecentlyUpdatedPage extends StatefulWidget {
   @override
-  _RecentlyUpdatedPageState createState() => _RecentlyUpdatedPageState();
+  createState() => _RecentlyUpdatedPageState();
 }
 
 class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            title: Text('最近更新'),
-            floating: true,
-          ),
-          Observer(
-            builder: (_) {
-              return store.animeList != null
-                  ? SliverGrid.count(
-                      crossAxisCount: 2, // 每行显示几列
-                      mainAxisSpacing: 2.0, // 每行的上下间距
-                      crossAxisSpacing: 2.0, // 每列的间距
-                      childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
-                      children: <Widget>[
-                        for (var anime in store.animeList)
-                          AnimeCard(animeData: anime),
-                      ],
-                    )
-                  : SliverLoading();
-            },
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: store.refresh,
+        child: CustomScrollView(
+          key: PageStorageKey('recently_updated'),
+          slivers: <Widget>[
+            SliverAppBar(
+              title: Text('最近更新'),
+              floating: true,
+            ),
+            Observer(
+              builder: (context) {
+                if (store.animeList == null) {
+                  return SliverLoading();
+                } else {
+                  return SliverGrid.count(
+                    crossAxisCount: 2, // 每行显示几列
+                    mainAxisSpacing: 2.0, // 每行的上下间距
+                    crossAxisSpacing: 2.0, // 每列的间距
+                    childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
+                    children: <Widget>[
+                      for (var anime in store.animeList)
+                        AnimeCard(animeData: anime),
+                    ],
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

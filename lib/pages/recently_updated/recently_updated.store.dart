@@ -10,7 +10,7 @@ class RecentlyUpdatedStore = _RecentlyUpdatedStore with _$RecentlyUpdatedStore;
 
 abstract class _RecentlyUpdatedStore with Store {
   _RecentlyUpdatedStore() {
-    getData();
+    _getData();
   }
 
   @observable
@@ -19,9 +19,8 @@ abstract class _RecentlyUpdatedStore with Store {
   /// 由于没有id，全是一样的class
   /// 先获取标题
   /// 在获取兄弟节点
-
   @action
-  Future<void> getData() async {
+  Future<void> _getData() async {
     dom.Document document = await $document('http://www.nicotv.me');
 
     /// 获取所有标题元素
@@ -37,5 +36,11 @@ abstract class _RecentlyUpdatedStore with Store {
     List<dom.Element> list = $$(dataEles, 'li');
     BuiltList<LiData> aList = createAnimeList(list);
     animeList = aList;
+  }
+
+  @action
+  Future<void> refresh() async {
+    animeList = null;
+    _getData();
   }
 }

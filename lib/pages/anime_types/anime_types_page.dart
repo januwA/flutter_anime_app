@@ -44,6 +44,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
       child: Scaffold(
         body: CustomScrollView(
           controller: store.strollCtrl,
+          key: PageStorageKey('anime_types'),
           slivers: <Widget>[
             SliverSafeArea(
               sliver: SliverAppBar(

@@ -63,6 +63,11 @@ abstract class _HomeStore with Store {
     isLoading = false;
   }
 
+  /// 下拉刷新
+  Future<void> refresh() async {
+    _getWeekData();
+  }
+
   /// 从每个li中解析出数据
   Map<String, dynamic> _queryLi(dom.Element li) {
     String link = $(li, 'p a').attributes['href'];

@@ -31,27 +31,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        return DefaultTabController(
-          length: store.week.length,
-          initialIndex: store.initialIndex,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text('追番表'),
-              actions: _buildActions(),
-              bottom: TabBar(
-                isScrollable: true,
-                tabs: store.week.map((w) => Tab(text: w)).toList(),
-              ),
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('追番表'),
+            actions: _buildActions(),
+            bottom: TabBar(
+              isScrollable: true,
+              controller: store.tabController,
+              tabs: store.week.map((w) => Tab(text: w)).toList(),
             ),
-            drawer: _buildDrawer(),
-            body: store.isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : TabBarView(
-                    children: [
-                      for (var data in store.weekData)
-                        GridView.count(
+          ),
+          drawer: _buildDrawer(),
+          body: store.isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : TabBarView(
+                  controller: store.tabController,
+                  children: [
+                    for (var data in store.weekData)
+                      RefreshIndicator(
+                        onRefresh: store.refresh,
+                        child: GridView.count(
+                          // PageStorageKey: 保存页面的滚动状态，nice
+                          key: PageStorageKey<int>(data.index),
                           crossAxisCount: 2, // 每行显示几列
                           mainAxisSpacing: 2.0, // 每行的上下间距
                           crossAxisSpacing: 2.0, // 每列的间距
@@ -61,9 +64,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               AnimeCard(animeData: li),
                           ],
                         ),
-                    ],
-                  ),
-          ),
+                      ),
+                  ],
+                ),
         );
       },
     );

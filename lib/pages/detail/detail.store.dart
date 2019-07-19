@@ -103,10 +103,11 @@ abstract class _DetailStore with Store {
         var source = VideoDataSource.network(vSrc);
         if (video == null) {
           video = Video(
-            store: VideoStore(videoDataSource: source),
+            store: VideoStore(videoDataSource: source, autoplay: true),
           );
         } else {
-          video.store.setSource(source);
+          await video.store.setSource(source);
+          video.store.play();
         }
       } else {
         iframe = vSrc;
