@@ -22,7 +22,7 @@ dependencies:
   video_box: ^0.2.4
   html: ^0.14.0+1
   webview_flutter:
-  package_info: ^0.4.0+4
+  package_info: ^0.4.0+5
   flutter_downloader: ^1.1.7
   path_provider: ^1.1.0
   permission_handler:

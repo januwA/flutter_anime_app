@@ -7,21 +7,28 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:package_info/package_info.dart';
 
+final HomeStore store = HomeStore();
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<HomePage> {
-  final HomeStore store = HomeStore();
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+    store.initState(this);
+  }
 
   @override
-  bool get wantKeepAlive => true;
+  void dispose() {
+    store.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Observer(
       builder: (_) {
         return DefaultTabController(
@@ -110,8 +117,8 @@ class _HomePageState extends State<HomePage>
               Navigator.of(context).pushNamed('/collection');
             },
           ),
-          FutureBuilder<bool>(
-            future: mainStore.versionService.isNeedUpdate,
+          StreamBuilder<bool>(
+            stream: mainStore.versionService.isNeedUpdate.asStream(),
             initialData: true,
             builder: (context, snap) => ListTile(
               leading: Icon(Icons.autorenew),

@@ -62,7 +62,8 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                                 store.detailData.cover,
                                 fit: BoxFit.fill,
                               )
-                            : store.video.videoBox)
+                            : store.video.videoBox,
+                      )
                     : Container(
                         height: 220,
                         child: AspectRatio(

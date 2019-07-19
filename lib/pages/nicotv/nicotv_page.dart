@@ -66,6 +66,7 @@ class NnicotvPageState extends State<NicotvPage> {
       appBar: AppBar(
         title: StreamBuilder<String>(
             stream: title$.stream,
+            initialData: "",
             builder: (context, snapshot) =>
                 Text(snapshot.hasData ? snapshot.data : 'loading...')),
         actions: <Widget>[NavigationControls(_controller.future)],

@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: [
-        const Locale('zh', 'CN'), //
+        const Locale('zh', 'CN'), 
         const Locale.fromSubtags(languageCode: 'zh'),
         const Locale.fromSubtags(
             languageCode: 'zh', scriptCode: 'Hans', countryCode: 'zh_Hans_CN'),
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Anime",
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.deepPurple
       ),
       home: DashPage(),
       routes: <String, WidgetBuilder>{

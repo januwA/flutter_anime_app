@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/shared/globals.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
@@ -21,12 +21,29 @@ abstract class _HomeStore with Store {
     _getWeekData();
   }
 
+  @action
+  initState(ctx) {
+    tabController = TabController(
+      vsync: ctx,
+      initialIndex: initialIndex,
+      length: week.length,
+    )..addListener(() {
+        setInitialIndex(tabController.index);
+      });
+  }
+
   final week = <String>["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+  TabController tabController;
   @observable
   bool isLoading = true;
 
   @observable
   int initialIndex = DateTime.now().weekday - 1;
+
+  @action
+  void setInitialIndex(int i) {
+    initialIndex = i;
+  }
 
   @observable
   List<WeekData> weekData = List<WeekData>();
@@ -62,9 +79,16 @@ abstract class _HomeStore with Store {
     };
   }
 
+  /// 开开浏览器,前往github仓库页面
   Future<void> toGithubRepo() async {
     if (await canLaunch(githubAddress)) {
       await launch(githubAddress);
     }
+  }
+
+  @override
+  void dispose() {
+    tabController?.dispose();
+    super.dispose();
   }
 }
