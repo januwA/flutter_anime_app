@@ -124,10 +124,13 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                   children: <Widget>[
                     for (var tv in store.detail.tabsValues)
                       ListView(
+                        // keep scroll offset
+                        key: PageStorageKey(tv),
                         scrollDirection: Axis.horizontal,
                         children: <Widget>[
                           for (var t in tv.tabs)
                             Padding(
+                              key: ValueKey(t.id),
                               padding: EdgeInsets.symmetric(horizontal: 4.0),
                               child: RaisedButton(
                                 color: t == store.currentPlayVideo

@@ -32,7 +32,6 @@ abstract class _DetailStore with Store {
       vsync: ctx,
     );
   }
-
   @observable
   String animeId;
 
