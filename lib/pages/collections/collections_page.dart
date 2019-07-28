@@ -30,7 +30,13 @@ class _CollectionsPageState extends State<CollectionsPage> {
                         padding: EdgeInsets.all(18.0),
                         sliver: SliverToBoxAdapter(
                           child: Center(
-                            child: Text('空落落的收藏夹~~~'),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(Icons.hourglass_empty),
+                                Text('Empty of collection'),
+                              ],
+                            ),
                           ),
                         ),
                       )
