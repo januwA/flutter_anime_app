@@ -48,49 +48,60 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(store.detailData.videoName),
+            title: Text(store.detail.videoName),
             actions: _buildActions(),
           ),
           body: ListView(
             children: <Widget>[
               Observer(
-                builder: (_) => store.haokanBaidu
-                    ? Hero(
-                        tag: store.detailData.videoName,
-                        child: store.video == null
-                            ? Image.network(
-                                store.detailData.cover,
-                                fit: BoxFit.fill,
-                              )
-                            : store.video.videoBox,
-                      )
-                    : Container(
-                        height: 220,
-                        child: AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: WebView(
-                            initialUrl: store.iframe.isEmpty
-                                ? 'data:text/html,<h4>Loading...<h4>'
-                                : store.iframeUrl,
-                            javascriptMode: JavascriptMode.unrestricted,
-                            onWebViewCreated:
-                                (WebViewController webViewController) {
-                              store.webviewController.add(webViewController);
-                            },
-                          ),
-                        ),
+                key: ValueKey('video'),
+                builder: (_) {
+                  if (store.haokanBaidu) {
+                    return Hero(
+                      tag: store.detail.videoName,
+                      child: store.video == null
+                          ? Image.network(
+                              store.detail.cover,
+                              fit: BoxFit.fill,
+                            )
+                          : store.video.videoBox,
+                    );
+                  } else {
+                    return Container(
+                      height: 210,
+                      child: StreamBuilder<String>(
+                        stream: store.iframeVideo,
+                        initialData: '',
+                        builder: (context, snap) {
+                          if (snap.connectionState == ConnectionState.active &&
+                              snap.data.isNotEmpty) {
+                            return Container(
+                              child: WebView(
+                                  initialUrl: snap.data,
+                                  javascriptMode: JavascriptMode.unrestricted,
+                                  onWebViewCreated: (WebViewController wc) {
+                                    wc.loadUrl(snap.data);
+                                  }),
+                            );
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
                       ),
+                    );
+                  }
+                },
               ),
               _detailInfo(),
               ExpansionTile(
                 title: Text(
-                  store.detailData.plot,
+                  store.detail.plot,
                   overflow: TextOverflow.ellipsis,
                 ),
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(8),
-                    child: Text(store.detailData.plot),
+                    child: Text(store.detail.plot),
                   ),
                 ],
               ),
@@ -100,7 +111,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                   unselectedLabelColor: Colors.grey,
                   labelColor: Theme.of(context).primaryColor,
                   controller: store.tabController,
-                  tabs: store.detailData.tabs
+                  tabs: store.detail.tabs
                       .map<Widget>((el) => Tab(child: Text(el)))
                       .toList(),
                 ),
@@ -111,7 +122,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                 child: TabBarView(
                   controller: store.tabController,
                   children: <Widget>[
-                    for (var tv in store.detailData.tabsValues)
+                    for (var tv in store.detail.tabsValues)
                       ListView(
                         scrollDirection: Axis.horizontal,
                         children: <Widget>[
@@ -179,11 +190,11 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
         children: <Widget>[
           Text.rich(
             TextSpan(
-              text: '${store.detailData.videoName}',
+              text: '${store.detail.videoName}',
               style: Theme.of(context).textTheme.title,
               children: <TextSpan>[
                 TextSpan(
-                    text: '${store.detailData.curentText}',
+                    text: '${store.detail.curentText}',
                     style: Theme.of(context).textTheme.subtitle),
               ],
             ),
@@ -191,7 +202,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
           Wrap(
             children: <Widget>[
               Text('主演:'),
-              for (String name in store.detailData.starring)
+              for (String name in store.detail.starring)
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
                     child: Text(name)),
@@ -203,13 +214,13 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               Text('导演:'),
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(store.detailData.director)),
+                  child: Text(store.detail.director)),
             ],
           ),
           Wrap(
             children: <Widget>[
               Text('类型:'),
-              for (String name in store.detailData.types)
+              for (String name in store.detail.types)
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4),
                     child: Text(name)),
@@ -221,7 +232,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               Text('地区:'),
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(store.detailData.area)),
+                  child: Text(store.detail.area)),
             ],
           ),
           Row(
@@ -230,7 +241,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               Text('年份:'),
               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(store.detailData.years)),
+                  child: Text(store.detail.years)),
             ],
           ),
         ],

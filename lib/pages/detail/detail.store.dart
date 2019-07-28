@@ -12,7 +12,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_box/video.store.dart';
 import 'package:video_box/video_box.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 
@@ -26,15 +25,12 @@ abstract class _DetailStore with Store {
     this.animeId = animeId;
     isCollections = mainStore.collectionsService.exist(animeId);
     var data = await _getDetailData(animeId);
-    detailData = data;
+    detail = data;
     loading = false;
     tabController = TabController(
-      length: detailData.tabs.length,
+      length: detail.tabs.length,
       vsync: ctx,
     );
-    webviewController.listen((c) {
-      c.loadUrl(iframeUrl);
-    });
   }
 
   @observable
@@ -44,7 +40,7 @@ abstract class _DetailStore with Store {
   bool loading = true;
 
   @observable
-  DetailDto detailData;
+  DetailDto detail;
 
   @observable
   Video video;
@@ -59,17 +55,12 @@ abstract class _DetailStore with Store {
   bool haokanBaidu = true;
 
   @observable
-  String iframe = '';
-
-  @observable
   bool isCollections = false;
 
-  @computed
-  String get iframeUrl => 'data:text/html,$iframe';
-
-  @observable
-  BehaviorSubject<WebViewController> webviewController =
-      BehaviorSubject<WebViewController>();
+  Stream<String> get iframeVideo => _iframeVideoSubject.stream.map((String
+          src) =>
+      """data:text/html,<iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""");
+  final _iframeVideoSubject = BehaviorSubject<String>();
 
   /// 点击播放每一集
   @action
@@ -91,7 +82,7 @@ abstract class _DetailStore with Store {
     } else {
       // 视频资源,准备切换播放点击的视频
       String vSrc = await _idGetSrc(t.id);
-      if (vSrc == null || vSrc == '') {
+      if (vSrc == null || vSrc.isEmpty) {
         alertHttpGetError(
           context: context,
           text: '获取播放地址错误',
@@ -110,7 +101,7 @@ abstract class _DetailStore with Store {
           video.store.play();
         }
       } else {
-        iframe = vSrc;
+        _iframeVideoSubject.add(vSrc);
         video?.store?.pause();
       }
     }
@@ -211,20 +202,17 @@ abstract class _DetailStore with Store {
         .replaceAll(RegExp(r";document\.write.*"), '');
 
     Map<String, dynamic> jsonMap = jsonDecode(jsonData);
-    if (jsonMap['name'].trim() == 'haokan_baidu') {
+    var name = jsonMap['name'].trim();
+    if (name == 'haokan_baidu') {
       haokanBaidu = true;
       String url = jsonMap['url'];
       String videoUrl = Uri.parse(url).queryParameters['url'];
       return videoUrl;
-    } else if (jsonMap['name'].trim() == '360biaofan') {
+    } else if (name == '360biaofan') {
       haokanBaidu = false;
-      var cms = jsonMap;
       String src =
-          """${cms['jiexi']}${cms['url']}&time=${cms['time']}&auth_key=${cms['auth_key']}""";
-      String iframeHtml = """
-  <iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
-  """;
-      return iframeHtml;
+          """${jsonMap['jiexi']}${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+      return src;
     } else {
       return '';
     }
@@ -243,9 +231,9 @@ abstract class _DetailStore with Store {
     var saveData = LiData(
       (b) => b
         ..id = animeId
-        ..current = detailData.curentText
-        ..img = detailData.cover
-        ..title = detailData.videoName,
+        ..current = detail.curentText
+        ..img = detail.cover
+        ..title = detail.videoName,
     );
     if (!isCollections) {
       await mainStore.collectionsService.addOne(saveData);
@@ -275,7 +263,7 @@ abstract class _DetailStore with Store {
   void dispose() {
     video?.dispose();
     tabController?.dispose();
-    webviewController?.close();
+    _iframeVideoSubject?.close();
     super.dispose();
   }
 }

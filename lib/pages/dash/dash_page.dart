@@ -12,11 +12,11 @@ class DashPage extends StatefulWidget {
 }
 
 class _DashPageState extends State<DashPage> {
-  final dashStore = DashStore();
+  final store = DashStore();
 
   @override
   void dispose() {
-    dashStore.dispose();
+    store.dispose();
     super.dispose();
   }
 
@@ -26,8 +26,8 @@ class _DashPageState extends State<DashPage> {
       bottomNavigationBar: Observer(
         builder: (_) => BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          currentIndex: dashStore.index,
-          onTap: dashStore.controller.jumpToPage,
+          currentIndex: store.index,
+          onTap: store.controller.jumpToPage,
           items: <BottomNavigationBarItem>[
             _navBtn(title: '首页', icon: Icons.home),
             _navBtn(title: '最近', icon: Icons.fiber_new),
@@ -38,8 +38,8 @@ class _DashPageState extends State<DashPage> {
       ),
       body: Observer(
         builder: (_) => PageView(
-          controller: dashStore.controller,
-          onPageChanged: dashStore.onPageChanged,
+          controller: store.controller,
+          onPageChanged: store.onPageChanged,
           children: <Widget>[
             HomePage(),
             RecentlyUpdatedPage(),
