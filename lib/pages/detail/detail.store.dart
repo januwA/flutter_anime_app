@@ -57,9 +57,11 @@ abstract class _DetailStore with Store {
   @observable
   bool isCollections = false;
 
-  Stream<String> get iframeVideo => _iframeVideoSubject.stream.map((String
-          src) =>
-      """data:text/html,<iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""");
+  /// iframe 播放时的流
+  Stream<String> get iframeVideo => _iframeVideoSubject.stream.map(
+        (String src) =>
+            """data:text/html,<iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""",
+      );
   final _iframeVideoSubject = BehaviorSubject<String>();
 
   /// 点击播放每一集
@@ -184,8 +186,8 @@ abstract class _DetailStore with Store {
   /// 找到合适的src发起请求，处理返回的数据
   @action
   Future<String> _idGetSrc(String id) async {
-    dom.Document document =
-        await $document('http://www.nicotv.me/video/play/$id.html');
+    String url = 'http://www.nicotv.me/video/play/$id.html';
+    dom.Document document = await $document(url);
     List<dom.Element> ss = $$(document, 'script');
     String scriptSrc;
     for (var s in ss) {
@@ -203,15 +205,16 @@ abstract class _DetailStore with Store {
 
     Map<String, dynamic> jsonMap = jsonDecode(jsonData);
     var name = jsonMap['name'].trim();
-    if (name == 'haokan_baidu') {
+    String jsonUrl = jsonMap['url'];
+    bool isMp4 = RegExp(r'\.mp4$').hasMatch(jsonUrl);
+    if (name == 'haokan_baidu' && isMp4) {
       haokanBaidu = true;
-      String url = jsonMap['url'];
-      String videoUrl = Uri.parse(url).queryParameters['url'];
-      return videoUrl;
-    } else if (name == '360biaofan') {
+      // xx.mp4
+      return Uri.parse(jsonUrl).queryParameters['url'];
+    } else if (name == '360biaofan' || name == 'haokan_baidu' && !isMp4) {
       haokanBaidu = false;
       String src =
-          """${jsonMap['jiexi']}${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+          """${jsonMap['jiexi']}$jsonUrl&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
       return src;
     } else {
       return '';
