@@ -1,11 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter_video_app/db/collections.moor.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:moor/moor.dart';
 
 part 'collections.service.g.dart';
 
@@ -15,99 +15,42 @@ class CollectionsService = _CollectionsService with _$CollectionsService;
 final String tablename = 'collections';
 
 abstract class _CollectionsService with Store {
-  _CollectionsService() {
-    _init();
-  }
+  CollectionDatabase _db = CollectionDatabase();
+  CollectionDao get _collectionDao => _db.collectionDao;
 
-  @observable
-  bool isLoading = true;
+  /// 收藏夹流
+  Stream<List<Collection>> get collections$ =>
+      _collectionDao.watchAllCollections();
 
-  Future<Database> database;
-
-  /// 所有收藏的数据
-  @observable
-  ObservableList<LiData> collections = ObservableList<LiData>();
-
-  /// 服务被初始化时创建数据库
-  @action
-  Future<void> _init() async {
-    database = openDatabase(
-      join(await getDatabasesPath(), 'collections_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          """
-          CREATE TABLE $tablename (
-              id      INTEGER  PRIMARY KEY AUTOINCREMENT,
-              animeId VARCHAR NOT NULL
-          );
-          """,
-        );
-      },
-      version: 1,
+  /// 根据 animeId获取数据
+  Future<LiData> getAnime(String animeId) async {
+    dom.Document document =
+        await $document('http://www.nicotv.me/video/detail/$animeId.html');
+    dom.Element mediaBody = $(document, '.media-body');
+    return LiData.fromJson(
+      jsonEncode(
+        {
+          "id": animeId,
+          "title": $(mediaBody, 'h2 a').innerHtml.trim(),
+          "img": $(document, '.media-left img').attributes['data-original'],
+          "current": $(mediaBody, 'h2 small').innerHtml.trim(),
+        },
+      ),
     );
-    queryAll();
   }
 
-  /// 查询所有
-  @action
-  queryAll() async {
-    isLoading = true;
-    final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(tablename);
-    for (var m in maps) {
-      String animeId = m['animeId'];
-      dom.Document document =
-          await $document('http://www.nicotv.me/video/detail/$animeId.html');
-      dom.Element mediaBody = $(document, '.media-body');
-      collections.add(
-        LiData.fromJson(
-          jsonEncode(
-            {
-              "id": animeId,
-              "title": $(mediaBody, 'h2 a').innerHtml.trim(),
-              "img": $(document, '.media-left img').attributes['data-original'],
-              "current": $(mediaBody, 'h2 small').innerHtml.trim(),
-            },
-          ),
-        ),
-      );
-    }
-    // print('collections length: ${collections.length}');
-    isLoading = false;
+  /// 检查是否在收藏夹内
+  Future<bool> exist(String animeId) {
+    return _collectionDao.exist(animeId);
   }
 
-  /// 添加一个收藏
-  @action
-  Future<void> addOne(LiData c) async {
-    final Database db = await database;
-    db.insert(
-      tablename,
-      {
-        'id': null,
-        'animeId': c.id,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    collections.add(c);
+  /// 添加收藏
+  Future<int> insertCollection(Insertable<Collection> collection) {
+    return _collectionDao.insertCollection(collection);
   }
 
-  /// 移除一个收藏
-  @action
-  Future<void> remove(LiData c) async {
-    final db = await database;
-    await db.delete(
-      tablename,
-      where: "animeId = ?",
-      whereArgs: [c.id],
-    );
-    collections.removeWhere((x) => x == c);
-  }
-
-  @action
-  bool exist(String animeId) {
-    for (var c in collections) {
-      if (c.id == animeId) return true;
-    }
-    return false;
+  /// 删除收藏
+  Future<int> deleteCollection(String animeId) {
+    return _collectionDao.deleteCollection(animeId);
   }
 }

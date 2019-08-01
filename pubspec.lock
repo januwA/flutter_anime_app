@@ -331,6 +331,27 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.3.3+1"
+  moor:
+    dependency: transitive
+    description:
+      name: moor
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.6.0"
+  moor_flutter:
+    dependency: "direct main"
+    description:
+      name: moor_flutter
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.6.0"
+  moor_generator:
+    dependency: "direct dev"
+    description:
+      name: moor_generator
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.6.0+2"
   package_config:
     dependency: transitive
     description:
@@ -415,6 +436,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.3"
+  recase:
+    dependency: transitive
+    description:
+      name: recase
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.1"
   rxdart:
     dependency: "direct main"
     description:
@@ -463,12 +491,19 @@ packages:
     source: hosted
     version: "1.5.5"
   sqflite:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: sqflite
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.6+1"
+  sqlparser:
+    dependency: transitive
+    description:
+      name: sqlparser
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.2"
   stack_trace:
     dependency: transitive
     description:

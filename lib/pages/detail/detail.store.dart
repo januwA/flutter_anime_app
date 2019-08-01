@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/db/collections.moor.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
-import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
+import 'package:moor/moor.dart' as moor;
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_box/video.store.dart';
@@ -23,7 +24,6 @@ abstract class _DetailStore with Store {
   @action
   Future<void> initState(ctx, animeId) async {
     this.animeId = animeId;
-    isCollections = mainStore.collectionsService.exist(animeId);
     var data = await _getDetailData(animeId);
     detail = data;
     loading = false;
@@ -31,7 +31,9 @@ abstract class _DetailStore with Store {
       length: detail.tabs.length,
       vsync: ctx,
     );
+    isCollections = await mainStore.collectionsService.exist(animeId);
   }
+
   @observable
   String animeId;
 
@@ -230,19 +232,14 @@ abstract class _DetailStore with Store {
   /// 收藏 or 取消收藏
   @action
   Future<void> collections(BuildContext context) async {
-    var saveData = LiData(
-      (b) => b
-        ..id = animeId
-        ..current = detail.curentText
-        ..img = detail.cover
-        ..title = detail.videoName,
-    );
     if (!isCollections) {
-      await mainStore.collectionsService.addOne(saveData);
+      mainStore.collectionsService.insertCollection(CollectionsCompanion(
+        animeId: moor.Value(animeId),
+      ));
       isCollections = true;
       _showSnackbar(context, '已收藏!');
     } else {
-      await mainStore.collectionsService.remove(saveData);
+      mainStore.collectionsService.deleteCollection(animeId);
       isCollections = false;
       _showSnackbar(context, '已取消收藏!');
     }

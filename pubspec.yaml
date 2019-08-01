@@ -1,9 +1,9 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.4.1
+version: 0.4.2
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: '>=2.2.2 <3.0.0'
 
 dependencies:
   flutter:
@@ -29,7 +29,7 @@ dependencies:
   path:
   install_plugin: ^2.0.1
   device_info: ^0.4.0+2
-  sqflite:
+  moor_flutter:
 
 dev_dependencies:
   flutter_test:
@@ -37,12 +37,12 @@ dev_dependencies:
   build_runner:
   built_value_generator:
   mobx_codegen:
+  moor_generator:
 
 flutter:
   uses-material-design: true
   assets:
-   - assets/images/drawer_header.jpg
-
+    - assets/images/drawer_header.jpg
   # fonts:
   #   - family: Schyler
   #     fonts:
