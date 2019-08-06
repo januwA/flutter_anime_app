@@ -15,6 +15,8 @@ import 'package:video_box/video.store.dart';
 import 'package:video_box/video_box.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
+import 'package:video_player/video_player.dart';
+import 'package:flushbar/flushbar.dart';
 
 part 'detail.store.g.dart';
 
@@ -94,10 +96,10 @@ abstract class _DetailStore with Store {
         return;
       }
       if (haokanBaidu) {
-        var source = VideoDataSource.network(vSrc);
+        var source = VideoPlayerController.network(vSrc);
         if (video == null) {
           video = Video(
-            store: VideoStore(videoDataSource: source, autoplay: true),
+            store: VideoStore(source: source, autoplay: true),
           );
         } else {
           await video.store.setSource(source);
@@ -237,7 +239,7 @@ abstract class _DetailStore with Store {
         animeId: moor.Value(animeId),
       ));
       isCollections = true;
-      _showSnackbar(context, '已收藏!');
+      _showSnackbar(context, '收藏成功 >_<');
     } else {
       mainStore.collectionsService.deleteCollection(animeId);
       isCollections = false;
@@ -246,16 +248,20 @@ abstract class _DetailStore with Store {
   }
 
   void _showSnackbar(BuildContext context, String content) {
-    ScaffoldFeatureController<SnackBar, SnackBarClosedReason> ctrl;
-    ctrl = Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(content),
-      action: SnackBarAction(
-        label: '确定',
-        onPressed: () {
-          ctrl.close();
-        },
+    Flushbar<Object> flush;
+    flush = Flushbar(
+      // title: "提示",
+      message: content,
+      duration: Duration(seconds: 3),
+      backgroundColor: Theme.of(context).primaryColor,
+      mainButton: FlatButton(
+        onPressed: () => flush.dismiss(true),
+        child: Text("OK", style: TextStyle(color: Colors.amber)),
       ),
-    ));
+      margin: EdgeInsets.all(8),
+      borderRadius: 8,
+      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+    )..show(context);
   }
 
   @override
