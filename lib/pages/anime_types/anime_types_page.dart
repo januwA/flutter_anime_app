@@ -42,87 +42,90 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: CustomScrollView(
-          controller: store.strollCtrl,
-          key: PageStorageKey('anime_types'),
-          slivers: <Widget>[
-            SliverSafeArea(
-              sliver: SliverAppBar(
-                automaticallyImplyLeading: false,
-                expandedHeight: 230,
-                floating: true,
-                backgroundColor: Colors.grey[100],
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _createTab(
-                        store.tabTypesCtrl,
-                        store.types,
-                        onTap: debounce(store.setTypesCurrent),
-                      ),
-                      SizedBox(height: 10),
-                      _createTab(
-                        store.tabAreasCtrl,
-                        store.areas,
-                        onTap: debounce(store.setAreasCurrent),
-                      ),
-                      SizedBox(height: 10),
-                      _createTab(
-                        store.tabErasCtrl,
-                        store.eras,
-                        onTap: debounce(store.setErasCurrent),
-                      ),
-                      SizedBox(height: 10),
-                      _createTab(
-                        store.tabClassifyCtrl,
-                        store.classify.map((c) => c.text).toList(),
-                        onTap: debounce(store.setClassifyCurrent),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Observer(
-              builder: (_) => store.loading && store.animeData.isEmpty
-                  ? SliverToBoxAdapter()
-                  : store.animeData.isEmpty
-                      ? SliverToBoxAdapter(
-                          child: Center(
-                              child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('Not Data!'),
-                          )),
-                        )
-                      : SliverGrid.count(
-                          crossAxisCount: 2, // 每行显示几列
-                          mainAxisSpacing: 2.0, // 每行的上下间距
-                          crossAxisSpacing: 2.0, // 每列的间距
-                          childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
-                          children: <Widget>[
-                            for (var anime in store.animeData)
-                              AnimeCard(
-                                key: ObjectKey(anime),
-                                animeData: anime,
-                              )
-                          ],
+        body: NotificationListener(
+          onNotification: store.onNotification,
+          child: CustomScrollView(
+            controller: store.scrollCtrl,
+            key: PageStorageKey('anime_types'),
+            slivers: <Widget>[
+              SliverSafeArea(
+                sliver: SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  expandedHeight: 230,
+                  floating: true,
+                  backgroundColor: Colors.grey[100],
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _createTab(
+                          store.tabTypesCtrl,
+                          store.types,
+                          onTap: debounce(store.setTypesCurrent),
                         ),
-            ),
-            Observer(
-              builder: (_) => SliverToBoxAdapter(
-                child: Opacity(
-                  opacity: store.loading ? 1 : 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: CircularProgressIndicator(),
+                        SizedBox(height: 10),
+                        _createTab(
+                          store.tabAreasCtrl,
+                          store.areas,
+                          onTap: debounce(store.setAreasCurrent),
+                        ),
+                        SizedBox(height: 10),
+                        _createTab(
+                          store.tabErasCtrl,
+                          store.eras,
+                          onTap: debounce(store.setErasCurrent),
+                        ),
+                        SizedBox(height: 10),
+                        _createTab(
+                          store.tabClassifyCtrl,
+                          store.classify.map((c) => c.text).toList(),
+                          onTap: debounce(store.setClassifyCurrent),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Observer(
+                builder: (_) => store.loading && store.animeData.isEmpty
+                    ? SliverToBoxAdapter()
+                    : store.animeData.isEmpty
+                        ? SliverToBoxAdapter(
+                            child: Center(
+                                child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Not Data!'),
+                            )),
+                          )
+                        : SliverGrid.count(
+                            crossAxisCount: 2, // 每行显示几列
+                            mainAxisSpacing: 2.0, // 每行的上下间距
+                            crossAxisSpacing: 2.0, // 每列的间距
+                            childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
+                            children: <Widget>[
+                              for (var anime in store.animeData)
+                                AnimeCard(
+                                  key: ObjectKey(anime),
+                                  animeData: anime,
+                                )
+                            ],
+                          ),
+              ),
+              Observer(
+                builder: (_) => SliverToBoxAdapter(
+                  child: Opacity(
+                    opacity: store.loading ? 1 : 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

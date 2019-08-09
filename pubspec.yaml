@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.4.3
+version: 0.4.4
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
@@ -16,21 +16,18 @@ dependencies:
   built_value:
   built_collection:
   url_launcher: ^5.0.3
-  mobx: ^0.3.5
-  flutter_mobx: ^0.3.0+1
-  provider: ^3.0.0+1
+  mobx:
+  flutter_mobx:
+  provider:
   video_box: ^0.3.0
   html: ^0.14.0+1
   webview_flutter:
   package_info: ^0.4.0+5
-  flutter_downloader: ^1.1.7
   path_provider: ^1.1.0
-  permission_handler:
   path:
-  install_plugin: ^2.0.1
-  device_info: ^0.4.0+2
   moor_flutter:
   flushbar:
+  flutter_github_releases_service: ^0.1.0
 
 dev_dependencies:
   flutter_test:

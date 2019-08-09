@@ -1,5 +1,6 @@
+import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
+import 'package:flutter_video_app/shared/globals.dart';
 import 'package:flutter_video_app/store/collections/collections.service.dart';
-import 'package:flutter_video_app/store/version/version.service.dart';
 import 'package:mobx/mobx.dart';
 part 'main.store.g.dart';
 
@@ -7,10 +8,13 @@ class MainStore = _MainStore with _$MainStore;
 
 abstract class _MainStore with Store {
   /// 获取新版本 APK
-  final versionService = VersionService();
+  final GithubReleasesService versionService = GithubReleasesService(
+    repo: REPO,
+    owner: OWNER,
+  );
 
   /// 收藏service
-  final collectionsService = CollectionsService();
+  final CollectionsService collectionsService = CollectionsService();
 }
 
 MainStore mainStore = MainStore();

@@ -40,13 +40,7 @@ abstract class _AnimeTypesStore with Store {
       initialIndex: classifyCurrent,
     );
 
-    /// 监听页面滚动
-    strollCtrl = ScrollController()
-      ..addListener(() {
-        if (strollCtrl.position.pixels == strollCtrl.position.maxScrollExtent) {
-          _addNextPageData();
-        }
-      });
+    scrollCtrl = ScrollController();
   }
 
   http.Client _client;
@@ -55,7 +49,7 @@ abstract class _AnimeTypesStore with Store {
   TabController tabAreasCtrl;
   TabController tabErasCtrl;
   TabController tabClassifyCtrl;
-  ScrollController strollCtrl;
+  ScrollController scrollCtrl;
 
   @observable
   bool loading = true;
@@ -244,6 +238,15 @@ abstract class _AnimeTypesStore with Store {
     } catch (_) {}
   }
 
+  bool onNotification(Notification notification) {
+    if (notification is ScrollEndNotification &&
+        scrollCtrl.position.extentAfter == 0) {
+      _addNextPageData();
+      return true;
+    }
+    return false;
+  }
+
   @override
   void dispose() {
     _client?.close();
@@ -251,7 +254,7 @@ abstract class _AnimeTypesStore with Store {
     tabAreasCtrl?.dispose();
     tabClassifyCtrl?.dispose();
     tabErasCtrl?.dispose();
-    strollCtrl?.dispose();
+    scrollCtrl?.dispose();
     super.dispose();
   }
 }
