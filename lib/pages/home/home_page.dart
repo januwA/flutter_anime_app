@@ -136,7 +136,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
             future: grs.isNeedUpdate,
             builder: (context, AsyncSnapshot<bool> snap) {
               if (snap.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return ListTile(
+                  leading: Icon(Icons.autorenew),
+                  title: Text('正在检查...'),
+                );
               }
               if (snap.connectionState == ConnectionState.done) {
                 if (snap.hasError) {
@@ -191,8 +194,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
     );
   }
 
-  Future<void> _downloadApk(bool isNeedUpdate) {
-    return isNeedUpdate
+  Future<void> _downloadApk(bool isNeedUpdate) async {
+    return isNeedUpdate && await _showDialogView()
         ? grs.downloadApk(
             downloadUrl: grs.latestSync.assets.first.browserDownloadUrl,
             apkName: grs.latestSync.assets.first.name,
@@ -200,7 +203,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         : null;
   }
 
-  Future<bool> showDialogView(BuildContext context) async {
+  Future<bool> _showDialogView() async {
     String localVersion = await grs.localVersion;
     String latestVersion = await grs.latestVersion;
     return showDialog<bool>(
