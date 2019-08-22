@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_video_app/db/collections.moor.dart';
+import 'package:flutter_video_app/db/collections/collections.moor.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
@@ -10,9 +10,6 @@ import 'package:moor/moor.dart';
 part 'collections.service.g.dart';
 
 class CollectionsService = _CollectionsService with _$CollectionsService;
-
-/// 收藏
-final String tablename = 'collections';
 
 abstract class _CollectionsService with Store {
   CollectionDatabase _db = CollectionDatabase();

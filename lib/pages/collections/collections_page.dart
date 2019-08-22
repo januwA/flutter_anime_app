@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/db/collections.moor.dart';
+import 'package:flutter_video_app/db/collections/collections.moor.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
@@ -21,7 +21,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
             title: Text('我的收藏'),
             floating: true,
           ),
-          StreamBuilder(
+          StreamBuilder<List<Collection>>(
             stream: mainStore.collectionsService.collections$,
             builder: (context, AsyncSnapshot<List<Collection>> snap) {
               var status = snap.connectionState;
