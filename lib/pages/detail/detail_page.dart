@@ -1,14 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/pages/detail/detail.store.dart';
+import 'package:flutter_video_app/pages/detail/menu_options.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-enum MenuOptions {
-  openInBrowser,
-  collections,
-}
 
 class DetailPage extends StatefulWidget {
   DetailPage({
@@ -56,40 +52,45 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
               Observer(
                 key: ValueKey('video'),
                 builder: (_) {
-                  if (store.haokanBaidu) {
-                    return Hero(
-                      tag: store.detail.videoName,
-                      child: store.video == null
-                          ? Image.network(
-                              store.detail.cover,
-                              fit: BoxFit.fill,
-                            )
-                          : store.video.videoBox,
-                    );
-                  } else {
-                    return Container(
-                      height: 210,
-                      child: StreamBuilder<String>(
-                        stream: store.iframeVideo,
-                        initialData: '',
-                        builder: (context, snap) {
-                          if (snap.connectionState == ConnectionState.active &&
-                              snap.data.isNotEmpty) {
-                            return Container(
-                              child: WebView(
-                                  initialUrl: snap.data,
-                                  javascriptMode: JavascriptMode.unrestricted,
-                                  onWebViewCreated: (WebViewController wc) {
-                                    wc.loadUrl(snap.data);
-                                  }),
-                            );
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        },
-                      ),
-                    );
-                  }
+                  return AnimatedSwitcher(
+                    duration: Duration(milliseconds: 400),
+                    child: store.haokanBaidu && mounted
+                        ? Hero(
+                            tag: store.detail.videoName,
+                            child: store.video == null
+                                ? Image.network(
+                                    store.detail.cover,
+                                    fit: BoxFit.fill,
+                                  )
+                                : store.video.videoBox,
+                          )
+                        : Container(
+                            height: 210,
+                            child: StreamBuilder<String>(
+                              stream: store.iframeVideo,
+                              initialData: '',
+                              builder: (context, snap) {
+                                if (snap.connectionState ==
+                                        ConnectionState.active &&
+                                    snap.data.isNotEmpty) {
+                                  return Container(
+                                    child: WebView(
+                                        initialUrl: snap.data,
+                                        javascriptMode:
+                                            JavascriptMode.unrestricted,
+                                        onWebViewCreated:
+                                            (WebViewController wc) {
+                                          wc.loadUrl(snap.data);
+                                        }),
+                                  );
+                                } else {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+                              },
+                            ),
+                          ),
+                  );
                 },
               ),
               _detailInfo(),
@@ -133,7 +134,7 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                               key: ValueKey(t.id),
                               padding: EdgeInsets.symmetric(horizontal: 4.0),
                               child: RaisedButton(
-                                color: t == store.currentPlayVideo
+                                color: t.text == store.currentPlayVideo?.text
                                     ? Theme.of(context).primaryColor
                                     : Colors.grey[300],
                                 onPressed: () => store.tabClick(t, context),

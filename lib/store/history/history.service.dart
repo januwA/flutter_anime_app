@@ -1,5 +1,6 @@
-import 'package:flutter_video_app/db/history/history.dart';
+import 'package:flutter_video_app/db/app_database.dart';
 import 'package:mobx/mobx.dart';
+import 'package:moor_flutter/moor_flutter.dart';
 
 part 'history.service.g.dart';
 
@@ -7,11 +8,11 @@ part 'history.service.g.dart';
 class HistoryService = _HistoryService with _$HistoryService;
 
 abstract class _HistoryService with Store {
-  final HistoryDatabase _db = HistoryDatabase();
+  final AppDatabase _db = AppDatabase();
   HistoryDao get _historyDao => _db.historyDao;
 
   /// 创建一条历史记录
-  create(History history) {
+  create(Insertable<History> history) {
     _historyDao.insertHistory(history);
   }
 
@@ -22,7 +23,7 @@ abstract class _HistoryService with Store {
 
   /// 删除历史记录
   delete(History history) {
-    _historyDao.updateHistory(history);
+    _historyDao.deleteHistory(history);
   }
 
   /// 检测该anime是否存在

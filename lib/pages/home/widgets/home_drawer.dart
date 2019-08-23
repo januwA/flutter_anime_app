@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/pages/collections/collections_page.dart';
+import 'package:flutter_video_app/pages/history/history_page.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
 import 'package:package_info/package_info.dart';
@@ -36,7 +38,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
             onTap: () {
               // show collections
               Navigator.of(context).pop();
-              Navigator.of(context).pushNamed('/collection');
+              Navigator.of(context).pushNamed(CollectionsPage.routeName);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.history),
+            title: Text('历史记录'),
+            onTap: () {
+              // show history
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(HistoryPage.routeName);
             },
           ),
           FutureBuilder(

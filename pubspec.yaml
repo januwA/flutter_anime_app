@@ -27,7 +27,8 @@ dependencies:
   path:
   moor_flutter:
   flushbar:
-  flutter_github_releases_service: ^0.1.0
+  flutter_github_releases_service:
+  flutter_slidable:
 
 dev_dependencies:
   flutter_test:

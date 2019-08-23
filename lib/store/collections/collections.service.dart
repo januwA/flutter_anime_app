@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_video_app/db/collections/collections.moor.dart';
+import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
@@ -12,7 +12,7 @@ part 'collections.service.g.dart';
 class CollectionsService = _CollectionsService with _$CollectionsService;
 
 abstract class _CollectionsService with Store {
-  CollectionDatabase _db = CollectionDatabase();
+  AppDatabase _db = AppDatabase();
   CollectionDao get _collectionDao => _db.collectionDao;
 
   /// 收藏夹流

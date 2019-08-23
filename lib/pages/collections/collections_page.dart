@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/db/collections/collections.moor.dart';
+import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
@@ -7,6 +7,7 @@ import 'package:flutter_video_app/store/main/main.store.dart';
 /// 我的收藏页面
 
 class CollectionsPage extends StatefulWidget {
+  static const routeName = '/CollectionsPage';
   @override
   _CollectionsPageState createState() => _CollectionsPageState();
 }

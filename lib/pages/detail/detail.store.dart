@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/db/collections/collections.moor.dart';
+import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
@@ -34,6 +34,25 @@ abstract class _DetailStore with Store {
       vsync: ctx,
     );
     isCollections = await mainStore.collectionsService.exist(animeId);
+
+    if (await mainStore.historyService.exist(animeId)) {
+      history = await mainStore.historyService.findOne(animeId);
+      currentPlayVideo = TabsValueDto((b) => b
+        ..text = history.playCurrent
+        ..id = ''
+        ..boxUrl = '');
+    } else {
+      var newHistory = HistorysCompanion(
+        animeId: moor.Value(animeId),
+        cover: moor.Value(detail.cover),
+        title: moor.Value(detail.videoName),
+        time: moor.Value(DateTime.now()),
+        playCurrent: moor.Value(''),
+        position: moor.Value(0),
+        duration: moor.Value(0),
+      );
+      mainStore.historyService.create(newHistory);
+    }
   }
 
   @observable
@@ -59,6 +78,8 @@ abstract class _DetailStore with Store {
 
   @observable
   bool isCollections = false;
+
+  History history;
 
   /// iframe 播放时的流
   Stream<String> get iframeVideo => _iframeVideoSubject.stream.map(
@@ -99,7 +120,12 @@ abstract class _DetailStore with Store {
         var source = VideoPlayerController.network(vSrc);
         if (video == null) {
           video = Video(
-            store: VideoStore(source: source, autoplay: true),
+            store: VideoStore(
+              source: source,
+              autoplay: true,
+              initPosition:
+                  history != null ? Duration(seconds: history.position) : null,
+            ),
           );
         } else {
           await video.store.setSource(source);
@@ -109,6 +135,18 @@ abstract class _DetailStore with Store {
         _iframeVideoSubject.add(vSrc);
         video?.store?.pause();
       }
+      _updateHistory();
+    }
+  }
+
+  void _updateHistory() {
+    if (history != null && video != null) {
+      mainStore.historyService.update(history.copyWith(
+        time: DateTime.now(),
+        playCurrent: currentPlayVideo?.text ?? '',
+        position: video.store.position?.inSeconds ?? 0,
+        duration: video.store.duration?.inSeconds ?? 0,
+      ));
     }
   }
 
@@ -250,7 +288,6 @@ abstract class _DetailStore with Store {
   void _showSnackbar(BuildContext context, String content) {
     Flushbar<Object> flush;
     flush = Flushbar(
-      // title: "提示",
       message: content,
       duration: Duration(seconds: 3),
       backgroundColor: Theme.of(context).primaryColor,
@@ -269,6 +306,7 @@ abstract class _DetailStore with Store {
     video?.dispose();
     tabController?.dispose();
     _iframeVideoSubject?.close();
+    _updateHistory();
     super.dispose();
   }
 }
