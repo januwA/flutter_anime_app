@@ -12,8 +12,8 @@ abstract class _HistoryService with Store {
   HistoryDao get _historyDao => _db.historyDao;
 
   /// 创建一条历史记录
-  create(Insertable<History> history) {
-    _historyDao.insertHistory(history);
+  Future<History> create(Insertable<History> history) async {
+    return await _historyDao.createHistory(history);
   }
 
   /// 更新一条历史记录
@@ -32,10 +32,10 @@ abstract class _HistoryService with Store {
   }
 
   /// 所有历史记录列表
-  Stream<List<History>> get historys$ => _historyDao.findAll();
+  Stream<List<History>> get historys$ => _historyDao.findAll$();
 
   /// 获取指定anime的历史记录
-  Future<History> findOne(String animeId) async {
-    return await _historyDao.findOne(animeId);
+  Future<History> findOneByAnimeId(String animeId) async {
+    return await _historyDao.findOneByAnimeId(animeId);
   }
 }

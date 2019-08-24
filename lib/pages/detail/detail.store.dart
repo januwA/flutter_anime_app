@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
-import 'package:flutter_video_app/shared/widgets/alert_http_get_error.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
@@ -36,11 +35,7 @@ abstract class _DetailStore with Store {
     isCollections = await mainStore.collectionsService.exist(animeId);
 
     if (await mainStore.historyService.exist(animeId)) {
-      history = await mainStore.historyService.findOne(animeId);
-      currentPlayVideo = TabsValueDto((b) => b
-        ..text = history.playCurrent
-        ..id = ''
-        ..boxUrl = '');
+      history = await mainStore.historyService.findOneByAnimeId(animeId);
     } else {
       var newHistory = HistorysCompanion(
         animeId: moor.Value(animeId),
@@ -48,11 +43,21 @@ abstract class _DetailStore with Store {
         title: moor.Value(detail.videoName),
         time: moor.Value(DateTime.now()),
         playCurrent: moor.Value(''),
+        playCurrentId: moor.Value('0'),
+        playCurrentBoxUrl: moor.Value(''),
         position: moor.Value(0),
         duration: moor.Value(0),
       );
-      mainStore.historyService.create(newHistory);
+      history = await mainStore.historyService.create(newHistory);
     }
+    currentPlayVideo = TabsValueDto(
+      (b) => b
+        ..text = history.playCurrent
+        ..id = history.playCurrentId
+        ..boxUrl = history.playCurrentBoxUrl,
+    );
+
+    if (history.playCurrent.isNotEmpty) tabClick(currentPlayVideo, ctx);
   }
 
   @observable
@@ -98,22 +103,13 @@ abstract class _DetailStore with Store {
       if (await canLaunch(boxUrl)) {
         await launch(boxUrl);
       } else {
-        alertHttpGetError(
-          context: context,
-          title: '提示',
-          text: '无法启动$boxUrl',
-          okText: '确定',
-        );
+        _showSnackbar(context, '无法启动$boxUrl');
       }
     } else {
       // 视频资源,准备切换播放点击的视频
       String vSrc = await _idGetSrc(t.id);
       if (vSrc == null || vSrc.isEmpty) {
-        alertHttpGetError(
-          context: context,
-          text: '获取播放地址错误',
-          okText: '确定',
-        );
+        _showSnackbar(context, '获取播放地址错误');
         return;
       }
       if (haokanBaidu) {
@@ -140,14 +136,14 @@ abstract class _DetailStore with Store {
   }
 
   void _updateHistory() {
-    if (history != null && video != null) {
-      mainStore.historyService.update(history.copyWith(
-        time: DateTime.now(),
-        playCurrent: currentPlayVideo?.text ?? '',
-        position: video.store.position?.inSeconds ?? 0,
-        duration: video.store.duration?.inSeconds ?? 0,
-      ));
-    }
+    mainStore.historyService.update(history.copyWith(
+      time: DateTime.now(),
+      playCurrent: currentPlayVideo?.text ?? '',
+      playCurrentId: currentPlayVideo?.id,
+      playCurrentBoxUrl: currentPlayVideo?.boxUrl,
+      position: video?.store?.position?.inSeconds ?? 0,
+      duration: video?.store?.duration?.inSeconds ?? 0,
+    ));
   }
 
   /// 获取 anime 详情数据
@@ -303,10 +299,10 @@ abstract class _DetailStore with Store {
 
   @override
   void dispose() {
+    _updateHistory();
     video?.dispose();
     tabController?.dispose();
     _iframeVideoSubject?.close();
-    _updateHistory();
     super.dispose();
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
-import 'package:flutter_video_app/shared/widgets/one_line_text.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -39,6 +38,9 @@ class _HistoryPageState extends State<HistoryPage> {
                 return Center(child: Text('${snap.error}'));
               }
               List<History> historys = snap.data;
+              if (historys.isEmpty) {
+                return Center(child: Text('Not Data!'));
+              }
               return ListView.builder(
                 itemCount: historys.length,
                 itemBuilder: (content, int index) {
@@ -47,24 +49,46 @@ class _HistoryPageState extends State<HistoryPage> {
                     key: ValueKey(h.id),
                     actionPane: SlidableDrawerActionPane(),
                     actionExtentRatio: 0.2,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: ListTile(
-                        leading: AspectRatio(
-                          aspectRatio: 6 / 4,
-                          child: Image.network(
-                            h.cover,
-                            fit: BoxFit.cover,
+                    child: Card(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.horizontal(
+                              left: Radius.circular(4.0),
+                            ),
+                            child: Image.network(
+                              h.cover,
+                              fit: BoxFit.cover,
+                              width: 120,
+                              height: 90,
+                            ),
                           ),
-                        ),
-                        title: TwoLineText(h.title),
-                        subtitle: Text(
-                            _createTimeString(h.time) + ' ${h.playCurrent.isEmpty ? "第0集" : h.playCurrent}'),
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  DetailPage(animeId: h.animeId)));
-                        },
+                          SizedBox(width: 10),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                h.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.subtitle,
+                              ),
+                              Text(
+                                _createTimeString(h.time) +
+                                    ' ${h.playCurrent.isEmpty ? "第0集" : h.playCurrent}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .overline
+                                    .copyWith(
+                                      color: Colors.grey[600],
+                                    ),
+                              )
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     secondaryActions: <Widget>[
