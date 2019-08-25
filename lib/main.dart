@@ -3,6 +3,7 @@ import 'package:flutter_video_app/pages/collections/collections_page.dart';
 import 'package:flutter_video_app/pages/dash/dash_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_video_app/pages/history/history_page.dart';
+import 'package:flutter_video_app/theme/light_theme.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       ],
       debugShowCheckedModeBanner: false,
       title: "Anime",
-      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      theme: animeAppLightTheme,
       home: DashPage(),
       routes: <String, WidgetBuilder>{
         CollectionsPage.routeName: (BuildContext context) =>

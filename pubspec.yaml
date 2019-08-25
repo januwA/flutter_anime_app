@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.5.3
+version: 0.5.4
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -19,7 +19,7 @@ dependencies:
   mobx:
   flutter_mobx:
   provider:
-  video_box:
+  video_box: ^0.3.1
   html:
   webview_flutter:
   package_info:
