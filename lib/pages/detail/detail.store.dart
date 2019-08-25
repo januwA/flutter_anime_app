@@ -219,43 +219,52 @@ abstract class _DetailStore with Store {
     }));
   }
 
+  Map<String, dynamic> _parseResponseToObject(String r) {
+    String jsonData = r
+        .replaceFirst('var cms_player =', '')
+        .replaceAll(RegExp(r";document\.write.*"), '');
+    Map<String, dynamic> jsonMap = jsonDecode(jsonData);
+    return jsonMap;
+  }
+
+  String _findScript(List<dom.Element> scripts) {
+    for (var s in scripts) {
+      String src = s.attributes['src'];
+      if (src != null && src.contains('player.php')) {
+        return src;
+      }
+    }
+    throw '没有找到指定的script标签，尝试检查API';
+  }
+
   /// 先获取所有的script的src
   /// 找到合适的src发起请求，处理返回的数据
   @action
   Future<String> _idGetSrc(String id) async {
+    String result;
     String url = 'http://www.nicotv.me/video/play/$id.html';
+
     dom.Document document = await $document(url);
-    List<dom.Element> ss = $$(document, 'script');
-    String scriptSrc;
-    for (var s in ss) {
-      String src = s.attributes['src'];
-      if (src != null && src.contains('player.php')) {
-        scriptSrc = src;
-        continue;
-      }
-    }
+    String scriptSrc = _findScript($$(document, 'script'));
 
     var r2 = await http.get('http://www.nicotv.me$scriptSrc');
-    String jsonData = r2.body
-        .replaceFirst('var cms_player =', '')
-        .replaceAll(RegExp(r";document\.write.*"), '');
+    Map<String, dynamic> jsonMap = _parseResponseToObject(r2.body);
 
-    Map<String, dynamic> jsonMap = jsonDecode(jsonData);
-    var name = jsonMap['name'].trim();
     String jsonUrl = jsonMap['url'];
-    bool isMp4 = RegExp(r'\.mp4$').hasMatch(jsonUrl);
-    if (name == 'haokan_baidu' && isMp4) {
+    jsonUrl = Uri.decodeFull(jsonUrl);
+
+    var name = jsonMap['name'].trim();
+    if (name == 'haokan_baidu') {
       haokanBaidu = true;
-      // xx.mp4
-      return Uri.parse(jsonUrl).queryParameters['url'];
-    } else if (name == '360biaofan' || name == 'haokan_baidu' && !isMp4) {
-      haokanBaidu = false;
-      String src =
-          """${jsonMap['jiexi']}$jsonUrl&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
-      return src;
-    } else {
-      return '';
+      result = Uri.parse(jsonUrl).queryParameters['url'];
     }
+
+    if (name == '360biaofan') {
+      haokanBaidu = false;
+      result =
+          """${jsonMap['jiexi']}$jsonUrl&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+    }
+    return result;
   }
 
   /// webview 打开
