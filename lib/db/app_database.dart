@@ -53,7 +53,7 @@ class CollectionDao extends DatabaseAccessor<AppDatabase>
     var data = await (select(collections)
           ..where((t) => t.animeId.equals(animeId)))
         .getSingle();
-    return data == null;
+    return data != null;
   }
 
   Stream<List<Collection>> watchAllCollections() => select(collections).watch();

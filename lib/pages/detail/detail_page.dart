@@ -68,7 +68,6 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
                             height: 210,
                             child: StreamBuilder<String>(
                               stream: store.iframeVideo,
-                              initialData: '',
                               builder: (context, snap) {
                                 if (snap.connectionState ==
                                         ConnectionState.active &&
