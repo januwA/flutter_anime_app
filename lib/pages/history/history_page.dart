@@ -12,6 +12,10 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  final Color _greyColor = Colors.grey[600];
+  TextStyle get _textRichStyle =>
+      Theme.of(context).textTheme.caption.copyWith(color: _greyColor);
+
   String _createTimeString(DateTime t) {
     var now = DateTime.now();
     if (t.year == now.year && t.month == now.month && t.day == now.day) {
@@ -23,6 +27,10 @@ class _HistoryPageState extends State<HistoryPage> {
 
       return '${t.year}-${t.month}-$day $hour:$minute';
     }
+  }
+
+  String _durationString(int seconds) {
+    return durationString(Duration(seconds: seconds));
   }
 
   @override
@@ -50,123 +58,105 @@ class _HistoryPageState extends State<HistoryPage> {
                 itemCount: historys.length,
                 itemBuilder: (content, int index) {
                   var h = historys[index];
-                  return Container(
-                    margin: EdgeInsets.all(6.0),
-                    child: Slidable(
-                      key: ValueKey(h.id),
-                      actionPane: SlidableDrawerActionPane(),
-                      actionExtentRatio: 0.2,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                DetailPage(animeId: h.animeId),
-                          ));
-                        },
+                  return Slidable(
+                    key: ValueKey(h.id),
+                    actionPane: SlidableDrawerActionPane(),
+                    actionExtentRatio: 0.2,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => DetailPage(animeId: h.animeId),
+                        ));
+                      },
+                      child: Card(
                         child: Container(
-                          height: 100,
-                          child: Material(
-                            elevation: 4.0,
-                            borderRadius: BorderRadius.circular(4.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                ClipRRect(
-                                  borderRadius: BorderRadius.horizontal(
-                                    left: Radius.circular(4.0),
-                                  ),
-                                  child: AspectRatio(
-                                    aspectRatio: 4 / 3.2,
-                                    child: Image.network(
-                                      h.cover,
-                                      fit: BoxFit.cover,
-                                    ),
+                          height: 110,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              /// left image
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4.0),
+                                child: AspectRatio(
+                                  aspectRatio: 4 / 3.2,
+                                  child: Image.network(
+                                    h.cover,
+                                    fit: BoxFit.fitWidth,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              h.title,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .body1,
+                              ),
+
+                              /// right
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4.0, horizontal: 8.0),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            h.title,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body1,
+                                          ),
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                    text:
+                                                        '${h.playCurrent.isEmpty ? "第0集" : h.playCurrent}'),
+                                                TextSpan(text: '  '),
+                                                TextSpan(
+                                                    text: _durationString(
+                                                        h.position)),
+                                                TextSpan(text: ' / '),
+                                                TextSpan(
+                                                    text: _durationString(
+                                                        h.duration))
+                                              ],
                                             ),
-                                            Text.rich(
-                                              TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text:
-                                                          '${h.playCurrent.isEmpty ? "第0集" : h.playCurrent}'),
-                                                  TextSpan(text: '  '),
-                                                  TextSpan(
-                                                      text: durationString(
-                                                          Duration(
-                                                              seconds:
-                                                                  h.position))),
-                                                  TextSpan(text: ' / '),
-                                                  TextSpan(
-                                                      text: durationString(
-                                                          Duration(
-                                                              seconds:
-                                                                  h.duration)))
-                                                ],
-                                              ),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .body2
-                                                  .copyWith(
-                                                    color: Colors.grey[600],
-                                                  ),
-                                            ),
+                                            style: _textRichStyle,
+                                          ),
+                                        ],
+                                      ),
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                                text:
+                                                    _createTimeString(h.time)),
+                                            TextSpan(text: ' '),
                                           ],
                                         ),
-                                        Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                  text: _createTimeString(
-                                                      h.time)),
-                                              TextSpan(text: ' '),
-                                            ],
-                                          ),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .button
-                                              .copyWith(
-                                                color: Colors.grey[600],
-                                              ),
-                                        ),
-                                      ],
-                                    ),
+                                        style: _textRichStyle,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      secondaryActions: <Widget>[
-                        IconSlideAction(
-                          caption: 'delete',
-                          color: Colors.red,
-                          icon: Icons.delete,
-                          onTap: () => mainStore.historyService.delete(h),
-                        ),
-                      ],
                     ),
+                    secondaryActions: <Widget>[
+                      IconSlideAction(
+                        caption: 'delete',
+                        color: Colors.red,
+                        icon: Icons.delete,
+                        onTap: () => mainStore.historyService.delete(h),
+                      ),
+                    ],
                   );
                 },
               );
