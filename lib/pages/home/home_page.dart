@@ -57,7 +57,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           crossAxisCount: 2, // 每行显示几列
                           mainAxisSpacing: 2.0, // 每行的上下间距
                           crossAxisSpacing: 2.0, // 每列的间距
-                          childAspectRatio: 0.6, //每个孩子的横轴与主轴范围的比率
+                          childAspectRatio:
+                              AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
                           children: <Widget>[
                             for (var li in data.liData)
                               AnimeCard(animeData: li),

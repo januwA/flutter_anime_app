@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
@@ -21,6 +23,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
   DetailStore store = DetailStore();
+  final double _appBarHeight = 220.0;
 
   @override
   void initState() {
@@ -34,6 +37,64 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  _imagePlaceholder() {
+    double width = double.infinity;
+    double height = width;
+
+    return Stack(
+      children: <Widget>[
+        Image.network(
+          store.detail.cover,
+          fit: BoxFit.cover,
+          width: width,
+          height: height,
+        ),
+        BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: Container(
+            color: Colors.white.withOpacity(0.1),
+            width: width,
+            height: height,
+          ),
+        ),
+        Center(
+          child: Image.network(
+            store.detail.cover,
+            fit: BoxFit.contain,
+          ),
+        )
+      ],
+    );
+  }
+
+  _webVideo() {
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      color: Colors.black,
+      child: Center(
+        child: StreamBuilder<String>(
+          stream: store.iframeVideo,
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.active &&
+                snap.data.isNotEmpty) {
+              return Center(
+                child: WebView(
+                    initialUrl: snap.data,
+                    javascriptMode: JavascriptMode.unrestricted,
+                    onWebViewCreated: (WebViewController wc) {
+                      wc.loadUrl(snap.data);
+                    }),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Observer(
@@ -44,100 +105,92 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
           );
         }
         return Scaffold(
-          appBar: AppBar(
-            title: Text(store.detail.videoName),
-            actions: _buildActions(),
-          ),
-          body: ListView(
-            children: <Widget>[
-              Observer(
-                key: ValueKey('video'),
-                builder: (_) {
-                  return AnimatedSwitcher(
-                    duration: Duration(milliseconds: 400),
-                    child: store.haokanBaidu && mounted
-                        ? Hero(
-                            tag: store.detail.videoName,
-                            child: store.video == null
-                                ? Image.network(
-                                    store.detail.cover,
-                                    fit: BoxFit.fill,
-                                  )
-                                : store.video.videoBox,
-                          )
-                        : Container(
-                            height: 210,
-                            child: StreamBuilder<String>(
-                              stream: store.iframeVideo,
-                              builder: (context, snap) {
-                                if (snap.connectionState ==
-                                        ConnectionState.active &&
-                                    snap.data.isNotEmpty) {
-                                  return Container(
-                                    child: WebView(
-                                        initialUrl: snap.data,
-                                        javascriptMode:
-                                            JavascriptMode.unrestricted,
-                                        onWebViewCreated:
-                                            (WebViewController wc) {
-                                          wc.loadUrl(snap.data);
-                                        }),
-                                  );
-                                } else {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                }
-                              },
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: _appBarHeight,
+                pinned: true,
+                elevation: 0.0,
+                actions: _buildActions(),
+                flexibleSpace: store.haokanBaidu && mounted
+                    ? store.video == null
+                        ? FlexibleSpaceBar(
+                            background: Stack(
+                              fit: StackFit.expand,
+                              children: <Widget>[
+                                Hero(
+                                  tag: store.detail.cover,
+                                  child: _imagePlaceholder(),
+                                ),
+                                const DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment(0.0, -1.0),
+                                      end: Alignment(0.0, -0.4),
+                                      colors: <Color>[
+                                        Color(0x60000000),
+                                        Color(0x00000000)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
+                          )
+                        : Center(child: store.video.videoBox)
+                    : _webVideo(),
+              ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    _detailInfo(),
+                    Card(
+                      child: ExpansionTile(
+                        title: Text(
+                          store.detail.plot,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Text(store.detail.plot),
                           ),
-                  );
-                },
-              ),
-              _detailInfo(),
-              Card(
-                child: ExpansionTile(
-                  title: Text(
-                    store.detail.plot,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text(store.detail.plot),
-                    ),
-                  ],
-                ),
-              ),
-              Card(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: TabBar(
-                        isScrollable: true,
-                        unselectedLabelColor: Colors.grey,
-                        labelColor: Theme.of(context).primaryColor,
-                        controller: store.tabController,
-                        tabs: store.detail.tabs
-                            .map<Widget>((el) => Tab(child: Text(el)))
-                            .toList(),
+                        ],
                       ),
                     ),
-                    Container(
-                      height: 50,
-                      margin: const EdgeInsets.symmetric(vertical: 12.0),
-                      child: TabBarView(
-                        controller: store.tabController,
+                    Card(
+                      child: Column(
                         children: <Widget>[
-                          for (var tv in store.detail.tabsValues)
-                            ListView(
-                              // keep scroll offset
-                              key: PageStorageKey(tv),
-                              scrollDirection: Axis.horizontal,
+                          Container(
+                            child: TabBar(
+                              isScrollable: true,
+                              unselectedLabelColor: Colors.grey,
+                              labelColor: Theme.of(context).primaryColor,
+                              controller: store.tabController,
+                              tabs: store.detail.tabs
+                                  .map<Widget>((el) => Tab(child: Text(el)))
+                                  .toList(),
+                            ),
+                          ),
+                          Container(
+                            height: 50,
+                            margin: const EdgeInsets.symmetric(vertical: 12.0),
+                            child: TabBarView(
+                              controller: store.tabController,
                               children: <Widget>[
-                                for (var t in tv.tabs)
-                                  _buildRaisedButton(t, context),
+                                for (var tv in store.detail.tabsValues)
+                                  ListView(
+                                    // keep scroll offset
+                                    key: PageStorageKey(tv),
+                                    scrollDirection: Axis.horizontal,
+                                    children: <Widget>[
+                                      for (var t in tv.tabs)
+                                        _buildRaisedButton(t, context),
+                                    ],
+                                  )
                               ],
-                            )
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -175,6 +228,9 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
             )
           : OutlineButton(
               shape: shape,
+              borderSide: BorderSide(
+                color: theme.primaryColor,
+              ),
               textTheme: ButtonTextTheme.primary,
               onPressed: () => store.tabClick(t, context),
               child: Text(t.text, style: style),
@@ -219,66 +275,80 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text.rich(
-              TextSpan(
-                text: '${store.detail.videoName}',
-                style: Theme.of(context).textTheme.title,
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '${store.detail.curentText}',
-                      style: Theme.of(context).textTheme.subtitle),
+        child: DefaultTextStyle(
+          style: TextStyle(
+            inherit: true,
+            fontSize: 14,
+            color: Colors.black87,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Hero(
+                tag: store.detail.videoName,
+                child: Text(
+                  store.detail.videoName,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Text(
+                store.detail.curentText,
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+              Wrap(
+                alignment: WrapAlignment.start,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  Text('主演:'),
+                  for (String name in store.detail.starring)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(name),
+                    ),
                 ],
               ),
-            ),
-            Wrap(
-              children: <Widget>[
-                Text('主演:'),
-                for (String name in store.detail.starring)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text('导演:'),
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(name)),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text('导演:'),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(store.detail.director)),
-              ],
-            ),
-            Wrap(
-              children: <Widget>[
-                Text('类型:'),
-                for (String name in store.detail.types)
+                      child: Text(store.detail.director)),
+                ],
+              ),
+              Wrap(
+                children: <Widget>[
+                  Text('类型:'),
+                  for (String name in store.detail.types)
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        child: Text(name)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text('地区:'),
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(name)),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text('地区:'),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(store.detail.area)),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text('年份:'),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(store.detail.years)),
-              ],
-            ),
-          ],
+                      child: Text(store.detail.area)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text('年份:'),
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(store.detail.years)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

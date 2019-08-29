@@ -15,19 +15,37 @@ dependencies:
   rxdart:
   built_value:
   built_collection:
+
+  # 打开浏览器
   url_launcher:
   mobx:
   flutter_mobx:
   provider:
+
+  # 视频播放器
   video_box: ^0.3.1
+
+  # 解析html字符串
   html:
+
+  # webview
   webview_flutter:
+
+  # 当前包的信息
   package_info:
   path_provider:
   path:
+
+  # sqlite
   moor_flutter:
+
+  # 在通知用户时需要更多自定义的snackbar
   flushbar:
+
+  # apk升级策略
   flutter_github_releases_service:
+
+  # 可滑动列表项
   flutter_slidable:
 
 dev_dependencies:

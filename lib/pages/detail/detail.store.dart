@@ -89,7 +89,7 @@ abstract class _DetailStore with Store {
   /// iframe 播放时的流
   Stream<String> get iframeVideo => _iframeVideoSubject.stream.map(
         (String src) =>
-            """data:text/html,<iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""",
+            """data:text/html,<style>body{margin: 0px}</style><iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""",
       );
   final _iframeVideoSubject = BehaviorSubject<String>();
 
