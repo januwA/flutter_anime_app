@@ -10,8 +10,7 @@ import 'package:mobx/mobx.dart';
 import 'package:moor/moor.dart' as moor;
 import 'package:rxdart/rxdart.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:video_box/video.store.dart';
-import 'package:video_box/video_box.dart';
+import 'package:video_box/video.controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:video_player/video_player.dart';
@@ -70,7 +69,7 @@ abstract class _DetailStore with Store {
   DetailDto detail;
 
   @observable
-  Video video;
+  VideoController vc;
 
   @observable
   TabController tabController;
@@ -114,22 +113,20 @@ abstract class _DetailStore with Store {
       }
       if (haokanBaidu) {
         var source = VideoPlayerController.network(vSrc);
-        if (video == null) {
-          video = Video(
-            store: VideoStore(
-              source: source,
-              autoplay: true,
-              initPosition:
-                  history != null ? Duration(seconds: history.position) : null,
-            ),
+        if (vc == null) {
+          vc = VideoController(
+            source: source,
+            autoplay: true,
+            initPosition:
+                history != null ? Duration(seconds: history.position) : null,
           );
         } else {
-          await video.store.setSource(source);
-          video.store.play();
+          await vc.setSource(source);
+          vc.play();
         }
       } else {
         _iframeVideoSubject.add(vSrc);
-        video?.store?.pause();
+        vc?.pause();
       }
       _updateHistory();
     }
@@ -141,8 +138,8 @@ abstract class _DetailStore with Store {
       playCurrent: currentPlayVideo?.text ?? '',
       playCurrentId: currentPlayVideo?.id,
       playCurrentBoxUrl: currentPlayVideo?.boxUrl,
-      position: video?.store?.position?.inSeconds ?? 0,
-      duration: video?.store?.duration?.inSeconds ?? 0,
+      position: vc?.position?.inSeconds ?? 0,
+      duration: vc?.duration?.inSeconds ?? 0,
     ));
   }
 
@@ -309,7 +306,7 @@ abstract class _DetailStore with Store {
   @override
   void dispose() {
     _updateHistory();
-    video?.dispose();
+    vc?.dispose();
     tabController?.dispose();
     _iframeVideoSubject?.close();
     super.dispose();
