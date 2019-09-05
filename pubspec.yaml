@@ -1,0 +1,73 @@
+name: flutter_video_app
+description: a play anime app
+version: 0.5.6
+
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  http: ^0.12.0+2
+  rxdart: ^0.22.2
+  built_value: ^6.7.1
+  built_collection: ^4.2.2
+
+  # 打开浏览器
+  url_launcher: ^5.1.2
+  mobx: ^0.3.7
+  flutter_mobx: ^0.3.2
+  provider: ^3.1.0
+
+  # 视频播放器
+  video_box: ^0.4.1
+
+  # 解析html字符串
+  html: ^0.14.0+2
+
+  # webview
+  webview_flutter: ^0.3.13
+
+  # 当前包的信息
+  package_info: ^0.4.0+6
+  path_provider: ^1.2.2
+  path: ^1.6.4
+
+  # sqlite
+  moor_flutter: ^1.7.0
+
+  # 在通知用户时需要更多自定义的snackbar
+  flushbar: ^1.9.0
+
+  # apk升级策略
+  flutter_github_releases_service: ^0.2.0
+
+  # 可滑动列表项
+  flutter_slidable: ^0.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner:
+  built_value_generator:
+  mobx_codegen:
+  moor_generator:
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/drawer_header.jpg
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
