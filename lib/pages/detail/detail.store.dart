@@ -117,14 +117,20 @@ abstract class _DetailStore with Store {
       }
       if (haokanBaidu) {
         var source = VideoPlayerController.network(vSrc);
+
+        // 存在历史记录，并且是相同的一集，才初始化播放时间
+        bool isInitVideoPosition =
+            history != null && t.id == history.playCurrentId;
         if (vc == null) {
           vc = VideoController(
             source: source,
             autoplay: true,
-            initPosition:
-                history != null ? Duration(seconds: history.position) : null,
+            initPosition: isInitVideoPosition
+                ? Duration(seconds: history.position)
+                : null,
           );
         } else {
+          vc.setInitPosition(Duration.zero);
           await vc.setSource(source);
           vc.play();
         }
@@ -132,11 +138,11 @@ abstract class _DetailStore with Store {
         _iframeVideoSubject.add(vSrc);
         vc?.pause();
       }
-      _updateHistory();
+      updateHistory();
     }
   }
 
-  void _updateHistory() {
+  void updateHistory() {
     mainStore.historyService.update(history.copyWith(
       time: DateTime.now(),
       playCurrent: currentPlayVideo?.text ?? '',
@@ -309,7 +315,7 @@ abstract class _DetailStore with Store {
 
   @override
   void dispose() {
-    _updateHistory();
+    updateHistory();
     vc?.dispose();
     tabController?.dispose();
     _iframeVideoSubject?.close();

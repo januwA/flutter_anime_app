@@ -21,7 +21,8 @@ class DetailPage extends StatefulWidget {
   _DetailPageState createState() => _DetailPageState();
 }
 
-class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
+class _DetailPageState extends State<DetailPage>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   DetailStore store = DetailStore();
 
   @override
@@ -32,12 +33,36 @@ class _DetailPageState extends State<DetailPage> with TickerProviderStateMixin {
       context,
       widget.animeId,
     );
+
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     store.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print('应用程序可见并响应用户输入。');
+        break;
+      case AppLifecycleState.inactive:
+        print('应用程序处于非活动状态，并且未接收用户输入');
+        break;
+      case AppLifecycleState.paused:
+        // 用户当前看不到应用程序，没有响应
+        // 将应用至于后台时，保存下历史记录
+        store.updateHistory();
+        break;
+      case AppLifecycleState.suspending:
+        print('应用程序将暂停。');
+        break;
+      default:
+    }
   }
 
   /// h5 video
