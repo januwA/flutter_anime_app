@@ -78,7 +78,7 @@ class _HistoryPageState extends State<HistoryPage> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(4.0),
                                 child: AspectRatio(
-                                  aspectRatio: 4 / 3.2,
+                                  aspectRatio: 5 / 5,
                                   child: Image.network(
                                     h.cover,
                                     fit: BoxFit.fitWidth,
@@ -109,6 +109,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                                 .textTheme
                                                 .body1,
                                           ),
+                                          SizedBox(height: 5,),
                                           Text.rich(
                                             TextSpan(
                                               children: [
@@ -150,11 +151,14 @@ class _HistoryPageState extends State<HistoryPage> {
                       ),
                     ),
                     secondaryActions: <Widget>[
-                      IconSlideAction(
-                        caption: 'delete',
-                        color: Colors.red,
-                        icon: Icons.delete,
-                        onTap: () => mainStore.historyService.delete(h),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: IconSlideAction(
+                          caption: 'delete',
+                          color: Colors.red,
+                          icon: Icons.delete,
+                          onTap: () => mainStore.historyService.delete(h),
+                        ),
                       ),
                     ],
                   );

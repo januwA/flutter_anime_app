@@ -51,14 +51,15 @@ class AnimeCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                  begin: Alignment(0.0, -1.0),
-                  end: Alignment(0.0, 0.3),
-                  colors: [
-                    Colors.black54.withAlpha(10),
-                    Colors.black54,
-                  ],
-                )),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black54.withAlpha(10),
+                      Colors.black54,
+                    ],
+                    begin: Alignment(0.0, -0.8),
+                    end: Alignment(0.0, 1),
+                  ),
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -14,6 +14,12 @@ import 'package:html/dom.dart' as dom;
 List<ListSearchDto> _listData;
 
 class ListSearchPage extends SearchDelegate<String> {
+  ListSearchPage()
+      : super(
+          searchFieldLabel: 'Search Anime Name',
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.search,
+        );
   @override
   appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(

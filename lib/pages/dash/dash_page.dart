@@ -1,3 +1,4 @@
+import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/anime_types/anime_types_page.dart';
 import 'package:flutter_video_app/pages/dash/dash.store.dart';
@@ -24,15 +25,28 @@ class _DashPageState extends State<DashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Observer(
-        builder: (_) => BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
+        builder: (_) => BubbleBottomBar(
+          opacity: 0.2,
           currentIndex: store.index,
           onTap: store.controller.jumpToPage,
-          items: <BottomNavigationBarItem>[
-            _navBtn(title: '首页', icon: Icons.home),
-            _navBtn(title: '最近', icon: Icons.fiber_new),
-            _navBtn(title: '推荐', icon: Icons.thumb_up),
-            _navBtn(title: '分类', icon: Icons.toys),
+          borderRadius: BorderRadius.circular(16),
+          hasNotch: true,
+          hasInk: true,
+          inkColor: Colors.black12,
+          items: <BubbleBottomBarItem>[
+            for (var e in store.navList)
+              BubbleBottomBarItem(
+                backgroundColor: e.color,
+                icon: Icon(
+                  e.icon,
+                  color: Colors.black,
+                ),
+                activeIcon: Icon(
+                  e.icon,
+                  color: e.color,
+                ),
+                title: Text(e.title),
+              ),
           ],
         ),
       ),
@@ -47,10 +61,5 @@ class _DashPageState extends State<DashPage> {
         ],
       ),
     );
-  }
-
-  BottomNavigationBarItem _navBtn({String title, IconData icon}) {
-    return BottomNavigationBarItem(
-        icon: Icon(icon), activeIcon: Icon(icon), title: Text(title));
   }
 }

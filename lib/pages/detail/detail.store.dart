@@ -64,6 +64,14 @@ abstract class _DetailStore with Store {
   }
 
   @observable
+  bool showMore = false;
+
+  @action
+  void setShowMore(bool v) {
+    showMore = v;
+  }
+
+  @observable
   String animeId;
 
   @observable

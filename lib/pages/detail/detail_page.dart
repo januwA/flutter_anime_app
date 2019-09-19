@@ -5,9 +5,11 @@ import 'package:flutter_video_app/pages/detail/detail.store.dart';
 import 'package:flutter_video_app/shared/widgets/column_button.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/shared/widgets/network_image_placeholder.dart';
 import 'package:video_box/video_box.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import 'widgets/network_image_placeholder.dart';
+import 'widgets/wrap_text.dart';
 
 class DetailPage extends StatefulWidget {
   DetailPage({
@@ -103,6 +105,7 @@ class _DetailPageState extends State<DetailPage>
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Observer(
       builder: (_) {
         if (store.loading) {
@@ -131,19 +134,53 @@ class _DetailPageState extends State<DetailPage>
                       Card(
                         child: Column(
                           children: <Widget>[
-                            _detailInfo(),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: _detailInfo(),
+                            ),
                             _buildButtonBar(context),
-                            ExpansionTile(
-                              title: Text(
-                                store.detail.plot,
-                                overflow: TextOverflow.ellipsis,
+
+                            // detail text
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  AnimatedCrossFade(
+                                    duration: kTabScrollDuration,
+                                    firstChild: Text(
+                                      store.detail.plot,
+                                      style: theme.textTheme.caption,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    secondChild: Text(
+                                      store.detail.plot,
+                                      style: theme.textTheme.caption,
+                                    ),
+                                    crossFadeState: store.showMore
+                                        ? CrossFadeState.showSecond
+                                        : CrossFadeState.showFirst,
+                                  ),
+                                  InkWell(
+                                    onTap: () =>
+                                        store.setShowMore(!store.showMore),
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Text(
+                                        store.showMore ? "收起" : '查看更多',
+                                        style: theme.textTheme.caption.copyWith(
+                                          color: theme.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(store.detail.plot),
-                                ),
-                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
                             ),
                           ],
                         ),
@@ -155,8 +192,9 @@ class _DetailPageState extends State<DetailPage>
                               child: TabBar(
                                 isScrollable: true,
                                 unselectedLabelColor: Colors.grey,
-                                labelColor: Theme.of(context).primaryColor,
+                                labelColor: theme.primaryColor,
                                 controller: store.tabController,
+                                indicator: MyIndicator(),
                                 tabs: store.detail.tabs
                                     .map<Widget>((el) => Tab(child: Text(el)))
                                     .toList(),
@@ -229,7 +267,7 @@ class _DetailPageState extends State<DetailPage>
     );
   }
 
-  _buildRaisedButton(TabsValueDto t, BuildContext context) {
+  Widget _buildRaisedButton(TabsValueDto t, BuildContext context) {
     ThemeData theme = Theme.of(context);
     bool isActive = t.text == store.currentPlayVideo?.text;
     ShapeBorder shape =
@@ -263,16 +301,16 @@ class _DetailPageState extends State<DetailPage>
     );
   }
 
-  _detailInfo() {
+  Widget _detailInfo() {
     Widget br = SizedBox(height: 4);
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: DefaultTextStyle(
-        style: TextStyle(
-          inherit: true,
-          fontSize: 14,
-          color: Colors.black87,
-        ),
+    return DefaultTextStyle(
+      style: TextStyle(
+        inherit: true,
+        fontSize: 14,
+        color: Colors.black87,
+      ),
+      child: Container(
+        width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -288,64 +326,69 @@ class _DetailPageState extends State<DetailPage>
             br,
             Text(
               store.detail.curentText,
-              style: TextStyle(
-                fontSize: 12,
-              ),
+              style: TextStyle(fontSize: 12),
+            ),
+            SizedBox(height: 10),
+            WrapText(
+              tag: '主演',
+              texts: store.detail.starring.toList(),
             ),
             br,
-            Wrap(
-              alignment: WrapAlignment.start,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 8,
-              runSpacing: 4,
-              children: <Widget>[
-                Text('主演:'),
-                for (String name in store.detail.starring) Text(name),
-              ],
+            WrapText(
+              tag: '导演',
+              texts: [store.detail.director],
             ),
             br,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text('导演:'),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(store.detail.director)),
-              ],
+            WrapText(
+              tag: '类型',
+              texts: store.detail.types.toList(),
             ),
             br,
-            Wrap(
-              children: <Widget>[
-                Text('类型:'),
-                for (String name in store.detail.types)
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(name)),
-              ],
+            WrapText(
+              tag: '地区',
+              texts: [store.detail.area],
             ),
             br,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text('地区:'),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(store.detail.area)),
-              ],
-            ),
-            br,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text('年份:'),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(store.detail.years)),
-              ],
+            WrapText(
+              tag: '年份',
+              texts: [store.detail.years],
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class MyIndicator extends Decoration {
+  @override
+  BoxPainter createBoxPainter([onChanged]) {
+    return _MyIndicator(this, onChanged);
+  }
+}
+
+class _MyIndicator extends BoxPainter {
+  _MyIndicator(this.decoration, VoidCallback onChanged)
+      : assert(decoration != null),
+        super(onChanged);
+
+  final MyIndicator decoration;
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
+    final Rect rect = offset & cfg.size;
+    print(rect);
+    var paint = Paint()
+      ..color = Colors.pink
+      ..style = PaintingStyle.fill;
+
+    var path = Path()
+      ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy)
+      ..lineTo(rect.bottomRight.dx, rect.bottomRight.dy)
+      ..lineTo(rect.bottomRight.dx - 4, rect.bottomRight.dy - 4)
+      ..lineTo(rect.bottomRight.dx - 6, rect.bottomRight.dy - 6)
+      ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy - 2)
+      ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy);
+    canvas.drawPath(path, paint);
   }
 }
