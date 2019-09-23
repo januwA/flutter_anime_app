@@ -10,7 +10,7 @@ abstract class _DashStore with Store {
   List<NavItem> navList = [
     NavItem(title: '首页', icon: Icons.home, color: Colors.pink),
     NavItem(title: '最近', icon: Icons.fiber_new, color: Colors.deepPurple),
-    NavItem(title: '推荐', icon: Icons.thumb_up, color: Colors.indigo),
+    NavItem(title: '推荐', icon: Icons.thumb_up, color: Colors.orange),
     NavItem(title: '分类', icon: Icons.toys, color: Colors.green),
   ];
 

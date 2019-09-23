@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class SliverLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+    Size size = MediaQuery.of(context).size;
+    print(size);
     return SliverToBoxAdapter(
       child: Container(
-        height: height,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        width: size.width,
+        height: size.height - kBottomNavigationBarHeight - kToolbarHeight,
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
   }

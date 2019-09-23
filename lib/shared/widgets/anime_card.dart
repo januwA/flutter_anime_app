@@ -9,7 +9,7 @@ class AnimeCard extends StatelessWidget {
     Key key,
     @required this.animeData,
   }) : super(key: key);
-  static const double aspectRatio = 0.7;
+  static const double aspectRatio = 0.72;
   final LiData animeData;
   @override
   Widget build(BuildContext context) {

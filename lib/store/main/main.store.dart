@@ -11,7 +11,11 @@ abstract class _MainStore with Store {
   /// 获取新版本 APK
   final GithubReleasesService versionService =
       GithubReleasesService(repo: REPO, owner: OWNER);
+
+  /// 收藏anime服务
   final CollectionsService collectionsService = CollectionsService();
+
+  /// 观看anime历史记录服务
   final HistoryService historyService = HistoryService();
 }
 
