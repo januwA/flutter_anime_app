@@ -128,21 +128,21 @@ mixin _$DetailStore on _DetailStore, Store {
     }, _$currentPlayVideoAtom, name: '${_$currentPlayVideoAtom.name}_set');
   }
 
-  final _$haokanBaiduAtom = Atom(name: '_DetailStore.haokanBaidu');
+  final _$animeVideoTypeAtom = Atom(name: '_DetailStore.animeVideoType');
 
   @override
-  bool get haokanBaidu {
-    _$haokanBaiduAtom.context.enforceReadPolicy(_$haokanBaiduAtom);
-    _$haokanBaiduAtom.reportObserved();
-    return super.haokanBaidu;
+  AnimeVideoType get animeVideoType {
+    _$animeVideoTypeAtom.context.enforceReadPolicy(_$animeVideoTypeAtom);
+    _$animeVideoTypeAtom.reportObserved();
+    return super.animeVideoType;
   }
 
   @override
-  set haokanBaidu(bool value) {
-    _$haokanBaiduAtom.context.conditionallyRunInAction(() {
-      super.haokanBaidu = value;
-      _$haokanBaiduAtom.reportChanged();
-    }, _$haokanBaiduAtom, name: '${_$haokanBaiduAtom.name}_set');
+  set animeVideoType(AnimeVideoType value) {
+    _$animeVideoTypeAtom.context.conditionallyRunInAction(() {
+      super.animeVideoType = value;
+      _$animeVideoTypeAtom.reportChanged();
+    }, _$animeVideoTypeAtom, name: '${_$animeVideoTypeAtom.name}_set');
   }
 
   final _$isCollectionsAtom = Atom(name: '_DetailStore.isCollections');

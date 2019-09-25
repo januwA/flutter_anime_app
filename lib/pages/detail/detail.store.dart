@@ -16,6 +16,8 @@ import 'package:html/dom.dart' as dom;
 import 'package:video_player/video_player.dart';
 import 'package:flushbar/flushbar.dart';
 
+import 'anime_video_type.dart';
+
 part 'detail.store.g.dart';
 
 class DetailStore = _DetailStore with _$DetailStore;
@@ -53,7 +55,7 @@ abstract class _DetailStore with Store {
       );
       history = await mainStore.historyService.create(newHistory);
     }
-    currentPlayVideo = TabsValueDto(
+    var currentPlayVideo = TabsValueDto(
       (b) => b
         ..text = history.playCurrent
         ..id = history.playCurrentId
@@ -90,7 +92,7 @@ abstract class _DetailStore with Store {
   TabsValueDto currentPlayVideo;
 
   @observable
-  bool haokanBaidu = true;
+  AnimeVideoType animeVideoType;
 
   @observable
   bool isCollections = false;
@@ -111,11 +113,7 @@ abstract class _DetailStore with Store {
     String boxUrl = t.boxUrl;
     if (boxUrl.isNotEmpty) {
       // 网盘资源
-      if (await canLaunch(boxUrl)) {
-        await launch(boxUrl);
-      } else {
-        _showSnackbar(context, '无法启动$boxUrl');
-      }
+      _openBrowser(context, boxUrl);
     } else {
       // 视频资源,准备切换播放点击的视频
       String vSrc = await _idGetSrc(t.id);
@@ -123,7 +121,7 @@ abstract class _DetailStore with Store {
         _showSnackbar(context, '获取播放地址错误');
         return;
       }
-      if (haokanBaidu) {
+      if (animeVideoType == AnimeVideoType.haokanBaidu) {
         var source = VideoPlayerController.network(vSrc);
 
         // 存在历史记录，并且是相同的一集，才初始化播放时间
@@ -147,6 +145,14 @@ abstract class _DetailStore with Store {
         vc?.pause();
       }
       updateHistory();
+    }
+  }
+
+  _openBrowser(BuildContext context, String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      _showSnackbar(context, '无法启动$url');
     }
   }
 
@@ -265,19 +271,30 @@ abstract class _DetailStore with Store {
     var r2 = await http.get('http://www.nicotv.me$scriptSrc');
     Map<String, dynamic> jsonMap = _parseResponseToObject(r2.body);
 
-    String jsonUrl = jsonMap['url'];
-    jsonUrl = Uri.decodeFull(jsonUrl);
+    // 解码url字段
+    String jsonUrl = Uri.decodeFull(jsonMap['url']);
 
     var name = jsonMap['name'].trim();
+
     if (name == 'haokan_baidu') {
-      haokanBaidu = true;
+      animeVideoType = AnimeVideoType.haokanBaidu;
       result = Uri.parse(jsonUrl).queryParameters['url'];
     }
 
     if (name == '360biaofan') {
-      haokanBaidu = false;
+      animeVideoType = AnimeVideoType.biaofan;
       result =
           """${jsonMap['jiexi']}$jsonUrl&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+    }
+
+    if (name == 'youku') {
+      animeVideoType = AnimeVideoType.youku;
+      result = """https://5.5252e.com/p/youku.php?url=${jsonMap['url']}""";
+    }
+
+    if (name == 'qq') {
+      animeVideoType = AnimeVideoType.qq;
+      result = """https://5.5252e.com/p/youku.php?url=${jsonMap['url']}""";
     }
     return result;
   }

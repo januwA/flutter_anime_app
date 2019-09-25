@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
+import 'package:flutter_video_app/pages/detail/anime_video_type.dart';
 import 'package:flutter_video_app/pages/detail/detail.store.dart';
 import 'package:flutter_video_app/shared/widgets/column_button.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
@@ -9,6 +10,7 @@ import 'package:video_box/video_box.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'widgets/network_image_placeholder.dart';
+import 'widgets/tab_Indicator.dart';
 import 'widgets/wrap_text.dart';
 
 class DetailPage extends StatefulWidget {
@@ -81,11 +83,12 @@ class _DetailPageState extends State<DetailPage>
                 snap.data.isNotEmpty) {
               return Center(
                 child: WebView(
-                    initialUrl: snap.data,
-                    javascriptMode: JavascriptMode.unrestricted,
-                    onWebViewCreated: (WebViewController wc) {
-                      wc.loadUrl(snap.data);
-                    }),
+                  initialUrl: snap.data,
+                  javascriptMode: JavascriptMode.unrestricted,
+                  onWebViewCreated: (WebViewController wc) {
+                    wc.loadUrl(snap.data);
+                  },
+                ),
               );
             } else {
               return Center(child: CircularProgressIndicator());
@@ -120,16 +123,18 @@ class _DetailPageState extends State<DetailPage>
                     [
                       AspectRatio(
                         aspectRatio: 16 / 9,
-                        child: store.haokanBaidu && mounted
-                            ? store.vc == null
-                                ? placeholderImage()
-                                : AspectRatio(
+                        child: store.currentPlayVideo == null
+                            ? placeholderImage()
+                            : store.animeVideoType ==
+                                        AnimeVideoType.haokanBaidu &&
+                                    mounted
+                                ? AspectRatio(
                                     aspectRatio: 16 / 9,
                                     child: VideoBox(
                                       controller: store.vc,
                                     ),
                                   )
-                            : _webVideo(),
+                                : _webVideo(),
                       ),
                       Card(
                         child: Column(
@@ -194,7 +199,7 @@ class _DetailPageState extends State<DetailPage>
                                 unselectedLabelColor: Colors.grey,
                                 labelColor: theme.primaryColor,
                                 controller: store.tabController,
-                                indicator: MyIndicator(),
+                                indicator: TabIndicator(),
                                 tabs: store.detail.tabs
                                     .map<Widget>((el) => Tab(child: Text(el)))
                                     .toList(),
@@ -357,38 +362,5 @@ class _DetailPageState extends State<DetailPage>
         ),
       ),
     );
-  }
-}
-
-class MyIndicator extends Decoration {
-  @override
-  BoxPainter createBoxPainter([onChanged]) {
-    return _MyIndicator(this, onChanged);
-  }
-}
-
-class _MyIndicator extends BoxPainter {
-  _MyIndicator(this.decoration, VoidCallback onChanged)
-      : assert(decoration != null),
-        super(onChanged);
-
-  final MyIndicator decoration;
-
-  @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
-    final Rect rect = offset & cfg.size;
-    print(rect);
-    var paint = Paint()
-      ..color = Colors.pink
-      ..style = PaintingStyle.fill;
-
-    var path = Path()
-      ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy)
-      ..lineTo(rect.bottomRight.dx, rect.bottomRight.dy)
-      ..lineTo(rect.bottomRight.dx - 4, rect.bottomRight.dy - 4)
-      ..lineTo(rect.bottomRight.dx - 6, rect.bottomRight.dy - 6)
-      ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy - 2)
-      ..lineTo(rect.bottomLeft.dx, rect.bottomLeft.dy);
-    canvas.drawPath(path, paint);
   }
 }
