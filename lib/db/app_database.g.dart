@@ -661,7 +661,7 @@ class $HistorysTable extends Historys with TableInfo<$HistorysTable, History> {
 }
 
 abstract class _$AppDatabase extends GeneratedDatabase {
-  _$AppDatabase(QueryExecutor e) : super(const SqlTypeSystem.withDefaults(), e);
+  _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.withDefaults(), e);
   $CollectionsTable _collections;
   $CollectionsTable get collections => _collections ??= $CollectionsTable(this);
   $HistorysTable _historys;
