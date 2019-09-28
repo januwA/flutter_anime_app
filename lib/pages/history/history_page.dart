@@ -55,6 +55,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 return Center(child: Text('Not Data!'));
               }
               return ListView.builder(
+                itemExtent: 110, // 每个子项的高度
                 itemCount: historys.length,
                 itemBuilder: (content, int index) {
                   var h = historys[index];
@@ -70,7 +71,6 @@ class _HistoryPageState extends State<HistoryPage> {
                       },
                       child: Card(
                         child: Container(
-                          height: 110,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
@@ -109,7 +109,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                                 .textTheme
                                                 .body1,
                                           ),
-                                          SizedBox(height: 5,),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
                                           Text.rich(
                                             TextSpan(
                                               children: [

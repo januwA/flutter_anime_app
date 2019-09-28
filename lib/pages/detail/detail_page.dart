@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:video_box/video_box.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'widgets/detail_text.dart';
 import 'widgets/network_image_placeholder.dart';
 import 'widgets/tab_Indicator.dart';
 import 'widgets/wrap_text.dart';
@@ -148,45 +149,9 @@ class _DetailPageState extends State<DetailPage>
                             // detail text
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  AnimatedCrossFade(
-                                    duration: kTabScrollDuration,
-                                    firstChild: Text(
-                                      store.detail.plot,
-                                      style: theme.textTheme.caption,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                    secondChild: Text(
-                                      store.detail.plot,
-                                      style: theme.textTheme.caption,
-                                    ),
-                                    crossFadeState: store.showMore
-                                        ? CrossFadeState.showSecond
-                                        : CrossFadeState.showFirst,
-                                  ),
-                                  InkWell(
-                                    onTap: () =>
-                                        store.setShowMore(!store.showMore),
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 8.0),
-                                      child: Text(
-                                        store.showMore ? "收起" : '查看更多',
-                                        style: theme.textTheme.caption.copyWith(
-                                          color: theme.primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: DetailText(store.detail.plot),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
+                            SizedBox(height: 10),
                           ],
                         ),
                       ),

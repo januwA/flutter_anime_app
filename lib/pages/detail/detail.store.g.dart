@@ -9,23 +9,6 @@ part of 'detail.store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$DetailStore on _DetailStore, Store {
-  final _$showMoreAtom = Atom(name: '_DetailStore.showMore');
-
-  @override
-  bool get showMore {
-    _$showMoreAtom.context.enforceReadPolicy(_$showMoreAtom);
-    _$showMoreAtom.reportObserved();
-    return super.showMore;
-  }
-
-  @override
-  set showMore(bool value) {
-    _$showMoreAtom.context.conditionallyRunInAction(() {
-      super.showMore = value;
-      _$showMoreAtom.reportChanged();
-    }, _$showMoreAtom, name: '${_$showMoreAtom.name}_set');
-  }
-
   final _$animeIdAtom = Atom(name: '_DetailStore.animeId');
 
   @override
@@ -190,17 +173,5 @@ mixin _$DetailStore on _DetailStore, Store {
   @override
   Future<void> collections(BuildContext context) {
     return _$collectionsAsyncAction.run(() => super.collections(context));
-  }
-
-  final _$_DetailStoreActionController = ActionController(name: '_DetailStore');
-
-  @override
-  void setShowMore(bool v) {
-    final _$actionInfo = _$_DetailStoreActionController.startAction();
-    try {
-      return super.setShowMore(v);
-    } finally {
-      _$_DetailStoreActionController.endAction(_$actionInfo);
-    }
   }
 }

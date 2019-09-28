@@ -9,13 +9,16 @@ class WrapText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      alignment: WrapAlignment.start,
-      crossAxisAlignment: WrapCrossAlignment.center,
       spacing: 8,
       runSpacing: 4,
       children: <Widget>[
-        Text('$tag:'),
-        for (String name in texts) Text(name),
+        Text(
+          '$tag:',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        for (String t in texts) Text(t),
       ],
     );
   }
