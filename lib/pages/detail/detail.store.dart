@@ -278,7 +278,17 @@ abstract class _DetailStore with Store {
 
     if (name == 'haokan_baidu') {
       animeVideoType = AnimeVideoType.haokanBaidu;
-      result = Uri.parse(jsonUrl).queryParameters['url'];
+
+      final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
+
+      // 避免没有拿到视频播放地址时的意外情况发生
+      if (videoUrl != null) {
+        result = videoUrl;
+      } else {
+        animeVideoType = AnimeVideoType.biaofan;
+        result =
+            """${jsonMap['jiexi']}$jsonUrl&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+      }
     }
 
     if (name == '360biaofan') {
