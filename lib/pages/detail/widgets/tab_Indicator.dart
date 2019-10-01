@@ -17,7 +17,6 @@ class _MyIndicator extends BoxPainter {
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
     final Rect rect = offset & cfg.size;
-    print(rect);
     var paint = Paint()
       ..color = Colors.pink
       ..style = PaintingStyle.fill;

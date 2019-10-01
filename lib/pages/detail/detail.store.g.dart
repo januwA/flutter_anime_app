@@ -9,6 +9,17 @@ part of 'detail.store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$DetailStore on _DetailStore, Store {
+  Computed<bool> _$hasNextPlayComputed;
+
+  @override
+  bool get hasNextPlay =>
+      (_$hasNextPlayComputed ??= Computed<bool>(() => super.hasNextPlay)).value;
+  Computed<bool> _$hasPrevPlayComputed;
+
+  @override
+  bool get hasPrevPlay =>
+      (_$hasPrevPlayComputed ??= Computed<bool>(() => super.hasPrevPlay)).value;
+
   final _$animeIdAtom = Atom(name: '_DetailStore.animeId');
 
   @override
@@ -173,5 +184,27 @@ mixin _$DetailStore on _DetailStore, Store {
   @override
   Future<void> collections(BuildContext context) {
     return _$collectionsAsyncAction.run(() => super.collections(context));
+  }
+
+  final _$_DetailStoreActionController = ActionController(name: '_DetailStore');
+
+  @override
+  dynamic nextPlay(BuildContext context) {
+    final _$actionInfo = _$_DetailStoreActionController.startAction();
+    try {
+      return super.nextPlay(context);
+    } finally {
+      _$_DetailStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic prevPlay(BuildContext context) {
+    final _$actionInfo = _$_DetailStoreActionController.startAction();
+    try {
+      return super.prevPlay(context);
+    } finally {
+      _$_DetailStoreActionController.endAction(_$actionInfo);
+    }
   }
 }

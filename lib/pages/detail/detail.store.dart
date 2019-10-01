@@ -98,6 +98,61 @@ abstract class _DetailStore with Store {
       );
   final _iframeVideoSubject = BehaviorSubject<String>();
 
+  @action
+  nextPlay(BuildContext context) {
+    var pis = parseCurentPlay();
+    int pvIndex = pis[0];
+    int currentPlayingIndex = pis[1];
+    TabsDto pv = detail.tabsValues[pvIndex];
+    var prevIndex = currentPlayingIndex + 1;
+    if (prevIndex < pv.tabs.length) {
+      TabsValueDto next = pv.tabs[prevIndex];
+      tabClick(next, context);
+    }
+  }
+
+  @computed
+  bool get hasNextPlay {
+    var pis = parseCurentPlay();
+    int pvIndex = pis[0];
+    int currentPlayingIndex = pis[1];
+    TabsDto pv = detail.tabsValues[pvIndex];
+    var prevIndex = currentPlayingIndex + 1;
+    if (prevIndex < pv.tabs.length) return true;
+    return false;
+  }
+
+  @action
+  prevPlay(BuildContext context) {
+    var pis = parseCurentPlay();
+    int pvIndex = pis[0];
+    int currentPlayingIndex = pis[1];
+    TabsDto pv = detail.tabsValues[pvIndex];
+
+    int nextIndex = currentPlayingIndex - 1;
+    if (nextIndex >= 0) {
+      TabsValueDto next = pv.tabs[nextIndex];
+      tabClick(next, context);
+    }
+  }
+
+  @computed
+  bool get hasPrevPlay {
+    var pis = parseCurentPlay();
+    int currentPlayingIndex = pis[1];
+    var prevIndex = currentPlayingIndex - 1;
+    if(prevIndex >= 0) return true;
+    return false;
+  }
+
+  List<int> parseCurentPlay() {
+    String id = currentPlayVideo.id;
+    List<String> idSplit = id.split('-');
+    int pvIndex = int.parse(idSplit[1]) - 1;
+    int currentPlayingIndex = int.parse(idSplit[2]) - 1;
+    return [pvIndex, currentPlayingIndex];
+  }
+
   /// 点击播放每一集
   @action
   Future<void> tabClick(TabsValueDto t, BuildContext context) async {

@@ -210,12 +210,12 @@ abstract class _AnimeTypesStore with Store {
             .last;
         allPageCount = int.parse(pageLen);
       }
-      print('current page index: $pageCount, allPageCount: $allPageCount');
+      // print('current page index: $pageCount, allPageCount: $allPageCount');
 
       /// 分页达到最大
       if (pageCount > allPageCount) {
         /// 分页已经达到最大
-        print('超过最大分页');
+        // print('超过最大分页');
         loading = false;
         return;
       }

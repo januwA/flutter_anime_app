@@ -53,10 +53,10 @@ class _DetailPageState extends State<DetailPage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        print('应用程序可见并响应用户输入。');
+        // print('应用程序可见并响应用户输入。');
         break;
       case AppLifecycleState.inactive:
-        print('应用程序处于非活动状态，并且未接收用户输入');
+        // print('应用程序处于非活动状态，并且未接收用户输入');
         break;
       case AppLifecycleState.paused:
         // 用户当前看不到应用程序，没有响应
@@ -64,7 +64,7 @@ class _DetailPageState extends State<DetailPage>
         store.updateHistory();
         break;
       case AppLifecycleState.suspending:
-        print('应用程序将暂停。');
+        // print('应用程序将暂停。');
         break;
       default:
     }
@@ -131,8 +131,42 @@ class _DetailPageState extends State<DetailPage>
                                     mounted
                                 ? AspectRatio(
                                     aspectRatio: 16 / 9,
-                                    child: VideoBox(
-                                      controller: store.vc,
+                                    child: Observer(
+                                      builder: (context) => VideoBox(
+                                        controller: store.vc,
+                                        children: <Widget>[
+                                          Observer(
+                                            builder: (_) => Align(
+                                              alignment: Alignment(-0.5, 0),
+                                              child: IconButton(
+                                                iconSize: 40,
+                                                disabledColor: Colors.white60,
+                                                color: Colors.white,
+                                                icon: Icon(Icons.skip_previous),
+                                                onPressed: store.hasPrevPlay
+                                                    ? () =>
+                                                        store.prevPlay(context)
+                                                    : null,
+                                              ),
+                                            ),
+                                          ),
+                                          Observer(
+                                            builder: (context) => Align(
+                                              alignment: Alignment(0.5, 0),
+                                              child: IconButton(
+                                                iconSize: 40,
+                                                disabledColor: Colors.white60,
+                                                color: Colors.white,
+                                                icon: Icon(Icons.skip_next),
+                                                onPressed: store.hasNextPlay
+                                                    ? () =>
+                                                        store.nextPlay(context)
+                                                    : null,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   )
                                 : _webVideo(),
@@ -286,7 +320,7 @@ class _DetailPageState extends State<DetailPage>
           children: <Widget>[
             Hero(
               tag: store.detail.videoName,
-              child: Text(
+              child: SelectableText(
                 store.detail.videoName,
                 style: TextStyle(
                   fontSize: 16,
@@ -294,7 +328,7 @@ class _DetailPageState extends State<DetailPage>
               ),
             ),
             br,
-            Text(
+            SelectableText(
               store.detail.curentText,
               style: TextStyle(fontSize: 12),
             ),

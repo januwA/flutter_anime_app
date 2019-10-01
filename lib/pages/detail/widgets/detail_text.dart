@@ -20,13 +20,12 @@ class _DetailTextState extends State<DetailText> {
       children: <Widget>[
         AnimatedCrossFade(
           duration: kTabScrollDuration,
-          firstChild: Text(
+          firstChild: SelectableText(
             widget.text,
             style: theme.textTheme.caption,
-            overflow: TextOverflow.ellipsis,
             maxLines: 2,
           ),
-          secondChild: Text(
+          secondChild: SelectableText(
             widget.text,
             style: theme.textTheme.caption,
           ),

@@ -1,9 +1,9 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.5.12
+version: 0.5.13
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: '>=2.2.2 <3.0.0'
 
 dependencies:
   flutter:
@@ -15,11 +15,12 @@ dependencies:
   rxdart: ^0.22.2
   built_value: ^6.7.1
   built_collection: ^4.2.2
+  build_resolvers: ^1.1.1
 
   # 打开浏览器
   url_launcher: ^5.1.2
-  mobx: ^0.3.7
-  flutter_mobx: ^0.3.2
+  mobx: ^0.3.8+1
+  flutter_mobx: ^0.3.3+1
   provider: ^3.1.0
 
   # 视频播放器
@@ -29,7 +30,7 @@ dependencies:
   html: ^0.14.0+2
 
   # webview
-  webview_flutter: ^0.3.13
+  webview_flutter: ^0.3.14+1
 
   # 当前包的信息
   package_info: ^0.4.0+6
@@ -54,8 +55,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner:
-  built_value_generator:
+  build_runner: ^1.7.1
+  built_value_generator: ^6.7.1
   mobx_codegen:
   moor_generator:
 

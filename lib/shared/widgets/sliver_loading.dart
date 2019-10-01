@@ -4,7 +4,6 @@ class SliverLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    print(size);
     return SliverToBoxAdapter(
       child: Container(
         width: size.width,
