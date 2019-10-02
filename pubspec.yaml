@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.5.13
+version: 0.5.14
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
@@ -21,21 +21,15 @@ dependencies:
   url_launcher: ^5.1.2
   mobx: ^0.3.8+1
   flutter_mobx: ^0.3.3+1
-  provider: ^3.1.0
 
   # 视频播放器
-  video_box: ^0.5.1
+  video_box: ^0.5.2
 
   # 解析html字符串
   html: ^0.14.0+2
 
   # webview
   webview_flutter: ^0.3.14+1
-
-  # 当前包的信息
-  package_info: ^0.4.0+6
-  path_provider: ^1.2.2
-  path: ^1.6.4
 
   # sqlite
   moor_flutter: ^1.7.0

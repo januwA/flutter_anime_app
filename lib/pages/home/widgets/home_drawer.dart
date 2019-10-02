@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/collections/collections_page.dart';
 import 'package:flutter_video_app/pages/history/history_page.dart';
 import 'package:flutter_video_app/pages/home/widgets/update_tile.dart';
-import 'package:package_info/package_info.dart';
+import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_video_app/shared/globals.dart';
@@ -49,14 +49,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
             },
           ),
           UpdateTile(),
-          FutureBuilder<PackageInfo>(
-            future: PackageInfo.fromPlatform(),
+          FutureBuilder<String>(
+            future: mainStore.versionService.localVersion,
             builder: (context, snap) => snap.hasData
                 ? AboutListTile(
                     icon: Icon(Icons.vertical_align_bottom),
-                    applicationName: snap.data.appName,
+                    applicationName: "Anime",
                     applicationIcon: Icon(Icons.copyright),
-                    applicationVersion: snap.data.version,
+                    applicationVersion: snap.data,
                     applicationLegalese: "该app用于学习Flutter",
                     aboutBoxChildren: <Widget>[
                       ListTile(

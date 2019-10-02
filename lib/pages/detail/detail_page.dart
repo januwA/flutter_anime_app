@@ -129,45 +129,38 @@ class _DetailPageState extends State<DetailPage>
                             : store.animeVideoType ==
                                         AnimeVideoType.haokanBaidu &&
                                     mounted
-                                ? AspectRatio(
-                                    aspectRatio: 16 / 9,
-                                    child: Observer(
-                                      builder: (context) => VideoBox(
-                                        controller: store.vc,
-                                        children: <Widget>[
-                                          Observer(
-                                            builder: (_) => Align(
-                                              alignment: Alignment(-0.5, 0),
-                                              child: IconButton(
-                                                iconSize: 40,
-                                                disabledColor: Colors.white60,
-                                                color: Colors.white,
-                                                icon: Icon(Icons.skip_previous),
-                                                onPressed: store.hasPrevPlay
-                                                    ? () =>
-                                                        store.prevPlay(context)
-                                                    : null,
-                                              ),
-                                            ),
+                                ? VideoBox(
+                                    controller: store.vc,
+                                    children: <Widget>[
+                                      Observer(
+                                        builder: (_) => Align(
+                                          alignment: Alignment(-0.5, 0),
+                                          child: IconButton(
+                                            iconSize: 40,
+                                            disabledColor: Colors.white60,
+                                            color: Colors.white,
+                                            icon: Icon(Icons.skip_previous),
+                                            onPressed: store.hasPrevPlay
+                                                ? () => store.prevPlay(context)
+                                                : null,
                                           ),
-                                          Observer(
-                                            builder: (context) => Align(
-                                              alignment: Alignment(0.5, 0),
-                                              child: IconButton(
-                                                iconSize: 40,
-                                                disabledColor: Colors.white60,
-                                                color: Colors.white,
-                                                icon: Icon(Icons.skip_next),
-                                                onPressed: store.hasNextPlay
-                                                    ? () =>
-                                                        store.nextPlay(context)
-                                                    : null,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
+                                      Observer(
+                                        builder: (context) => Align(
+                                          alignment: Alignment(0.5, 0),
+                                          child: IconButton(
+                                            iconSize: 40,
+                                            disabledColor: Colors.white60,
+                                            color: Colors.white,
+                                            icon: Icon(Icons.skip_next),
+                                            onPressed: store.hasNextPlay
+                                                ? () => store.nextPlay(context)
+                                                : null,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   )
                                 : _webVideo(),
                       ),
