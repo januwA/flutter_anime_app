@@ -1,7 +1,6 @@
-package com.example.flutter_video_app
+package com.ajanuw.flutter_video_app
 
 import android.os.Bundle
-
 import io.flutter.app.FlutterActivity
 import io.flutter.plugins.GeneratedPluginRegistrant
 
