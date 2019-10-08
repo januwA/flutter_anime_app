@@ -595,6 +595,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.0+1"
+  system_shortcuts:
+    dependency: transitive
+    description:
+      name: system_shortcuts
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.7"
   term_glyph:
     dependency: transitive
     description:
@@ -643,7 +650,7 @@ packages:
       name: video_box
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.5.2"
+    version: "0.6.0"
   video_player:
     dependency: transitive
     description:
@@ -651,6 +658,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.10.2+1"
+  volume:
+    dependency: transitive
+    description:
+      name: volume
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.0"
   watcher:
     dependency: transitive
     description:

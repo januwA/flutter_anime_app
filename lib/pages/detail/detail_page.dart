@@ -118,6 +118,7 @@ class _DetailPageState extends State<DetailPage>
         return SafeArea(
           child: Scaffold(
             body: CustomScrollView(
+              controller: store.controller,
               slivers: [
                 SliverList(
                   delegate: SliverChildListDelegate(

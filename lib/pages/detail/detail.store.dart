@@ -65,6 +65,8 @@ abstract class _DetailStore with Store {
     if (history.playCurrent.isNotEmpty) tabClick(currentPlayVideo, context);
   }
 
+  ScrollController controller = ScrollController();
+
   @observable
   String animeId;
 
@@ -141,7 +143,7 @@ abstract class _DetailStore with Store {
     var pis = parseCurentPlay();
     int currentPlayingIndex = pis[1];
     var prevIndex = currentPlayingIndex - 1;
-    if(prevIndex >= 0) return true;
+    if (prevIndex >= 0) return true;
     return false;
   }
 
