@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
+import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 
 class UpdateTile extends StatefulWidget {
@@ -89,7 +90,7 @@ class _UpdateTileState extends State<UpdateTile> {
         _title = '暂无新版本';
       });
     }
-    Navigator.of(context).pop();
+    router.navigator.pop();
     _downloadApk(isUpdate);
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/collections/collections_page.dart';
 import 'package:flutter_video_app/pages/history/history_page.dart';
 import 'package:flutter_video_app/pages/home/widgets/update_tile.dart';
+import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,18 +35,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
             leading: Icon(Icons.collections),
             title: Text('收藏列表'),
             onTap: () {
-              // show collections
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(CollectionsPage.routeName);
+              router.navigator.popAndPushNamed('/collections');
             },
           ),
           ListTile(
             leading: Icon(Icons.history),
             title: Text('历史记录'),
             onTap: () {
-              // show history
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(HistoryPage.routeName);
+              router.navigator.popAndPushNamed('/history');
             },
           ),
           UpdateTile(),

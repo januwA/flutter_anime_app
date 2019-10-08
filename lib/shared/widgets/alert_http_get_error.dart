@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/router/router.dart';
 
 /// 从服务器获取数据失败时，弹出提示框，提醒用户
 Future<void> alertHttpGetError({
@@ -25,13 +26,13 @@ Future<void> alertHttpGetError({
           FlatButton(
             child: Text('取消'),
             onPressed: () {
-              Navigator.of(ctx).pop();
+              router.navigator.pop();
             },
           ),
           FlatButton(
             child: Text(okText),
             onPressed: () {
-              Navigator.of(ctx).pop();
+              router.navigator.pop();
               onOk != null && onOk();
             },
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
+import 'package:flutter_video_app/router/router.dart';
 
 /// 每个anime的展示卡片
 class AnimeCard extends StatelessWidget {
@@ -94,18 +95,11 @@ class AnimeCard extends StatelessWidget {
   }
 
   _toDerailPage(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => DetailPage(animeId: animeData.id)));
+    router.navigator.pushNamed('/anime-detail/${animeData.id}');
   }
 
   _toNicotvPage(BuildContext context) {
     String url = 'http://www.nicotv.me/video/detail/${animeData.id}.html';
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => NicotvPage(
-          url: url,
-        ),
-      ),
-    );
+    router.navigator.pushNamed('/nicotv', arguments: url);
   }
 }

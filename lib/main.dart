@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/pages/collections/collections_page.dart';
-import 'package:flutter_video_app/pages/dash/dash_page.dart';
+import 'package:flutter_ajanuw_router/flutter_ajanuw_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_video_app/pages/history/history_page.dart';
+import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/theme/theme.dart';
 
 void main() => runApp(MyApp());
@@ -10,6 +9,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final String initialRoute = '/';
     return MaterialApp(
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -26,12 +26,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Anime",
       theme: myTheme,
-      home: DashPage(),
-      routes: <String, WidgetBuilder>{
-        CollectionsPage.routeName: (BuildContext context) =>
-            CollectionsPage(), // 我的收藏
-        HistoryPage.routeName: (BuildContext context) => HistoryPage(), // 历史记录
-      },
+      navigatorKey: router.navigatorKey,
+      initialRoute: initialRoute,
+      onGenerateRoute: router.forRoot(routes, initialRoute: initialRoute),
     );
   }
 }

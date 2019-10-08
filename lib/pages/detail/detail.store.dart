@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
+import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 import 'package:mobx/mobx.dart';
@@ -361,8 +362,7 @@ abstract class _DetailStore with Store {
   /// webview 打开
   void openInWebview(context) {
     String url = 'http://www.nicotv.me/video/detail/$animeId.html';
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => NicotvPage(url: url)));
+    router.navigator.pushNamed('/nicotv', arguments: url);
   }
 
   /// 收藏 or 取消收藏

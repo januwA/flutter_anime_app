@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
+import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 
 import 'package:http/http.dart' as http;
@@ -64,15 +65,13 @@ class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
         for (ListSearchDto data in listdata)
           ListTile(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => DetailPage(animeId: data.id)));
+              router.navigator.pushNamed('/anime-detail/${data.id}');
             },
             title: Text(data.text),
             trailing: IconButton(
               onPressed: () {
                 String url = 'http://www.nicotv.me${data.href}';
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => NicotvPage(url: url)));
+                router.navigator.pushNamed('/nicotv', arguments: url);
               },
               color: Theme.of(context).primaryColor,
               icon: Icon(Icons.open_in_new),
