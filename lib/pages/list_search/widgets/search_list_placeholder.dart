@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
-import 'package:flutter_video_app/pages/detail/detail_page.dart';
-import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
 

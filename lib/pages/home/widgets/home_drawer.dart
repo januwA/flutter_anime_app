@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/pages/collections/collections_page.dart';
-import 'package:flutter_video_app/pages/history/history_page.dart';
 import 'package:flutter_video_app/pages/home/widgets/update_tile.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';

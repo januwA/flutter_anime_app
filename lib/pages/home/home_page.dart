@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/home/home.store.dart';
 import 'package:flutter_video_app/pages/home/widgets/home_drawer.dart';
 import 'package:flutter_video_app/pages/list_search/list_search.dart';
-import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
-import 'package:flutter_video_app/pages/detail/detail_page.dart';
-import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/router/router.dart';
 
 /// 每个anime的展示卡片

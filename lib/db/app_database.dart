@@ -70,7 +70,12 @@ class HistoryDao extends DatabaseAccessor<AppDatabase> with _$HistoryDaoMixin {
   final AppDatabase db;
   HistoryDao(this.db) : super(db);
 
-  Stream<List<History>> findAll$() => select(historys).watch();
+  Stream<List<History>> findAll$() => (select(historys)
+        ..orderBy([
+          // 将最近的观看的历史记录，放在前面
+          (t) => OrderingTerm(expression: t.time, mode: OrderingMode.desc),
+        ]))
+      .watch();
 
   Future<History> findOneByAnimeId(String animeId) async {
     var data = await (select(historys)..where((t) => t.animeId.equals(animeId)))

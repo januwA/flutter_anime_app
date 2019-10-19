@@ -19,9 +19,12 @@ class NetworkImagePlaceholder extends StatelessWidget {
         child: Container(
           color: Colors.white.withOpacity(0.1),
           child: Center(
-            child: Image.network(
-              src,
-              fit: BoxFit.contain,
+            child: Hero(
+              tag: src,
+              child: Image.network(
+                src,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/db/app_database.dart';
-import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';

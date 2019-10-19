@@ -7,7 +7,6 @@ import 'package:flutter_video_app/shared/widgets/column_button.dart';
 import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:video_box/video_box.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import 'widgets/detail_text.dart';
 import 'widgets/network_image_placeholder.dart';
@@ -70,43 +69,6 @@ class _DetailPageState extends State<DetailPage>
     }
   }
 
-  /// h5 video
-  _webVideo() {
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      color: Colors.black,
-      child: Center(
-        child: StreamBuilder<String>(
-          stream: store.iframeVideo,
-          builder: (context, snap) {
-            if (snap.connectionState == ConnectionState.active &&
-                snap.data.isNotEmpty) {
-              return Center(
-                child: WebView(
-                  initialUrl: snap.data,
-                  javascriptMode: JavascriptMode.unrestricted,
-                  onWebViewCreated: (WebViewController wc) {
-                    wc.loadUrl(snap.data);
-                  },
-                ),
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  placeholderImage() {
-    return Hero(
-      tag: store.detail.cover,
-      child: NetworkImagePlaceholder(store.detail.cover),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -125,45 +87,44 @@ class _DetailPageState extends State<DetailPage>
                     [
                       AspectRatio(
                         aspectRatio: 16 / 9,
-                        child: store.currentPlayVideo == null
-                            ? placeholderImage()
-                            : store.animeVideoType ==
-                                        AnimeVideoType.haokanBaidu &&
-                                    mounted
-                                ? VideoBox(
-                                    controller: store.vc,
-                                    children: <Widget>[
-                                      Observer(
-                                        builder: (_) => Align(
-                                          alignment: Alignment(-0.5, 0),
-                                          child: IconButton(
-                                            iconSize: 40,
-                                            disabledColor: Colors.white60,
-                                            color: Colors.white,
-                                            icon: Icon(Icons.skip_previous),
-                                            onPressed: store.hasPrevPlay
-                                                ? () => store.prevPlay(context)
-                                                : null,
-                                          ),
-                                        ),
+                        child: store.currentPlayVideo != null &&
+                                store.animeVideoType ==
+                                    AnimeVideoType.haokanBaidu &&
+                                mounted
+                            ? VideoBox(
+                                controller: store.vc,
+                                children: <Widget>[
+                                  Observer(
+                                    builder: (_) => Align(
+                                      alignment: Alignment(-0.5, 0),
+                                      child: IconButton(
+                                        iconSize: 40,
+                                        disabledColor: Colors.white60,
+                                        color: Colors.white,
+                                        icon: Icon(Icons.skip_previous),
+                                        onPressed: store.hasPrevPlay
+                                            ? () => store.prevPlay(context)
+                                            : null,
                                       ),
-                                      Observer(
-                                        builder: (context) => Align(
-                                          alignment: Alignment(0.5, 0),
-                                          child: IconButton(
-                                            iconSize: 40,
-                                            disabledColor: Colors.white60,
-                                            color: Colors.white,
-                                            icon: Icon(Icons.skip_next),
-                                            onPressed: store.hasNextPlay
-                                                ? () => store.nextPlay(context)
-                                                : null,
-                                          ),
-                                        ),
+                                    ),
+                                  ),
+                                  Observer(
+                                    builder: (context) => Align(
+                                      alignment: Alignment(0.5, 0),
+                                      child: IconButton(
+                                        iconSize: 40,
+                                        disabledColor: Colors.white60,
+                                        color: Colors.white,
+                                        icon: Icon(Icons.skip_next),
+                                        onPressed: store.hasNextPlay
+                                            ? () => store.nextPlay(context)
+                                            : null,
                                       ),
-                                    ],
-                                  )
-                                : _webVideo(),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : NetworkImagePlaceholder(store.detail.cover),
                       ),
                       Card(
                         child: Column(

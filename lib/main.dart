@@ -5,10 +5,16 @@ import 'package:flutter_video_app/theme/theme.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final onGenerateRoute = router.forRoot(routes);
+
   @override
   Widget build(BuildContext context) {
-    final String initialRoute = '/';
     return MaterialApp(
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
@@ -26,8 +32,9 @@ class MyApp extends StatelessWidget {
       title: "Anime",
       theme: myTheme,
       navigatorKey: router.navigatorKey,
-      initialRoute: initialRoute,
-      onGenerateRoute: router.forRoot(routes, initialRoute: initialRoute),
+      navigatorObservers: [router.navigatorObserver],
+      initialRoute: '/',
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }

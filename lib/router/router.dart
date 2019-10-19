@@ -3,6 +3,7 @@ import 'package:flutter_ajanuw_router/flutter_ajanuw_router.dart';
 import 'package:flutter_video_app/pages/collections/collections_page.dart';
 import 'package:flutter_video_app/pages/dash/dash_page.dart';
 import 'package:flutter_video_app/pages/detail/detail_page.dart';
+import 'package:flutter_video_app/pages/detail/widgets/full_play_web_video.dart';
 import 'package:flutter_video_app/pages/history/history_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/pages/not_found/not_found.page.dart';
@@ -29,6 +30,12 @@ final List<AjanuwRoute> routes = [
   AjanuwRoute(
     path: 'anime-detail/:id',
     builder: (c, r) => DetailPage(animeId: r.paramMap['id']),
+  ),
+  AjanuwRoute(
+    path: 'full-webvideo',
+    builder: (c, r) {
+      return FullPlayWebVideo(initialUrl: r.arguments);
+    },
   ),
   AjanuwRoute(
     path: 'nicotv',

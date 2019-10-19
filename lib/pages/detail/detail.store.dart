@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
-import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
@@ -17,6 +16,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:video_player/video_player.dart';
 import 'package:flushbar/flushbar.dart';
 
+import '../../router/router.dart';
 import 'anime_video_type.dart';
 
 part 'detail.store.g.dart';
@@ -64,6 +64,10 @@ abstract class _DetailStore with Store {
     );
 
     if (history.playCurrent.isNotEmpty) tabClick(currentPlayVideo, context);
+
+    iframeVideo.listen((String url) {
+      router.navigator.pushNamed('/full-webvideo', arguments: url);
+    });
   }
 
   ScrollController controller = ScrollController();

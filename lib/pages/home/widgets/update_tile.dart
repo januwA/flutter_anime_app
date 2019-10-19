@@ -96,10 +96,15 @@ class _UpdateTileState extends State<UpdateTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(Icons.autorenew),
-      title: Text(_title),
-      onTap: _checkVersion,
+    return FutureBuilder(
+      future: grs.initialized,
+      builder: (c, snap) => snap.connectionState == ConnectionState.done
+          ? ListTile(
+              leading: Icon(Icons.autorenew),
+              title: Text(_title),
+              onTap: _checkVersion,
+            )
+          : SizedBox(),
     );
   }
 }
