@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/shared/globals.dart';
+import 'package:flutter_video_app/utils/open_browser.dart';
 
 class NotFoundPage extends StatefulWidget {
   @override
@@ -10,10 +12,19 @@ class _NotFoundPageState extends State<NotFoundPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('NotFoundPage'),
+        title: Text('not found'),
       ),
       body: Center(
-        child: Text('NotFoundPage work.'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('页面丢失.'),
+            FlatButton(
+              child: Text('提交问题'),
+              onPressed: () => openBrowser(githubIssuesUrl),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -6,10 +6,10 @@ import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_video_app/utils/jquery.dart';
+import 'package:flutter_video_app/utils/open_browser.dart';
 import 'package:mobx/mobx.dart';
 import 'package:moor/moor.dart' as moor;
 import 'package:rxdart/rxdart.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:video_box/video.controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
@@ -167,7 +167,7 @@ abstract class _DetailStore with Store {
     String boxUrl = t.boxUrl;
     if (boxUrl.isNotEmpty) {
       // 网盘资源
-      _openBrowser(context, boxUrl);
+      openBrowser(boxUrl);
     } else {
       // 视频资源,准备切换播放点击的视频
       String vSrc = await _idGetSrc(t.id);
@@ -199,14 +199,6 @@ abstract class _DetailStore with Store {
         vc?.pause();
       }
       updateHistory();
-    }
-  }
-
-  _openBrowser(BuildContext context, String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      _showSnackbar(context, '无法启动$url');
     }
   }
 

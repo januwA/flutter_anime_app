@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/pages/home/widgets/update_tile.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_video_app/shared/globals.dart';
+import 'package:flutter_video_app/utils/open_browser.dart';
 
 class HomeDrawer extends StatefulWidget {
   @override
@@ -59,11 +59,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                         title: Text('查看Anime源码'),
                         trailing: IconButton(
                           icon: Icon(Icons.open_in_browser),
-                          onPressed: () async {
-                            if (await canLaunch(githubAddress)) {
-                              await launch(githubAddress);
-                            }
-                          },
+                          onPressed: () => openBrowser(githubAddress),
                         ),
                       )
                     ],

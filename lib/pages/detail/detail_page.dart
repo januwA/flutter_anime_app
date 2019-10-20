@@ -4,7 +4,6 @@ import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/pages/detail/anime_video_type.dart';
 import 'package:flutter_video_app/pages/detail/detail.store.dart';
 import 'package:flutter_video_app/shared/widgets/column_button.dart';
-import 'package:flutter_video_app/shared/widgets/http_loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:video_box/video_box.dart';
 
@@ -74,108 +73,115 @@ class _DetailPageState extends State<DetailPage>
     var theme = Theme.of(context);
     return Observer(
       builder: (_) {
-        if (store.loading) {
-          return HttpLoadingPage(title: '加载中...');
-        }
         return SafeArea(
           child: Scaffold(
-            body: CustomScrollView(
-              controller: store.controller,
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: store.currentPlayVideo != null &&
-                                store.animeVideoType ==
-                                    AnimeVideoType.haokanBaidu &&
-                                mounted
-                            ? VideoBox(
-                                controller: store.vc,
-                                children: <Widget>[
-                                  Observer(
-                                    builder: (_) => Align(
-                                      alignment: Alignment(-0.5, 0),
-                                      child: IconButton(
-                                        iconSize: 40,
-                                        disabledColor: Colors.white60,
-                                        color: Colors.white,
-                                        icon: Icon(Icons.skip_previous),
-                                        onPressed: store.hasPrevPlay
-                                            ? () => store.prevPlay(context)
-                                            : null,
-                                      ),
-                                    ),
-                                  ),
-                                  Observer(
-                                    builder: (context) => Align(
-                                      alignment: Alignment(0.5, 0),
-                                      child: IconButton(
-                                        iconSize: 40,
-                                        disabledColor: Colors.white60,
-                                        color: Colors.white,
-                                        icon: Icon(Icons.skip_next),
-                                        onPressed: store.hasNextPlay
-                                            ? () => store.nextPlay(context)
-                                            : null,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : NetworkImagePlaceholder(store.detail.cover),
-                      ),
-                      Card(
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: _detailInfo(),
-                            ),
-                            _buildButtonBar(context),
-
-                            // detail text
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: DetailText(store.detail.plot),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
-                      Card(
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              child: TabBar(
-                                isScrollable: true,
-                                unselectedLabelColor: Colors.grey,
-                                labelColor: theme.primaryColor,
-                                controller: store.tabController,
-                                indicator: TabIndicator(),
-                                tabs: store.detail.tabs
-                                    .map<Widget>((el) => Tab(child: Text(el)))
-                                    .toList(),
-                              ),
-                            ),
-                            Container(
-                              height: 50,
-                              margin:
-                                  const EdgeInsets.symmetric(vertical: 12.0),
-                              child: TabBarView(
-                                controller: store.tabController,
-                                children: <Widget>[
-                                  for (var tv in store.detail.tabsValues)
-                                    ListView(
-                                      // keep scroll offset
-                                      key: PageStorageKey(tv),
-                                      scrollDirection: Axis.horizontal,
+            body: store.loading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : CustomScrollView(
+                    controller: store.controller,
+                    slivers: [
+                      SliverList(
+                        delegate: SliverChildListDelegate(
+                          [
+                            AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: store.currentPlayVideo != null &&
+                                      store.animeVideoType ==
+                                          AnimeVideoType.haokanBaidu &&
+                                      mounted
+                                  ? VideoBox(
+                                      controller: store.vc,
                                       children: <Widget>[
-                                        for (var t in tv.tabs)
-                                          _buildRaisedButton(t, context),
+                                        Observer(
+                                          builder: (_) => Align(
+                                            alignment: Alignment(-0.5, 0),
+                                            child: IconButton(
+                                              iconSize: 40,
+                                              disabledColor: Colors.white60,
+                                              color: Colors.white,
+                                              icon: Icon(Icons.skip_previous),
+                                              onPressed: store.hasPrevPlay
+                                                  ? () =>
+                                                      store.prevPlay(context)
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                        Observer(
+                                          builder: (context) => Align(
+                                            alignment: Alignment(0.5, 0),
+                                            child: IconButton(
+                                              iconSize: 40,
+                                              disabledColor: Colors.white60,
+                                              color: Colors.white,
+                                              icon: Icon(Icons.skip_next),
+                                              onPressed: store.hasNextPlay
+                                                  ? () =>
+                                                      store.nextPlay(context)
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     )
+                                  : NetworkImagePlaceholder(store.detail.cover),
+                            ),
+                            Card(
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: _detailInfo(),
+                                  ),
+                                  _buildButtonBar(context),
+
+                                  // detail text
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: DetailText(store.detail.plot),
+                                  ),
+                                  SizedBox(height: 10),
+                                ],
+                              ),
+                            ),
+                            Card(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    child: TabBar(
+                                      isScrollable: true,
+                                      unselectedLabelColor: Colors.grey,
+                                      labelColor: theme.primaryColor,
+                                      controller: store.tabController,
+                                      indicator: TabIndicator(),
+                                      tabs: store.detail.tabs
+                                          .map<Widget>(
+                                              (el) => Tab(child: Text(el)))
+                                          .toList(),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 50,
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 12.0),
+                                    child: TabBarView(
+                                      controller: store.tabController,
+                                      children: <Widget>[
+                                        for (var tv in store.detail.tabsValues)
+                                          ListView(
+                                            // keep scroll offset
+                                            key: PageStorageKey(tv),
+                                            scrollDirection: Axis.horizontal,
+                                            children: <Widget>[
+                                              for (var t in tv.tabs)
+                                                _buildRaisedButton(t, context),
+                                            ],
+                                          )
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -184,9 +190,6 @@ class _DetailPageState extends State<DetailPage>
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
           ),
         );
       },
