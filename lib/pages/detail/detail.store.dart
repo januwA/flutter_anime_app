@@ -223,23 +223,33 @@ abstract class _DetailStore with Store {
     List<String> tabs = ulLis.map((dom.Element el) => $(el, 'a').text).toList();
 
     dom.Element ffPlayurlTab = $(document, '.tab-content.ff-playurl-tab');
-    List<dom.Element> ffPlayurlTabUls = $$(ffPlayurlTab, 'ul');
-    var tabsValues = ffPlayurlTabUls.map((dom.Element ul) {
-      List<dom.Element> lis = $$(ul, 'li');
-      return {
-        "tabs": lis.map((dom.Element li) {
-          dom.Element a = $(li, 'a');
-          String boxUrl =
-              a.attributes['target'] == '_blank' ? a.attributes['href'] : "";
-          return {
-            'id': li?.attributes['data-id'],
-            'text': a?.innerHtml?.trim(),
-            'boxUrl': boxUrl,
-          };
-        }).toList()
-      };
-    }).toList();
 
+    // ul组
+    List<dom.Element> ffPlayurlTabUls = $$(ffPlayurlTab, 'ul');
+
+    // [ { 'tabs': [{id, text, isBox}] } ]
+    // 循环获取，可以过滤掉意外情况.
+    List<Map<String, dynamic>> tabsValues = [];
+    for (dom.Element ul in ffPlayurlTabUls) {
+      List<dom.Element> lis = $$(ul, 'li');
+      var _tabs = [];
+      for (dom.Element li in lis) {
+        dom.Element a = $(li, 'a');
+        String text = a?.innerHtml?.trim();
+        String id = li?.attributes['data-id'];
+        if (text.contains('全部') || id == null) continue;
+        String boxUrl =
+            a.attributes['target'] == '_blank' ? a.attributes['href'] : "";
+        Map<String, String> _tab = {
+          'id': id,
+          'text': text,
+          'boxUrl': boxUrl,
+        };
+        _tabs.add(_tab);
+      }
+
+      tabsValues.add({"tabs": _tabs});
+    }
     dom.Element mediaBody = $(document, '.media-body');
     List<dom.Element> dds = $$(mediaBody, 'dd');
 
@@ -294,6 +304,7 @@ abstract class _DetailStore with Store {
     return jsonMap;
   }
 
+  /// 找到脚本名中包含'player.php'的第一个'<script>'标签
   String _findScript(List<dom.Element> scripts) {
     for (var s in scripts) {
       String src = s.attributes['src'];
