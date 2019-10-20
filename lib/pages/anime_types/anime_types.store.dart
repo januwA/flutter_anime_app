@@ -223,7 +223,6 @@ abstract class _AnimeTypesStore with Store {
       /// 获取页面数据
       List<dom.Element> listUnstyledLi = $$(document, '.list-unstyled li');
       if (listUnstyledLi.isEmpty) {
-        print('not Data');
         loading = false;
         return;
       }

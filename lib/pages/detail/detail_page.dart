@@ -51,10 +51,10 @@ class _DetailPageState extends State<DetailPage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        // print('应用程序可见并响应用户输入。');
+        // 应用程序可见并响应用户输入
         break;
       case AppLifecycleState.inactive:
-        // print('应用程序处于非活动状态，并且未接收用户输入');
+        // 应用程序处于非活动状态，并且未接收用户输入
         break;
       case AppLifecycleState.paused:
         // 用户当前看不到应用程序，没有响应
@@ -62,7 +62,7 @@ class _DetailPageState extends State<DetailPage>
         store.updateHistory();
         break;
       case AppLifecycleState.suspending:
-        // print('应用程序将暂停。');
+        // 应用程序将暂停
         break;
       default:
     }
@@ -70,7 +70,6 @@ class _DetailPageState extends State<DetailPage>
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return Observer(
       builder: (_) {
         return SafeArea(
@@ -87,46 +86,7 @@ class _DetailPageState extends State<DetailPage>
                           [
                             AspectRatio(
                               aspectRatio: 16 / 9,
-                              child: store.currentPlayVideo != null &&
-                                      store.animeVideoType ==
-                                          AnimeVideoType.haokanBaidu &&
-                                      mounted
-                                  ? VideoBox(
-                                      controller: store.vc,
-                                      children: <Widget>[
-                                        Observer(
-                                          builder: (_) => Align(
-                                            alignment: Alignment(-0.5, 0),
-                                            child: IconButton(
-                                              iconSize: 40,
-                                              disabledColor: Colors.white60,
-                                              color: Colors.white,
-                                              icon: Icon(Icons.skip_previous),
-                                              onPressed: store.hasPrevPlay
-                                                  ? () =>
-                                                      store.prevPlay(context)
-                                                  : null,
-                                            ),
-                                          ),
-                                        ),
-                                        Observer(
-                                          builder: (context) => Align(
-                                            alignment: Alignment(0.5, 0),
-                                            child: IconButton(
-                                              iconSize: 40,
-                                              disabledColor: Colors.white60,
-                                              color: Colors.white,
-                                              icon: Icon(Icons.skip_next),
-                                              onPressed: store.hasNextPlay
-                                                  ? () =>
-                                                      store.nextPlay(context)
-                                                  : null,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : NetworkImagePlaceholder(store.detail.cover),
+                              child: _createVideoBox(),
                             ),
                             Card(
                               child: Column(
@@ -136,8 +96,6 @@ class _DetailPageState extends State<DetailPage>
                                     child: _detailInfo(),
                                   ),
                                   _buildButtonBar(context),
-
-                                  // detail text
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: DetailText(store.detail.plot),
@@ -149,36 +107,16 @@ class _DetailPageState extends State<DetailPage>
                             Card(
                               child: Column(
                                 children: <Widget>[
+                                  _createTabbar(),
                                   Container(
-                                    child: TabBar(
-                                      isScrollable: true,
-                                      unselectedLabelColor: Colors.grey,
-                                      labelColor: theme.primaryColor,
-                                      controller: store.tabController,
-                                      indicator: TabIndicator(),
-                                      tabs: store.detail.tabs
-                                          .map<Widget>(
-                                              (el) => Tab(child: Text(el)))
-                                          .toList(),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 50,
+                                    height: 90,
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 12.0),
                                     child: TabBarView(
                                       controller: store.tabController,
                                       children: <Widget>[
                                         for (var tv in store.detail.tabsValues)
-                                          ListView(
-                                            // keep scroll offset
-                                            key: PageStorageKey(tv),
-                                            scrollDirection: Axis.horizontal,
-                                            children: <Widget>[
-                                              for (var t in tv.tabs)
-                                                _buildRaisedButton(t, context),
-                                            ],
-                                          )
+                                          _createTabBarViewItem(tv),
                                       ],
                                     ),
                                   ),
@@ -194,6 +132,157 @@ class _DetailPageState extends State<DetailPage>
         );
       },
     );
+  }
+
+  /// 播放类型tabbar
+  Widget _createTabbar() {
+    var theme = Theme.of(context);
+    return Container(
+      child: TabBar(
+        isScrollable: true,
+        unselectedLabelColor: Colors.grey,
+        labelColor: theme.primaryColor,
+        controller: store.tabController,
+        indicator: TabIndicator(),
+        tabs: store.detail.tabs
+            .map<Widget>((el) => Tab(child: Text(el)))
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _createTabBarViewItem(TabsDto tv) {
+    var theme = Theme.of(context);
+    return Builder(
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Expanded(child: Text('选集')),
+                GestureDetector(
+                  onTap: () {
+                    // showBottomSheet(
+                    showModalBottomSheet(
+                        context: context,
+                        backgroundColor: Colors.white,
+                        builder: (context) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text('选集 (${tv.tabs.length})'),
+                                      IconButton(
+                                        icon: Icon(Icons.close),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView(
+                                    children: <Widget>[
+                                      Observer(
+                                        builder: (_) => Center(
+                                          child: Wrap(
+                                            alignment: WrapAlignment.start,
+                                            children: <Widget>[
+                                              for (var t in tv.tabs)
+                                                _buildRaisedButton(t, context),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                  child: Text(
+                    '共 ${tv.tabs.length} 集',
+                    style: theme.textTheme.caption,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_right,
+                  color: theme.textTheme.caption.color,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              key: PageStorageKey(tv),
+              scrollDirection: Axis.horizontal,
+              children: <Widget>[
+                for (var t in tv.tabs) _buildRaisedButton(t, context),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 播放时显示video，反之显示占位图像
+  Widget _createVideoBox() {
+    return store.currentPlayVideo != null &&
+            store.animeVideoType == AnimeVideoType.haokanBaidu &&
+            mounted
+        ? VideoBox(
+            controller: store.vc,
+            children: _videoBoxChildren(),
+          )
+        : NetworkImagePlaceholder(store.detail.cover);
+  }
+
+  /// prev and next button
+  List<Widget> _videoBoxChildren() {
+    const Color disabledColor = Colors.white60;
+    return [
+      Observer(
+        builder: (_) => Align(
+          alignment: Alignment(-0.5, 0),
+          child: IconButton(
+            iconSize: VideoBox.centerIconSize,
+            disabledColor: disabledColor,
+            icon: Icon(Icons.skip_previous),
+            onPressed: store.hasPrevPlay ? () => store.prevPlay(context) : null,
+          ),
+        ),
+      ),
+      Observer(
+        builder: (context) => Align(
+          alignment: Alignment(0.5, 0),
+          child: IconButton(
+            iconSize: VideoBox.centerIconSize,
+            disabledColor: disabledColor,
+            icon: Icon(Icons.skip_next),
+            onPressed: store.hasNextPlay ? () => store.nextPlay(context) : null,
+          ),
+        ),
+      ),
+    ];
   }
 
   Widget _buildButtonBar(BuildContext context) {

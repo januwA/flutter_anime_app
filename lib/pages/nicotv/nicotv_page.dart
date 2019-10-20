@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 
 /// 移除页面广告的js脚本
 String jsStr = """
+
 function getPV(el, prop) {
   return document.defaultView
     .getComputedStyle(el, null)
@@ -41,10 +42,10 @@ function startRemovePopUpsEvent() {
   removePopUpsEvent();
   setIntervalCtrl = setInterval(removePopUpsEvent, 1000 * 2.5);
 }
-for (var i = 1; i < 100; i++) {
+startRemovePopUpsEvent();
+for (var i = 1; i < 200; i++) {
   clearInterval(i);
 }
-startRemovePopUpsEvent();
 """;
 
 class NicotvPage extends StatefulWidget {

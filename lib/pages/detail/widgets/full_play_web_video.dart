@@ -47,6 +47,9 @@ class _FullPlayWebVideoState extends State<FullPlayWebVideo> {
             child: WebView(
               initialUrl: widget.initialUrl,
               javascriptMode: JavascriptMode.unrestricted,
+              navigationDelegate: (NavigationRequest request) {
+                return NavigationDecision.prevent;
+              },
             ),
           ),
         ),

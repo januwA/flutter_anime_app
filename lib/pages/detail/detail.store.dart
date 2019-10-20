@@ -100,8 +100,8 @@ abstract class _DetailStore with Store {
 
   /// iframe 播放时的流
   Stream<String> get iframeVideo => _iframeVideoSubject.stream.map(
-        (String src) =>
-            """data:text/html,<style>body{margin: 0px}</style><iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""",
+        (String src) => src,
+        // """data:text/html,<style>body{margin: 0px}</style><script>$jsStr</script><iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""",
       );
   final _iframeVideoSubject = BehaviorSubject<String>();
 
@@ -356,12 +356,12 @@ abstract class _DetailStore with Store {
 
     if (name == 'youku') {
       animeVideoType = AnimeVideoType.youku;
-      result = """https://5.5252e.com/p/youku.php?url=${jsonMap['url']}""";
+      result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
     }
 
     if (name == 'qq') {
       animeVideoType = AnimeVideoType.qq;
-      result = """https://5.5252e.com/p/youku.php?url=${jsonMap['url']}""";
+      result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
     }
     return result;
   }
