@@ -63,7 +63,9 @@ abstract class _DetailStore with Store {
         ..boxUrl = history.playCurrentBoxUrl,
     );
 
-    if (history.playCurrent.isNotEmpty) tabClick(currentPlayVideo, context);
+    // 百度地址不自动打开
+    if (history.playCurrent.isNotEmpty && currentPlayVideo.boxUrl.isEmpty)
+      tabClick(currentPlayVideo, context);
 
     iframeVideo.listen((String url) {
       router.navigator.pushNamed('/full-webvideo', arguments: url);
@@ -99,10 +101,7 @@ abstract class _DetailStore with Store {
   History history;
 
   /// iframe 播放时的流
-  Stream<String> get iframeVideo => _iframeVideoSubject.stream.map(
-        (String src) => src,
-        // """data:text/html,<style>body{margin: 0px}</style><script>$jsStr</script><iframe class="embed-responsive-item" src="$src" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>""",
-      );
+  Stream<String> get iframeVideo => _iframeVideoSubject.stream;
   final _iframeVideoSubject = BehaviorSubject<String>();
 
   @action
@@ -175,6 +174,7 @@ abstract class _DetailStore with Store {
         _showSnackbar(context, '获取播放地址错误');
         return;
       }
+
       if (animeVideoType == AnimeVideoType.haokanBaidu) {
         var source = VideoPlayerController.network(vSrc);
 
@@ -332,38 +332,30 @@ abstract class _DetailStore with Store {
     String jsonUrl = Uri.decodeFull(jsonMap['url']);
 
     var name = jsonMap['name'].trim();
-
+    print('video url type: ' + name);
     if (name == 'haokan_baidu') {
-      animeVideoType = AnimeVideoType.haokanBaidu;
-
       final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
-
       // 避免没有拿到视频播放地址时的意外情况发生
       if (videoUrl != null) {
+        animeVideoType = AnimeVideoType.haokanBaidu;
         result = videoUrl;
       } else {
-        animeVideoType = AnimeVideoType.biaofan;
-        result =
-            """${jsonMap['jiexi']}$jsonUrl&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+        animeVideoType = AnimeVideoType.other;
+        result = _createH5VidelUrl(jsonMap);
+      }
+    } else {
+      animeVideoType = AnimeVideoType.other;
+      if (name == '360biaofan') {
+        result = _createH5VidelUrl(jsonMap);
+      } else {
+        result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
       }
     }
-
-    if (name == '360biaofan') {
-      animeVideoType = AnimeVideoType.biaofan;
-      result =
-          """${jsonMap['jiexi']}$jsonUrl&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
-    }
-
-    if (name == 'youku') {
-      animeVideoType = AnimeVideoType.youku;
-      result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
-    }
-
-    if (name == 'qq') {
-      animeVideoType = AnimeVideoType.qq;
-      result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
-    }
     return result;
+  }
+
+  String _createH5VidelUrl(Map<String, dynamic> jsonMap) {
+    return """${jsonMap['jiexi']}${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
   }
 
   /// webview 打开
