@@ -345,11 +345,12 @@ abstract class _DetailStore with Store {
       }
     } else {
       animeVideoType = AnimeVideoType.other;
-      if (name == '360biaofan') {
-        result = _createH5VidelUrl(jsonMap);
-      } else {
-        result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
-      }
+      result = _createH5VidelUrl(jsonMap);
+      // if (name == '360biaofan') {
+      //   result = _createH5VidelUrl(jsonMap);
+      // } else {
+      //   result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
+      // }
     }
     return result;
   }
