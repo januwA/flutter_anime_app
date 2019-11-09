@@ -5,9 +5,7 @@ import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 
 /// 我的收藏页面
-
 class CollectionsPage extends StatefulWidget {
-  static const routeName = '/CollectionsPage';
   @override
   _CollectionsPageState createState() => _CollectionsPageState();
 }

@@ -1,57 +1,45 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
+import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/router/router.dart';
-import 'package:flutter_video_app/utils/jquery.dart';
-
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html;
-import 'package:html/dom.dart' as dom;
+import 'package:flutter_video_app/shared/nicotv.service.dart';
 
 class SearchListPlaceholder extends StatefulWidget {
-  /// 用户开始搜索前，显示搜索建议
-  SearchListPlaceholder();
-
   @override
   _SearchListPlaceholderState createState() => _SearchListPlaceholderState();
 }
 
 class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
+  final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
   List<ListSearchDto> _listData;
-  String placeholderListUrl = 'http://www.nicotv.me/ajax-search.html';
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    setState(() {
+      loading = true;
+    });
+    _listData = await nicoTvService.getSearchListPlaceholder();
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (_listData == null) {
-      return FutureBuilder<http.Response>(
-        future: http.get(placeholderListUrl),
-        builder: (context, AsyncSnapshot<http.Response> snap) {
-          if (snap.connectionState == ConnectionState.done && snap.hasData) {
-            var body = snap.data.body;
-            dom.Document document = html.parse(body);
-            List<dom.Element> aEls = $$(document, 'dd a');
-            List<ListSearchDto> listData = aEls
-                .map(
-                  (dom.Element a) => ListSearchDto.fromJson(jsonEncode({
-                    'id': RegExp(r"\d+").stringMatch(a.attributes['href']),
-                    'text': a.innerHtml.trim(),
-                    'href': a.attributes['href'],
-                  })),
-                )
-                .toList();
-            _listData = listData;
-            return _popularSearches(context, _listData);
-          }
-          return SizedBox();
-        },
-      );
-    } else {
-      return _popularSearches(context, _listData);
+    if (loading) {
+      return SizedBox();
     }
+
+    return _popularSearches();
   }
 
-  _popularSearches(context, List<ListSearchDto> listdata) {
+  _popularSearches() {
     return ListView(
       children: [
         ListTile(
@@ -60,7 +48,7 @@ class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
             style: Theme.of(context).textTheme.title,
           ),
         ),
-        for (ListSearchDto data in listdata)
+        for (ListSearchDto data in _listData)
           ListTile(
             onTap: () {
               router.navigator.pushNamed('/anime-detail/${data.id}');

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_video_app/router/router.dart';
+import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/theme/theme.dart';
+import 'package:get_it/get_it.dart';
 
-void main() => runApp(MyApp());
+GetIt getIt = GetIt.instance;
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+void main() {
+  getIt..registerSingleton<NicoTvService>(NicoTvService());
+  runApp(MyApp());
 }
 
-class _MyAppState extends State<MyApp> {
+class MyApp extends StatelessWidget {
   final onGenerateRoute = router.forRoot(routes);
 
   @override

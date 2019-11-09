@@ -189,7 +189,7 @@ packages:
       name: flushbar
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.9.0"
+    version: "1.9.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -201,7 +201,7 @@ packages:
       name: flutter_ajanuw_router
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.1"
+    version: "0.2.2"
   flutter_downloader:
     dependency: transitive
     description:
@@ -247,6 +247,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.19"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.3"
   glob:
     dependency: transitive
     description:
@@ -671,7 +678,7 @@ packages:
       name: video_box
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.6.0"
+    version: "0.7.0"
   video_player:
     dependency: transitive
     description:

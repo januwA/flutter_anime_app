@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
+import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
-import 'package:flutter_video_app/utils/anime_list.dart';
-import 'package:flutter_video_app/utils/jquery.dart';
-
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html;
-import 'package:html/dom.dart' as dom;
 
 class ListResults extends StatefulWidget {
   final String query;
@@ -18,28 +14,25 @@ class ListResults extends StatefulWidget {
 }
 
 class _ListResultsState extends State<ListResults> {
+  final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
+
   @override
   Widget build(BuildContext context) {
     String query = widget.query;
 
-    if (query.isEmpty)
-      return Center(
-        child: Text('搜索关键词'),
-      );
+    if (query.isEmpty) return Center(child: Text('搜索关键词'));
 
-    return FutureBuilder<http.Response>(
-      future: http.get(Uri.http('www.nicotv.me', '/video/search/$query.html')),
-      builder: (_, snapshot) {
+    return FutureBuilder(
+      future: nicoTvService.getSearch(query),
+      builder: (context, AsyncSnapshot<List<LiData>> snapshot) {
         if (!snapshot.hasData) {
           return Text('loading...');
         }
-        List<dom.Element> list = _getList(snapshot.data.body);
-        if (list == null || list.length == 0) {
-          return Center(
-            child: Text('$query共有0个视频!'),
-          );
+        List<LiData> list = snapshot.data;
+        if (list?.isEmpty ?? true) {
+          return Center(child: Text('$query共有0个视频!'));
         }
-        return _displayResultList(createAnimeList(list).asList());
+        return _displayResultList(list);
       },
     );
   }
@@ -79,12 +72,5 @@ class _ListResultsState extends State<ListResults> {
         ),
       ],
     );
-  }
-
-  List<dom.Element> _getList(String body) {
-    dom.Document document = html.parse(body);
-    dom.Element ul = $(document, 'ul.list-unstyled');
-    List<dom.Element> list = $$(ul, 'li');
-    return list;
   }
 }

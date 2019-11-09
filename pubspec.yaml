@@ -22,7 +22,7 @@ dependencies:
   flutter_mobx: ^0.3.3+1
 
   # 视频播放器
-  video_box: ^0.6.0
+  video_box: ^0.7.0
 
   # 解析html字符串
   html: ^0.14.0+2
@@ -34,7 +34,7 @@ dependencies:
   moor_flutter: ^1.7.0
 
   # 在通知用户时需要更多自定义的snackbar
-  flushbar: ^1.9.0
+  flushbar: ^1.9.1
 
   # apk升级策略
   flutter_github_releases_service: ^0.4.0
@@ -44,7 +44,8 @@ dependencies:
 
   # 底部泡泡栏
   bubble_bottom_bar: ^1.2.0
-  flutter_ajanuw_router: ^0.2.1
+  flutter_ajanuw_router: ^0.2.2
+  get_it:
 
 dev_dependencies:
   flutter_test:

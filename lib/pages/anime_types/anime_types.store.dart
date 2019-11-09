@@ -1,23 +1,21 @@
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
-import 'package:flutter_video_app/utils/anime_list.dart';
-import 'package:flutter_video_app/utils/jquery.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html;
 part 'anime_types.store.g.dart';
 
 class AnimeTypesStore = _AnimeTypesStore with _$AnimeTypesStore;
 
 abstract class _AnimeTypesStore with Store {
+  final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
   _AnimeTypesStore() {
     getData();
   }
 
   @action
-  initState(TickerProvider  ctx) {
+  initState(TickerProvider ctx) {
     tabTypesCtrl = TabController(
       vsync: ctx,
       length: types.length,
@@ -54,7 +52,7 @@ abstract class _AnimeTypesStore with Store {
   @observable
   bool loading = true;
   @observable
-  ObservableList<LiData> animeData = ObservableList<LiData>();
+  List<LiData> animeData = List<LiData>();
 
   /// 类型
   List<String> types = [
@@ -178,63 +176,18 @@ abstract class _AnimeTypesStore with Store {
     getData();
   }
 
-  /// 获取document
-  ///
-  /// 用户的操作可能很快
-  /// 想清除上一次的请求，在新建一个请求
-  Future<dom.Document> _getDocument(String url) async {
-    _client = http.Client();
-    var r = await _client.get(url);
-    dom.Document document = html.parse(r.body);
-    return document;
-  }
-
   /// 获取url的数据
   ///
   /// 1. 先获取分页
   /// 2. 在获取data
   @action
-  getData() async {
+  Future<void> getData() async {
     loading = true;
-    _client?.close();
-    try {
-      dom.Document document = await _getDocument(url);
-      // 分页
-      int allPageCount = 1;
-      List<dom.Element> pagination = $$(document, '.pagination li');
-      if (pagination != null && pagination.isNotEmpty) {
-        String pageLen = pagination
-            .map((dom.Element li) => $(li, 'a').innerHtml)
-            .where((String s) => s != "»" && s != '«')
-            .map((String s) => s.contains('.') ? s.replaceAll('.', '') : s)
-            .last;
-        allPageCount = int.parse(pageLen);
-      }
-      // print('current page index: $pageCount, allPageCount: $allPageCount');
-
-      /// 分页达到最大
-      if (pageCount > allPageCount) {
-        /// 分页已经达到最大
-        // print('超过最大分页');
-        loading = false;
-        return;
-      }
-
-      /// 获取页面数据
-      List<dom.Element> listUnstyledLi = $$(document, '.list-unstyled li');
-      if (listUnstyledLi.isEmpty) {
-        loading = false;
-        return;
-      }
-
-      BuiltList<LiData> ad = createAnimeList(listUnstyledLi);
-      for (var a in ad) {
-        animeData.add(a);
-      }
-      loading = false;
-    } on http.ClientException catch (_) {
-      // 无视掉请求中断错误
-    } catch (_) {}
+    var animes = await nicoTvService.getAnimeTypes(url, pageCount);
+    if (animes.isNotEmpty) {
+      animeData.addAll(animes);
+    }
+    loading = false;
   }
 
   bool onNotification(Notification notification) {

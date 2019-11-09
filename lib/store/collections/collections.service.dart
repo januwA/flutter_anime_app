@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
-import 'package:flutter_video_app/utils/jquery.dart';
+import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:mobx/mobx.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:moor/moor.dart';
 
 part 'collections.service.g.dart';
@@ -12,6 +10,7 @@ part 'collections.service.g.dart';
 class CollectionsService = _CollectionsService with _$CollectionsService;
 
 abstract class _CollectionsService with Store {
+  final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
   AppDatabase _db = AppDatabase();
   CollectionDao get _collectionDao => _db.collectionDao;
 
@@ -21,19 +20,7 @@ abstract class _CollectionsService with Store {
 
   /// 根据 animeId获取数据
   Future<LiData> getAnime(String animeId) async {
-    dom.Document document =
-        await $document('http://www.nicotv.me/video/detail/$animeId.html');
-    dom.Element mediaBody = $(document, '.media-body');
-    return LiData.fromJson(
-      jsonEncode(
-        {
-          "id": animeId,
-          "title": $(mediaBody, 'h2 a').innerHtml.trim(),
-          "img": $(document, '.media-left img').attributes['data-original'],
-          "current": $(mediaBody, 'h2 small').innerHtml.trim(),
-        },
-      ),
-    );
+    return nicoTvService.getAnimeInfo(animeId);
   }
 
   /// 检查是否在收藏夹内
