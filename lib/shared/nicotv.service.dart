@@ -3,30 +3,24 @@ import 'dart:convert';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
 import 'package:flutter_video_app/pages/detail/anime_video_type.dart';
-import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html;
 
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 
-dom.Element $(parent, String select) {
-  return parent.querySelector(select);
-}
+import 'nicotv_http.dart';
 
-List<dom.Element> $$(parent /* Element or Document */, String select) {
-  return parent.querySelectorAll(select);
-}
+dom.Element $(parent, String select) => parent.querySelector(select);
+List<dom.Element> $$(parent /*Element|Document*/, String select) =>
+    parent.querySelectorAll(select);
 
-Future<dom.Document> $document(String url) async {
-  var r = await http.get(url);
-  dom.Document document = html.parse(r.body);
-  return document;
-}
+Future<dom.Document> $document(String url) =>
+    nicoTvHttp.get(url).then((r) => html.parse(r.body));
 
 class NicoTvService {
   /// 获取一周更新的amines
   Future<List<WeekData>> getWeekAnimes() async {
-    dom.Document document = await $document('http://www.nicotv.me');
+    dom.Document document = await $document('/');
     List<dom.Element> weekList = $$(document, '.weekDayContent');
     return weekList.map((dom.Element w) {
       List<dom.Element> list = $$(w, 'div.ff-col ul li');
@@ -55,10 +49,9 @@ class NicoTvService {
 
   /// 用户开始搜索前，显示搜索建议
   Future<List<ListSearchDto>> getSearchListPlaceholder() async {
-    String placeholderListUrl = 'http://www.nicotv.me/ajax-search.html';
-    dom.Document document = await $document(placeholderListUrl);
+    dom.Document document = await $document('/ajax-search.html');
     List<dom.Element> aEls = $$(document, 'dd a');
-    List<ListSearchDto> listData = aEls
+    return aEls
         .map(
           (dom.Element a) => ListSearchDto.fromJson(jsonEncode({
             'id': RegExp(r"\d+").stringMatch(a.attributes['href']),
@@ -67,13 +60,11 @@ class NicoTvService {
           })),
         )
         .toList();
-    return listData;
   }
 
   /// 搜索
   Future<List<LiData>> getSearch(String query) async {
-    dom.Document document =
-        await $document('http://www.nicotv.me/video/search/$query.html');
+    dom.Document document = await $document('/video/search/$query.html');
     dom.Element ul = $(document, 'ul.list-unstyled');
     List<dom.Element> list = $$(ul, 'li');
     return _createAnimeList(list);
@@ -99,32 +90,19 @@ class NicoTvService {
   }
 
   /// 获取最近更新模块的animes
-  Future<List<LiData>> getRecentlyUpdatedAnimes() async {
-    dom.Document document = await $document('http://www.nicotv.me');
-
-    /// 获取所有标题元素
-    List<dom.Element> headers = $$(document, '.page-header');
-
-    /// 所有元素的 text
-    int index = headers.indexWhere((el) => el.innerHtml.contains('最近更新'));
-
-    /// 找到兄弟元素 获取数据
-    dom.Element dataEles =
-        $(headers[index].nextElementSibling, 'div.col-md-8>ul.list-unstyled');
-
-    List<dom.Element> list = $$(dataEles, 'li');
-    return _createAnimeList(list);
-  }
+  Future<List<LiData>> getRecentlyUpdatedAnimes() => _getHomeModule('最近更新');
 
   /// 获取推荐模块的animes
-  Future<List<LiData>> getRecommendAnimes() async {
-    dom.Document document = await $document('http://www.nicotv.me');
+  Future<List<LiData>> getRecommendAnimes() => _getHomeModule('推荐动漫');
+
+  Future<List<LiData>> _getHomeModule(String moduleName) async {
+    dom.Document document = await $document('/');
 
     /// 获取所有标题元素
     List<dom.Element> headers = $$(document, '.page-header');
 
     /// 所有元素的 text
-    int index = headers.indexWhere((el) => el.innerHtml.contains('推荐动漫'));
+    int index = headers.indexWhere((el) => el.innerHtml.contains(moduleName));
 
     /// 找到兄弟元素 获取数据
     dom.Element dataEles =
@@ -136,8 +114,7 @@ class NicoTvService {
 
   /// 详情数据
   Future<DetailDto> getAnime(String animeId) async {
-    dom.Document document =
-        await $document('http://www.nicotv.me/video/detail/$animeId.html');
+    dom.Document document = await $document('/video/detail/$animeId.html');
 
     dom.Element ul = $(document, '.nav.nav-tabs.ff-playurl-tab');
     List<dom.Element> ulLis = $$(ul, 'li');
@@ -184,30 +161,29 @@ class NicoTvService {
       'cover': $(document, '.media-left img').attributes['data-original'],
 
       /// video name
-      'videoName': $(mediaBody, 'h2 a').innerHtml.trim(),
+      'videoName': $(mediaBody, 'h2 a').text.trim(),
 
       /// 多少集
-      'curentText': $(mediaBody, 'h2 small').innerHtml.trim(),
+      'curentText': $(mediaBody, 'h2 small').text.trim(),
 
       /// 主演
       'starring':
-          $$(dds[0], 'a').map((dom.Element a) => a.innerHtml.trim()).toList(),
+          $$(dds[0], 'a').map((dom.Element a) => a.text.trim()).toList(),
 
       /// 导演
       'director': director,
 
       /// 类型
-      'types':
-          $$(dds[2], 'a').map((dom.Element a) => a.innerHtml.trim()).toList(),
+      'types': $$(dds[2], 'a').map((dom.Element a) => a.text.trim()).toList(),
 
       /// 地区
-      'area': $(dds[3], 'a').innerHtml.trim(),
+      'area': $(dds[3], 'a').text.trim(),
 
       /// 年份
-      'years': $(dds[4], 'a').innerHtml.trim(),
+      'years': $(dds[4], 'a').text.trim(),
 
       /// 剧情介绍
-      'plot': $(dds[5], 'span').innerHtml.trim(),
+      'plot': $(dds[5], 'span').text.trim(),
 
       /// 资源类型，资源来源
       'tabs': tabs,
@@ -217,16 +193,14 @@ class NicoTvService {
     }));
   }
 
-  String _createH5VidelUrl(Map<String, dynamic> jsonMap) {
-    return """${jsonMap['jiexi']}${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
-  }
+  String _createH5VidelUrl(Map<String, dynamic> jsonMap) =>
+      """${jsonMap['jiexi']}${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
 
   Map<String, dynamic> _parseResponseToObject(String r) {
     String jsonData = r
         .replaceFirst('var cms_player =', '')
         .replaceAll(RegExp(r";document\.write.*"), '');
-    Map<String, dynamic> jsonMap = jsonDecode(jsonData);
-    return jsonMap;
+    return jsonDecode(jsonData);
   }
 
   /// 找到脚本名中包含'player.php'的第一个'<script>'标签
@@ -245,12 +219,12 @@ class NicoTvService {
   Future<AnimeSource> getAnimeSource(String id) async {
     var animeVideoType;
     String result;
-    String url = 'http://www.nicotv.me/video/play/$id.html';
+    String url = '/video/play/$id.html';
 
     dom.Document document = await $document(url);
     String scriptSrc = _findScript($$(document, 'script'));
 
-    var r2 = await http.get('http://www.nicotv.me$scriptSrc');
+    var r2 = await nicoTvHttp.get(scriptSrc);
     Map<String, dynamic> jsonMap = _parseResponseToObject(r2.body);
 
     // 解码url字段
@@ -313,8 +287,7 @@ class NicoTvService {
 
   /// 获取Anime简单的展示数据
   Future<LiData> getAnimeInfo(String animeId) async {
-    dom.Document document =
-        await $document('http://www.nicotv.me/video/detail/$animeId.html');
+    dom.Document document = await $document('/video/detail/$animeId.html');
     dom.Element mediaBody = $(document, '.media-body');
     return LiData.fromJson(
       jsonEncode(
@@ -329,6 +302,7 @@ class NicoTvService {
   }
 }
 
+/// 每集的资源
 class AnimeSource {
   final AnimeVideoType type;
   final String src;

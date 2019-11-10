@@ -276,12 +276,21 @@ packages:
     source: hosted
     version: "0.14.0+3"
   http:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: http
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.12.0+2"
+  http_interceptor:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: bffce7cf80a305bd314b4ae8c147a9d86bbfc2be
+      url: "https://github.com/januwA/http_interceptor.git"
+    source: git
+    version: "0.1.1"
   http_multi_server:
     dependency: transitive
     description:
