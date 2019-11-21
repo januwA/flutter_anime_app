@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/home/home.store.dart';
 import 'package:flutter_video_app/pages/home/widgets/home_drawer.dart';
 import 'package:flutter_video_app/pages/list_search/list_search.dart';
-import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -28,23 +28,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var week = [
+      AnimeLocalizations.of(context).monday,
+      AnimeLocalizations.of(context).tuesday,
+      AnimeLocalizations.of(context).wednesday,
+      AnimeLocalizations.of(context).thursday,
+      AnimeLocalizations.of(context).friday,
+      AnimeLocalizations.of(context).saturday,
+      AnimeLocalizations.of(context).sunday,
+    ];
     return Observer(
       builder: (_) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('追番表'),
+            title: Text(AnimeLocalizations.of(context).homeTitle),
             actions: _buildActions(),
             bottom: TabBar(
               isScrollable: true,
               controller: store.tabController,
-              tabs: store.week.map((w) => Tab(text: w)).toList(),
+              tabs: week.map((w) => Tab(text: w)).toList(),
             ),
           ),
           drawer: HomeDrawer(),
           body: store.isLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
+              ? Center(child: CircularProgressIndicator())
               : TabBarView(
                   controller: store.tabController,
                   children: [
@@ -57,8 +64,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           crossAxisCount: 2, // 每行显示几列
                           mainAxisSpacing: 2.0, // 每行的上下间距
                           crossAxisSpacing: 2.0, // 每列的间距
-                          childAspectRatio:
-                              AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
+                          childAspectRatio: AnimeCard.aspectRatio,
                           children: <Widget>[
                             for (var li in data.liData)
                               AnimeCard(animeData: li),
@@ -87,12 +93,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           );
         },
       ),
-      IconButton(
-        icon: Icon(Icons.live_tv),
-        onPressed: () {
-          router.navigator.pushNamed('/nicotv');
-        },
-      ),
+      // IconButton(
+      //   icon: Icon(Icons.live_tv),
+      //   onPressed: () {
+      //     router.navigator.pushNamed('/nicotv');
+      //   },
+      // ),
     ];
   }
 }

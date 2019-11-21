@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/recommend/recommend.store.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/shared/widgets/sliver_loading.dart';
@@ -21,7 +22,7 @@ class _RecommendPageState extends State<RecommendPage> {
           key: PageStorageKey('recently_updated'),
           slivers: <Widget>[
             SliverAppBar(
-              title: Text('推荐动漫'),
+              title: Text(AnimeLocalizations.of(context).recommendTitle),
               floating: true,
             ),
             Observer(
@@ -31,7 +32,8 @@ class _RecommendPageState extends State<RecommendPage> {
                         crossAxisCount: 2, // 每行显示几列
                         mainAxisSpacing: 2.0, // 每行的上下间距
                         crossAxisSpacing: 2.0, // 每列的间距
-                        childAspectRatio: AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
+                        childAspectRatio:
+                            AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
                         children: <Widget>[
                           for (var anime in store.animeList)
                             AnimeCard(animeData: anime),

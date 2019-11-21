@@ -61,7 +61,7 @@ class _DetailPageState extends State<DetailPage>
         // 将应用至于后台时，保存下历史记录
         store.updateHistory();
         break;
-      case AppLifecycleState.suspending:
+      case AppLifecycleState.detached:
         // 应用程序将暂停
         break;
       default:

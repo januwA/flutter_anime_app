@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/anime_types/anime_types.store.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/utils/debounce.dart';
@@ -17,6 +18,11 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
   void initState() {
     super.initState();
     store.initState(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
@@ -40,6 +46,24 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
 
   @override
   Widget build(BuildContext context) {
+    var types = [
+      AnimeLocalizations.of(context).types1,
+      AnimeLocalizations.of(context).types2,
+      AnimeLocalizations.of(context).types3,
+      AnimeLocalizations.of(context).types4,
+      AnimeLocalizations.of(context).types5,
+      AnimeLocalizations.of(context).types6,
+      AnimeLocalizations.of(context).types7,
+      AnimeLocalizations.of(context).types8,
+      AnimeLocalizations.of(context).types9,
+      AnimeLocalizations.of(context).types10,
+      AnimeLocalizations.of(context).types11,
+      AnimeLocalizations.of(context).types12,
+      AnimeLocalizations.of(context).types13,
+      AnimeLocalizations.of(context).types14,
+      AnimeLocalizations.of(context).types15,
+      AnimeLocalizations.of(context).types16,
+    ];
     return SafeArea(
       child: Scaffold(
         body: NotificationListener(
@@ -60,7 +84,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
                       children: <Widget>[
                         _createTab(
                           store.tabTypesCtrl,
-                          store.types,
+                          types,
                           onTap: debounce(store.setTypesCurrent),
                         ),
                         SizedBox(height: 10),
@@ -101,7 +125,8 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
                             crossAxisCount: 2, // 每行显示几列
                             mainAxisSpacing: 2.0, // 每行的上下间距
                             crossAxisSpacing: 2.0, // 每列的间距
-                            childAspectRatio: AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
+                            childAspectRatio:
+                                AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
                             children: <Widget>[
                               for (var anime in store.animeData)
                                 AnimeCard(

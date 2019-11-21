@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/recently_updated/recently_updated.store.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_video_app/shared/widgets/sliver_loading.dart';
@@ -21,7 +22,7 @@ class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage> {
           key: PageStorageKey('recently_updated'),
           slivers: <Widget>[
             SliverAppBar(
-              title: Text('最近更新'),
+              title: Text(AnimeLocalizations.of(context).recommendTitle),
               floating: true,
             ),
             Observer(

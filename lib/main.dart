@@ -5,6 +5,8 @@ import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/theme/theme.dart';
 import 'package:get_it/get_it.dart';
 
+import 'anime_localizations.dart';
+
 GetIt getIt = GetIt.instance;
 
 void main() {
@@ -19,10 +21,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       localizationsDelegates: [
+        const AnimeLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: [
+        const Locale('en', ''),
         const Locale('zh', 'CN'),
         const Locale.fromSubtags(
           languageCode: 'zh',

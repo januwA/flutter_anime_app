@@ -10,30 +10,31 @@ class AnimeTypesStore = _AnimeTypesStore with _$AnimeTypesStore;
 
 abstract class _AnimeTypesStore with Store {
   final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
+
   _AnimeTypesStore() {
     getData();
   }
 
   @action
-  initState(TickerProvider ctx) {
+  initState(TickerProvider vsync) {
     tabTypesCtrl = TabController(
-      vsync: ctx,
-      length: types.length,
+      vsync: vsync,
+      length: _types.length,
       initialIndex: typesCurrent,
     );
     tabAreasCtrl = TabController(
-      vsync: ctx,
+      vsync: vsync,
       length: areas.length,
       initialIndex: areasCurrent,
     );
 
     tabErasCtrl = TabController(
-      vsync: ctx,
+      vsync: vsync,
       length: eras.length,
       initialIndex: erasCurrent,
     );
     tabClassifyCtrl = TabController(
-      vsync: ctx,
+      vsync: vsync,
       length: classify.length,
       initialIndex: classifyCurrent,
     );
@@ -55,7 +56,7 @@ abstract class _AnimeTypesStore with Store {
   List<LiData> animeData = List<LiData>();
 
   /// 类型
-  List<String> types = [
+  List<String> _types = [
     "全部",
     "热血",
     "恋爱",
@@ -118,7 +119,7 @@ abstract class _AnimeTypesStore with Store {
   }
 
   @computed
-  String get type => typesCurrent == 0 ? '' : types[typesCurrent];
+  String get type => typesCurrent == 0 ? '' : _types[typesCurrent];
 
   @computed
   String get area => areasCurrent == 0 ? '' : areas[areasCurrent];

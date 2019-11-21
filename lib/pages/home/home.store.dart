@@ -6,16 +6,14 @@ import 'package:mobx/mobx.dart';
 
 part 'home.store.g.dart';
 
+/// 一周有7天
+const int WEEK_LEN = 7;
 class HomeStore = _HomeStore with _$HomeStore;
 
 abstract class _HomeStore with Store {
   final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
+  BuildContext context;
   _HomeStore() {
-    init();
-  }
-
-  @action
-  Future<void> init() async {
     _getWeekData();
   }
 
@@ -24,13 +22,12 @@ abstract class _HomeStore with Store {
     tabController = TabController(
       vsync: vsync,
       initialIndex: initialIndex,
-      length: week.length,
+      length: WEEK_LEN,
     )..addListener(() {
         setInitialIndex(tabController.index);
       });
   }
 
-  final week = <String>["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
   TabController tabController;
   @observable
   bool isLoading = true;

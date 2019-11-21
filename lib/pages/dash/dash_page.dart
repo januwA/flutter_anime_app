@@ -1,5 +1,6 @@
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/anime_types/anime_types_page.dart';
 import 'package:flutter_video_app/pages/dash/dash.store.dart';
 import 'package:flutter_video_app/pages/home/home_page.dart';
@@ -23,6 +24,25 @@ class _DashPageState extends State<DashPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<NavItem> navList = [
+      NavItem(
+        title: AnimeLocalizations.of(context).dashHome,
+        icon: Icons.home,
+        color: Colors.pink,
+      ),
+      NavItem(
+          title: AnimeLocalizations.of(context).dashRecent,
+          icon: Icons.fiber_new,
+          color: Colors.deepPurple),
+      NavItem(
+          title: AnimeLocalizations.of(context).dashRecommend,
+          icon: Icons.thumb_up,
+          color: Colors.orange),
+      NavItem(
+          title: AnimeLocalizations.of(context).dashClassification,
+          icon: Icons.toys,
+          color: Colors.green),
+    ];
     return Scaffold(
       bottomNavigationBar: Observer(
         builder: (_) => BubbleBottomBar(
@@ -34,7 +54,7 @@ class _DashPageState extends State<DashPage> {
           hasInk: true,
           inkColor: Colors.black12,
           items: <BubbleBottomBarItem>[
-            for (var e in store.navList)
+            for (var e in navList)
               BubbleBottomBarItem(
                 backgroundColor: e.color,
                 icon: Icon(

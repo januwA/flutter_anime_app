@@ -1,0 +1,153 @@
+{
+  "@@last_modified": "2019-11-21T21:28:42.081080",
+  "dashHome": "首页",
+  "@dashHome": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "dashRecent": "最近",
+  "@dashRecent": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "dashRecommend": "推荐",
+  "@dashRecommend": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "dashClassification": "分类",
+  "@dashClassification": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "homeTitle": "追番表",
+  "@homeTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "recentTitle": "最近更新",
+  "@recentTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "recommendTitle": "推荐动漫",
+  "@recommendTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "monday": "周一",
+  "@monday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "tuesday": "周二",
+  "@tuesday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "wednesday": "周三",
+  "@wednesday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "thursday": "周四",
+  "@thursday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "friday": "周五",
+  "@friday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "saturday": "周六",
+  "@saturday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "sunday": "周日",
+  "@sunday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types1": "全部",
+  "@types1": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types2": "热血",
+  "@types2": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types3": "恋爱",
+  "@types3": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types4": "科幻",
+  "@types4": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types5": "奇幻",
+  "@types5": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types6": "百合",
+  "@types6": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types7": "后宫",
+  "@types7": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types8": "励志",
+  "@types8": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types9": "搞笑",
+  "@types9": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types10": "冒险",
+  "@types10": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types11": "校园",
+  "@types11": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types12": "战斗",
+  "@types12": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types13": "机战",
+  "@types13": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types14": "运动",
+  "@types14": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types15": "战争",
+  "@types15": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types16": "萝莉",
+  "@types16": {
+    "type": "text",
+    "placeholders": {}
+  }
+}

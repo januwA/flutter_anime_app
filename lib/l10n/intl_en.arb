@@ -1,0 +1,148 @@
+{
+  "dashHome": "Home",
+  "@dashHome": {
+    "type": "text"
+  },
+  "dashRecent": "Recent",
+  "@dashRecent": {
+    "type": "text"
+  },
+  "dashRecommend": "Recom",
+  "@dashRecommend": {
+    "type": "text"
+  },
+  "dashClassification": "Classify",
+  "@dashClassification": {
+    "type": "text"
+  },
+  "homeTitle": "Chasing table",
+  "@homeTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "recentTitle": "Recently updated",
+  "@recentTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "recommendTitle": "Recommended anime",
+  "@recommendTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "monday": "Mon",
+  "@monday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "tuesday": "Tues",
+  "@tuesday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "wednesday": "Wed",
+  "@wednesday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "thursday": "Thur",
+  "@thursday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "friday": "Fri",
+  "@friday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "saturday": "Sat",
+  "@saturday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "sunday": "Sun",
+  "@sunday": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types1": "All",
+  "@types1": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types2": "WarmBlood",
+  "@types2": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types3": "InLove",
+  "@types3": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types4": "ScienceFiction",
+  "@types4": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types5": "Fantasy",
+  "@types5": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types6": "Lily",
+  "@types6": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types7": "Harem",
+  "@types7": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types8": "Inspirational",
+  "@types8": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types9": "Funny",
+  "@types9": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types10": "Adventure",
+  "@types10": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types11": "Campus",
+  "@types11": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types12": "Fighting",
+  "@types12": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types13": "MachineWar",
+  "@types13": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types14": "Motion",
+  "@types14": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types15": "War",
+  "@types15": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "types16": "Loli",
+  "@types16": {
+    "type": "text",
+    "placeholders": {}
+  }
+}
