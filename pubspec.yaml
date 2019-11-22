@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.5.19
+version: 0.6.0
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
@@ -21,7 +21,7 @@ dependencies:
   built_collection: ^4.2.2
 
   # 打开浏览器
-  url_launcher: ^5.2.2
+  url_launcher: ^5.2.5
   mobx: ^0.3.8+1
   flutter_mobx: ^0.3.3+1
 
@@ -54,6 +54,8 @@ dependencies:
     git:
       url: https://github.com/januwA/http_interceptor.git
       ref: master
+  
+  toast: ^0.1.5
 
 dev_dependencies:
   flutter_test:

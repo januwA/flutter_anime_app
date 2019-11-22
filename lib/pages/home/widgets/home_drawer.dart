@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/home/widgets/update_tile.dart';
-import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 
 import 'package:flutter_video_app/shared/globals.dart';
@@ -19,29 +19,20 @@ class _HomeDrawerState extends State<HomeDrawer> {
         children: <Widget>[
           DrawerHeader(
             padding: EdgeInsets.zero,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-              ),
-              child: Image.asset(
-                'assets/images/drawer_header.jpg',
-                fit: BoxFit.cover,
-              ),
+            child: Image.asset(
+              'assets/images/drawer_header.jpg',
+              fit: BoxFit.cover,
             ),
           ),
           ListTile(
             leading: Icon(Icons.collections),
-            title: Text('收藏列表'),
-            onTap: () {
-              router.navigator.popAndPushNamed('/collections');
-            },
+            title: Text(AnimeLocalizations.of(context).collectionList),
+            onTap: () => Navigator.of(context).popAndPushNamed('/collections'),
           ),
           ListTile(
             leading: Icon(Icons.history),
-            title: Text('历史记录'),
-            onTap: () {
-              router.navigator.popAndPushNamed('/history');
-            },
+            title: Text(AnimeLocalizations.of(context).historicalRecord),
+            onTap: () => Navigator.of(context).popAndPushNamed('/history'),
           ),
           UpdateTile(),
           FutureBuilder<String>(
@@ -55,12 +46,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     applicationLegalese: "该app用于学习Flutter",
                     aboutBoxChildren: <Widget>[
                       ListTile(
+                        onTap: () => openBrowser(githubAddress),
                         selected: true,
                         title: Text('查看Anime源码'),
-                        trailing: IconButton(
-                          icon: Icon(Icons.open_in_browser),
-                          onPressed: () => openBrowser(githubAddress),
-                        ),
+                        trailing: Icon(Icons.open_in_browser),
                       )
                     ],
                   )

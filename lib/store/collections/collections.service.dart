@@ -1,4 +1,5 @@
 import 'package:flutter_video_app/db/app_database.dart';
+import 'package:flutter_video_app/db/collections.table.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';

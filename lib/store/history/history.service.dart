@@ -1,4 +1,5 @@
 import 'package:flutter_video_app/db/app_database.dart';
+import 'package:flutter_video_app/db/historys.table.dart';
 import 'package:mobx/mobx.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 

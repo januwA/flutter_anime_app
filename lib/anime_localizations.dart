@@ -38,7 +38,7 @@ class AnimeLocalizations {
   String get saturday => Intl.message('周六', name: 'saturday');
   String get sunday => Intl.message('周日', name: 'sunday');
 
-  String get types1 => Intl.message('全部', name: 'types1');
+  String get all => Intl.message('全部', name: 'all');
   String get types2 => Intl.message('热血', name: 'types2');
   String get types3 => Intl.message('恋爱', name: 'types3');
   String get types4 => Intl.message('科幻', name: 'types4');
@@ -54,6 +54,22 @@ class AnimeLocalizations {
   String get types14 => Intl.message('运动', name: 'types14');
   String get types15 => Intl.message('战争', name: 'types15');
   String get types16 => Intl.message('萝莉', name: 'types16');
+
+  String get notData => Intl.message('没有数据!!!', name: 'notData');
+  String get earlier => Intl.message('更早', name: 'earlier');
+
+  String get classifyTabsRecentlyBroadcasted =>
+      Intl.message('最近热播', name: 'classifyTabsRecentlyBroadcasted');
+  String get classifyTabsNewest =>
+      Intl.message('最新', name: 'classifyTabsNewest');
+  String get classifyTabsHighestScore =>
+      Intl.message('评分最高', name: 'classifyTabsHighestScore');
+
+  String get historicalRecord => Intl.message("历史记录", name: "historicalRecord");
+  String get collectionList => Intl.message("收藏列表", name: "collectionList");
+  String get canUpdateAppTitle => Intl.message("有新版本可以更新!", name: "canUpdateAppTitle");
+  String get checkUpdate => Intl.message("检查更新", name: "checkUpdate");
+  String get noNewVersion => Intl.message("暂无新版本", name: "noNewVersion");
 }
 
 class AnimeLocalizationsDelegate

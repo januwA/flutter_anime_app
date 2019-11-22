@@ -47,7 +47,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
   @override
   Widget build(BuildContext context) {
     var types = [
-      AnimeLocalizations.of(context).types1,
+      AnimeLocalizations.of(context).all,
       AnimeLocalizations.of(context).types2,
       AnimeLocalizations.of(context).types3,
       AnimeLocalizations.of(context).types4,
@@ -63,6 +63,24 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
       AnimeLocalizations.of(context).types14,
       AnimeLocalizations.of(context).types15,
       AnimeLocalizations.of(context).types16,
+    ];
+    List<String> eras = [
+      AnimeLocalizations.of(context).all,
+      "2019",
+      "2018",
+      "2017",
+      "2016",
+      "2015",
+      "2014",
+      "2013",
+      "2010-2000",
+      "90年代",
+      AnimeLocalizations.of(context).earlier
+    ];
+    List<String> classify = [
+      AnimeLocalizations.of(context).classifyTabsRecentlyBroadcasted,
+      AnimeLocalizations.of(context).classifyTabsNewest,
+      AnimeLocalizations.of(context).classifyTabsHighestScore,
     ];
     return SafeArea(
       child: Scaffold(
@@ -96,13 +114,13 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
                         SizedBox(height: 10),
                         _createTab(
                           store.tabErasCtrl,
-                          store.eras,
+                          eras,
                           onTap: debounce(store.setErasCurrent),
                         ),
                         SizedBox(height: 10),
                         _createTab(
                           store.tabClassifyCtrl,
-                          store.classify.map((c) => c.text).toList(),
+                          classify,
                           onTap: debounce(store.setClassifyCurrent),
                         ),
                       ],
@@ -118,7 +136,8 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
                             child: Center(
                                 child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text('Not Data!'),
+                              child:
+                                  Text(AnimeLocalizations.of(context).notData),
                             )),
                           )
                         : SliverGrid.count(

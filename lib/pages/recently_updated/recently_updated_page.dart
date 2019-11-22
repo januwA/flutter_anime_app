@@ -22,7 +22,7 @@ class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage> {
           key: PageStorageKey('recently_updated'),
           slivers: <Widget>[
             SliverAppBar(
-              title: Text(AnimeLocalizations.of(context).recommendTitle),
+              title: Text(AnimeLocalizations.of(context).recentTitle),
               floating: true,
             ),
             Observer(

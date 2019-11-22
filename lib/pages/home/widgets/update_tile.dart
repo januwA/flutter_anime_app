@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 
@@ -10,7 +11,7 @@ class UpdateTile extends StatefulWidget {
 
 class _UpdateTileState extends State<UpdateTile> {
   GithubReleasesService grs = mainStore.versionService;
-  String _title = '检查更新';
+  bool isNeddUpdate = true;
 
   /// 下载apk事件
   Future<void> _downloadApk(bool isNeedUpdate) async {
@@ -30,25 +31,25 @@ class _UpdateTileState extends State<UpdateTile> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('有新版本可以更新!'),
+          title: Text(AnimeLocalizations.of(context).canUpdateAppTitle),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('当前版本: v$localVersion'),
-                Text('最新版本: v$latestVersion'),
+                SelectableText('Current Version: v$localVersion'),
+                SelectableText('Latest  Version: v$latestVersion'),
               ],
             ),
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('取消'),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
             ),
             RaisedButton(
               child: Text(
-                '确定',
+                MaterialLocalizations.of(context).okButtonLabel,
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
@@ -87,7 +88,7 @@ class _UpdateTileState extends State<UpdateTile> {
     bool isUpdate = await grs.isNeedUpdate;
     if (!isUpdate) {
       setState(() {
-        _title = '暂无新版本';
+        isNeddUpdate = false;
       });
     }
     router.navigator.pop();
@@ -96,6 +97,9 @@ class _UpdateTileState extends State<UpdateTile> {
 
   @override
   Widget build(BuildContext context) {
+    String _title = isNeddUpdate
+        ? AnimeLocalizations.of(context).checkUpdate
+        : AnimeLocalizations.of(context).noNewVersion;
     return FutureBuilder(
       future: grs.initialized,
       builder: (c, snap) => snap.connectionState == ConnectionState.done

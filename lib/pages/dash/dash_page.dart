@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/anime_localizations.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_video_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/pages/recently_updated/recently_updated_page.dart';
 import 'package:flutter_video_app/pages/recommend/recommend_page.dart';
+import 'package:toast/toast.dart';
 
 class DashPage extends StatefulWidget {
   @override
@@ -15,11 +18,26 @@ class DashPage extends StatefulWidget {
 
 class _DashPageState extends State<DashPage> {
   final store = DashStore();
+  Timer _closeTimer;
 
   @override
   void dispose() {
     store.dispose();
     super.dispose();
+  }
+
+  Future<bool> onWillPop() async {
+    if (_closeTimer?.isActive ?? false) {
+      return true;
+    }
+    Toast.show(
+      "再次点击退出",
+      context,
+      duration: Toast.LENGTH_SHORT,
+      gravity: Toast.BOTTOM,
+    );
+    _closeTimer = Timer(Duration(milliseconds: 1000), null);
+    return false;
   }
 
   @override
@@ -43,42 +61,45 @@ class _DashPageState extends State<DashPage> {
           icon: Icons.toys,
           color: Colors.green),
     ];
-    return Scaffold(
-      bottomNavigationBar: Observer(
-        builder: (_) => BubbleBottomBar(
-          opacity: 0.2,
-          currentIndex: store.index,
-          onTap: store.controller.jumpToPage,
-          borderRadius: BorderRadius.circular(16),
-          hasNotch: true,
-          hasInk: true,
-          inkColor: Colors.black12,
-          items: <BubbleBottomBarItem>[
-            for (var e in navList)
-              BubbleBottomBarItem(
-                backgroundColor: e.color,
-                icon: Icon(
-                  e.icon,
-                  color: Colors.black,
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+        bottomNavigationBar: Observer(
+          builder: (_) => BubbleBottomBar(
+            opacity: 0.2,
+            currentIndex: store.index,
+            onTap: store.controller.jumpToPage,
+            borderRadius: BorderRadius.circular(16),
+            hasNotch: true,
+            hasInk: true,
+            inkColor: Colors.black12,
+            items: <BubbleBottomBarItem>[
+              for (var e in navList)
+                BubbleBottomBarItem(
+                  backgroundColor: e.color,
+                  icon: Icon(
+                    e.icon,
+                    color: Colors.black,
+                  ),
+                  activeIcon: Icon(
+                    e.icon,
+                    color: e.color,
+                  ),
+                  title: Text(e.title),
                 ),
-                activeIcon: Icon(
-                  e.icon,
-                  color: e.color,
-                ),
-                title: Text(e.title),
-              ),
+            ],
+          ),
+        ),
+        body: PageView(
+          controller: store.controller,
+          onPageChanged: store.onPageChanged,
+          children: <Widget>[
+            HomePage(),
+            RecentlyUpdatedPage(),
+            RecommendPage(),
+            AnimeTypesPage(),
           ],
         ),
-      ),
-      body: PageView(
-        controller: store.controller,
-        onPageChanged: store.onPageChanged,
-        children: <Widget>[
-          HomePage(),
-          RecentlyUpdatedPage(),
-          RecommendPage(),
-          AnimeTypesPage(),
-        ],
       ),
     );
   }

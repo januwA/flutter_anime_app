@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
@@ -6,7 +7,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_video_app/utils/duration_string.dart';
 
 class HistoryPage extends StatefulWidget {
-  static const routeName = '/HistoryPage';
   @override
   _HistoryPageState createState() => _HistoryPageState();
 }
@@ -37,7 +37,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('历史记录'),
+        title: Text(AnimeLocalizations.of(context).historicalRecord),
       ),
       body: Center(
         child: StreamBuilder<List<History>>(
@@ -52,7 +52,8 @@ class _HistoryPageState extends State<HistoryPage> {
               }
               List<History> historys = snap.data;
               if (historys.isEmpty) {
-                return Center(child: Text('Not Data!'));
+                return Center(
+                    child: Text(AnimeLocalizations.of(context).notData));
               }
               return ListView.builder(
                 itemExtent: 110, // 每个子项的高度
@@ -65,7 +66,8 @@ class _HistoryPageState extends State<HistoryPage> {
                     actionExtentRatio: 0.2,
                     child: InkWell(
                       onTap: () {
-                        router.navigator.pushNamed('/anime-detail/${h.animeId}');
+                        router.navigator
+                            .pushNamed('/anime-detail/${h.animeId}');
                       },
                       child: Card(
                         child: Container(

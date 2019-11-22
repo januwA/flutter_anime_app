@@ -1,5 +1,5 @@
 {
-  "@@last_modified": "2019-11-21T21:28:42.081080",
+  "@@last_modified": "2019-11-22T09:26:18.519264",
   "dashHome": "首页",
   "@dashHome": {
     "type": "text",
@@ -70,8 +70,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "types1": "全部",
-  "@types1": {
+  "all": "全部",
+  "@all": {
     "type": "text",
     "placeholders": {}
   },
@@ -147,6 +147,56 @@
   },
   "types16": "萝莉",
   "@types16": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "notData": "没有数据!!!",
+  "@notData": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "earlier": "更早",
+  "@earlier": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "classifyTabsRecentlyBroadcasted": "最近热播",
+  "@classifyTabsRecentlyBroadcasted": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "classifyTabsNewest": "最新",
+  "@classifyTabsNewest": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "classifyTabsHighestScore": "评分最高",
+  "@classifyTabsHighestScore": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "historicalRecord": "历史记录",
+  "@historicalRecord": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "collectionList": "收藏列表",
+  "@collectionList": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "canUpdateAppTitle": "有新版本可以更新!",
+  "@canUpdateAppTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "checkUpdate": "检查更新",
+  "@checkUpdate": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "noNewVersion": "暂无新版本",
+  "@noNewVersion": {
     "type": "text",
     "placeholders": {}
   }

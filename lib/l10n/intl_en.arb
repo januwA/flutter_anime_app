@@ -65,8 +65,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "types1": "All",
-  "@types1": {
+  "all": "All",
+  "@all": {
     "type": "text",
     "placeholders": {}
   },
@@ -142,6 +142,56 @@
   },
   "types16": "Loli",
   "@types16": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "notData": "Not Data!!!",
+  "@notData": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "earlier": "Earlier",
+  "@earlier": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "classifyTabsRecentlyBroadcasted": "Recent hot broadcast",
+  "@classifyTabsRecentlyBroadcasted": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "classifyTabsNewest": "Newest",
+  "@classifyTabsNewest": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "classifyTabsHighestScore": "Highest Score",
+  "@classifyTabsHighestScore": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "historicalRecord": "Historical Record",
+  "@historicalRecord": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "collectionList": "Collection List",
+  "@collectionList": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "canUpdateAppTitle": "There is a new version to update!",
+  "@canUpdateAppTitle": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "checkUpdate": "Check Update",
+  "@checkUpdate": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "noNewVersion": "No New Version",
+  "@noNewVersion": {
     "type": "text",
     "placeholders": {}
   }

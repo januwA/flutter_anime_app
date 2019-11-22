@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
@@ -17,7 +18,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            title: Text('我的收藏'),
+            title: Text(AnimeLocalizations.of(context).collectionList),
             floating: true,
           ),
           StreamBuilder<List<Collection>>(

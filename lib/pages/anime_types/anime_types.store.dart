@@ -30,12 +30,12 @@ abstract class _AnimeTypesStore with Store {
 
     tabErasCtrl = TabController(
       vsync: vsync,
-      length: eras.length,
+      length: _eras.length,
       initialIndex: erasCurrent,
     );
     tabClassifyCtrl = TabController(
       vsync: vsync,
-      length: classify.length,
+      length: _classify.length,
       initialIndex: classifyCurrent,
     );
 
@@ -79,7 +79,7 @@ abstract class _AnimeTypesStore with Store {
   List<String> areas = ["全部", "日本", "大陆", "欧美", "其他"];
 
   /// 年代
-  List<String> eras = [
+  List<String> _eras = [
     "全部",
     "2019",
     "2018",
@@ -92,7 +92,7 @@ abstract class _AnimeTypesStore with Store {
     "90年代",
     "更早"
   ];
-  List<ClassifyDto> classify = [
+  List<ClassifyDto> _classify = [
     ClassifyDto(text: "最近热播", url: 'hits'),
     ClassifyDto(text: "最新", url: 'addtime'),
     ClassifyDto(text: "评分最高", url: 'gold'),
@@ -125,10 +125,10 @@ abstract class _AnimeTypesStore with Store {
   String get area => areasCurrent == 0 ? '' : areas[areasCurrent];
 
   @computed
-  String get era => erasCurrent == 0 ? '' : eras[erasCurrent];
+  String get era => erasCurrent == 0 ? '' : _eras[erasCurrent];
 
   @computed
-  String get cify => classify[classifyCurrent].url;
+  String get cify => _classify[classifyCurrent].url;
 
   @computed
   String get pageUrl => pageCount == 1 ? '' : '-$pageCount';
