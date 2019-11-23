@@ -6,6 +6,17 @@ import 'package:intl/intl.dart';
 import 'l10n/messages_all.dart';
 
 class AnimeLocalizations {
+
+  static final Iterable<Locale> supportedLocales = [
+        const Locale('en', ''),
+        const Locale('zh', 'CN'),
+        const Locale.fromSubtags(
+          languageCode: 'zh',
+          scriptCode: 'Hans',
+          countryCode: 'zh_Hans_CN',
+        ),
+  ];
+
   static Future<AnimeLocalizations> load(Locale locale) {
     final String name =
         locale.countryCode.isEmpty ? locale.languageCode : locale.toString();

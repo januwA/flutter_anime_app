@@ -20,23 +20,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Anime",
+      theme: myTheme,
       localizationsDelegates: [
         const AnimeLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('en', ''),
-        const Locale('zh', 'CN'),
-        const Locale.fromSubtags(
-          languageCode: 'zh',
-          scriptCode: 'Hans',
-          countryCode: 'zh_Hans_CN',
-        ),
-      ],
-      debugShowCheckedModeBanner: false,
-      title: "Anime",
-      theme: myTheme,
+      supportedLocales: AnimeLocalizations.supportedLocales,
       navigatorKey: router.navigatorKey,
       navigatorObservers: [router.navigatorObserver],
       initialRoute: '/',

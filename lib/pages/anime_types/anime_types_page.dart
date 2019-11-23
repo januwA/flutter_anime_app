@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/anime_types/anime_types.store.dart';
-import 'package:flutter_video_app/shared/widgets/anime_card.dart';
+import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
 import 'package:flutter_video_app/utils/debounce.dart';
 
 AnimeTypesStore store = AnimeTypesStore();
@@ -140,19 +140,10 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
                                   Text(AnimeLocalizations.of(context).notData),
                             )),
                           )
-                        : SliverGrid.count(
-                            crossAxisCount: 2, // 每行显示几列
-                            mainAxisSpacing: 2.0, // 每行的上下间距
-                            crossAxisSpacing: 2.0, // 每列的间距
-                            childAspectRatio:
-                                AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
-                            children: <Widget>[
-                              for (var anime in store.animeData)
-                                AnimeCard(
-                                  key: ObjectKey(anime),
-                                  animeData: anime,
-                                )
-                            ],
+                        : AnimeGridView(
+                            key: ValueKey('anime_types'),
+                            sliver: true,
+                            animes: store.animeData,
                           ),
               ),
               Observer(

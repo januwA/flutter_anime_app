@@ -3,8 +3,8 @@ import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/pages/home/home.store.dart';
 import 'package:flutter_video_app/pages/home/widgets/home_drawer.dart';
 import 'package:flutter_video_app/pages/list_search/list_search.dart';
-import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
 
 final HomeStore store = HomeStore();
 
@@ -58,17 +58,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     for (var data in store.weekData)
                       RefreshIndicator(
                         onRefresh: store.refresh,
-                        child: GridView.count(
-                          // PageStorageKey: 保存页面的滚动状态，nice
+                        child: AnimeGridView(
                           key: PageStorageKey<int>(data.index),
-                          crossAxisCount: 2, // 每行显示几列
-                          mainAxisSpacing: 2.0, // 每行的上下间距
-                          crossAxisSpacing: 2.0, // 每列的间距
-                          childAspectRatio: AnimeCard.aspectRatio,
-                          children: <Widget>[
-                            for (var li in data.liData)
-                              AnimeCard(animeData: li),
-                          ],
+                          animes: data.liData.toList(),
                         ),
                       ),
                   ],
