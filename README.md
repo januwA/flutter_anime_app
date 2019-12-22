@@ -29,3 +29,6 @@ $ flutter build apk --split-per-abi
 λ flutter pub run intl_translation:extract_to_arb --output-dir=lib/l10n lib/anime_localizations.dart
 $ flutter pub run intl_translation:generate_from_arb --output-dir=lib/l10n --no-use-deferred-loading lib/anime_localizations.dart lib/l10n/intl_*.arb
 ```
+
+![](https://i.loli.net/2019/12/22/UOCmgeYS5pyWsHD.png)
+![](https://i.loli.net/2019/12/22/kAxULFrcEHSVW9d.png)

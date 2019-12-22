@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
-import 'package:flutter_video_app/pages/detail/anime_video_type.dart';
 import 'package:flutter_video_app/pages/detail/detail.store.dart';
 import 'package:flutter_video_app/shared/widgets/column_button.dart';
 import 'package:flutter/material.dart';
 import 'package:video_box/video_box.dart';
 
+import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'widgets/detail_text.dart';
 import 'widgets/network_image_placeholder.dart';
 import 'widgets/tab_Indicator.dart';

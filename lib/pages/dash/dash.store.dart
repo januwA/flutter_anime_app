@@ -15,7 +15,6 @@ abstract class _DashStore with Store {
     index = x;
   }
 
-  @override
   void dispose() {
     controller.dispose();
   }

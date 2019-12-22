@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
-import 'package:flutter_video_app/pages/detail/anime_video_type.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html;
 
@@ -301,6 +300,16 @@ class NicoTvService {
     );
   }
 }
+
+enum AnimeVideoType {
+
+  /// 能够获取到mp4的播放地址, 高速通道
+  haokanBaidu,
+
+  /// 依靠解析，使用webview播放
+  other,
+}
+
 
 /// 每集的资源
 class AnimeSource {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
 import 'package:flutter_video_app/utils/open_browser.dart';
@@ -14,7 +13,6 @@ import 'package:video_player/video_player.dart';
 import 'package:flushbar/flushbar.dart';
 
 import '../../router/router.dart';
-import 'anime_video_type.dart';
 
 part 'detail.store.g.dart';
 
@@ -189,10 +187,11 @@ abstract class _DetailStore with Store {
                 : null,
           )..initialize();
         } else {
-          vc.setInitPosition(Duration.zero);
-          await vc.setSource(source);
-          vc.play();
-          vc.initialize();
+          vc
+            ..setSource(source)
+            ..setInitPosition(Duration.zero)
+            ..setAutoplay(true)
+            ..initialize();
         }
       } else {
         _iframeVideoSubject.add(vSrc);
@@ -260,12 +259,10 @@ abstract class _DetailStore with Store {
     )..show(context);
   }
 
-  @override
   void dispose() {
     updateHistory();
     vc?.dispose();
     tabController?.dispose();
     _iframeVideoSubject?.close();
-    super.dispose();
   }
 }

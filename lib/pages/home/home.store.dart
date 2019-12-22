@@ -55,9 +55,7 @@ abstract class _HomeStore with Store {
     _getWeekData();
   }
 
-  @override
   void dispose() {
     tabController?.dispose();
-    super.dispose();
   }
 }

@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.1
+version: 0.6.2
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
@@ -16,23 +16,23 @@ dependencies:
   intl_translation:
 
   cupertino_icons: ^0.1.2
-  rxdart: ^0.22.2
-  built_value: ^6.7.1
-  built_collection: ^4.2.2
+  rxdart: ^0.23.1
+  built_value:
+  built_collection: ^4.3.0
 
   # 打开浏览器
-  url_launcher: ^5.2.5
-  mobx: ^0.3.8+1
-  flutter_mobx: ^0.3.3+1
+  url_launcher: ^5.4.1
+  mobx: ^0.3.10
+  flutter_mobx: ^0.3.4+1
 
   # 视频播放器
-  video_box: ^0.7.2
+  video_box: ^0.8.1
 
   # 解析html字符串
-  html: ^0.14.0+2
+  html: ^0.14.0+3
 
   # webview
-  webview_flutter: ^0.3.14+1
+  webview_flutter: ^0.3.18+1
 
   # sqlite
   moor_flutter: ^1.7.0
@@ -44,19 +44,19 @@ dependencies:
   flutter_github_releases_service: ^0.4.0
 
   # 可滑动列表项
-  flutter_slidable: ^0.5.3
+  flutter_slidable: ^0.5.4
 
   # 底部泡泡栏
   bubble_bottom_bar: ^1.2.0
   flutter_ajanuw_router: ^0.2.2
-  get_it:
+  get_it: ^3.0.3
   http_interceptor:
     git:
       url: https://github.com/januwA/http_interceptor.git
       ref: master
   
   toast: ^0.1.5
-  breakpoints: ^0.1.0
+  breakpoints: ^0.2.0
 
 dev_dependencies:
   flutter_test:

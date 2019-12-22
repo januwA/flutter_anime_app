@@ -33,9 +33,7 @@ final List<AjanuwRoute> routes = [
   ),
   AjanuwRoute(
     path: 'full-webvideo',
-    builder: (c, r) {
-      return FullPlayWebVideo(initialUrl: r.arguments);
-    },
+    builder: (c, r) => FullPlayWebVideo(initialUrl: r.arguments),
   ),
   AjanuwRoute(
     path: 'nicotv',

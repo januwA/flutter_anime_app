@@ -200,7 +200,6 @@ abstract class _AnimeTypesStore with Store {
     return false;
   }
 
-  @override
   void dispose() {
     _client?.close();
     tabTypesCtrl?.dispose();
@@ -208,7 +207,6 @@ abstract class _AnimeTypesStore with Store {
     tabClassifyCtrl?.dispose();
     tabErasCtrl?.dispose();
     scrollCtrl?.dispose();
-    super.dispose();
   }
 }
 
