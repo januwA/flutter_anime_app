@@ -4,16 +4,16 @@ import 'package:flutter_video_app/router/router.dart';
 
 /// 每个anime的展示卡片
 class AnimeCard extends StatelessWidget {
+  final LiData animeData;
+  static const double aspectRatio = 0.72;
   AnimeCard({
     Key key,
     @required this.animeData,
   }) : super(key: key);
-  static const double aspectRatio = 0.72;
-  final LiData animeData;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _toDerailPage(context),
+      onTap: _toDerailPage,
       child: Card(
         child: Stack(
           children: [
@@ -40,7 +40,7 @@ class AnimeCard extends StatelessWidget {
                 child: IconButton(
                   color: Colors.green,
                   icon: Icon(Icons.open_in_new),
-                  onPressed: () => _toNicotvPage(context),
+                  onPressed: _toNicotvPage,
                 ),
               ),
             ),
@@ -92,12 +92,12 @@ class AnimeCard extends StatelessWidget {
     );
   }
 
-  _toDerailPage(BuildContext context) {
-    router.navigator.pushNamed('/anime-detail/${animeData.id}');
+  _toDerailPage() {
+    router.pushNamed('/anime-detail/${animeData.id}');
   }
 
-  _toNicotvPage(BuildContext context) {
+  _toNicotvPage() {
     String url = 'http://www.nicotv.me/video/detail/${animeData.id}.html';
-    router.navigator.pushNamed('/nicotv', arguments: url);
+    router.pushNamed('/nicotv', arguments: url);
   }
 }

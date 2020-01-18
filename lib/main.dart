@@ -15,8 +15,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final onGenerateRoute = router.forRoot(routes);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,7 +30,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: router.navigatorKey,
       navigatorObservers: [router.navigatorObserver],
       initialRoute: '/',
-      onGenerateRoute: onGenerateRoute,
+      onGenerateRoute: router.forRoot(routes),
     );
   }
 }

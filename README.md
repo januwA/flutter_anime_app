@@ -15,7 +15,7 @@ flutter packages pub run build_runner watch  // 文件更改自动打包
 flutter packages pub run build_runner watch --delete-conflicting-outputs  // 删除旧文件在打包
 ```
 
-## [go to generator built_value data](https://januwa.github.io/p5-jsObj-builtValue/index.html)
+## [go to generator built_value data](https://januwa.github.io/p5_object_2_builtvalue/index.html)
 
 
 ## build apk

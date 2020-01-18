@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var week = [
+    final week = <String>[
       AnimeLocalizations.of(context).monday,
       AnimeLocalizations.of(context).tuesday,
       AnimeLocalizations.of(context).wednesday,
@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       AnimeLocalizations.of(context).saturday,
       AnimeLocalizations.of(context).sunday,
     ];
+    final tabs = week.map((w) => Tab(text: w)).toList();
     return Observer(
       builder: (_) {
         return Scaffold(
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             bottom: TabBar(
               isScrollable: true,
               controller: store.tabController,
-              tabs: week.map((w) => Tab(text: w)).toList(),
+              tabs: tabs,
             ),
           ),
           drawer: HomeDrawer(),
@@ -85,12 +86,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           );
         },
       ),
-      // IconButton(
-      //   icon: Icon(Icons.live_tv),
-      //   onPressed: () {
-      //     router.navigator.pushNamed('/nicotv');
-      //   },
-      // ),
     ];
   }
 }

@@ -91,7 +91,7 @@ class _UpdateTileState extends State<UpdateTile> {
         isNeddUpdate = false;
       });
     }
-    router.navigator.pop();
+    router.pop();
     _downloadApk(isUpdate);
   }
 

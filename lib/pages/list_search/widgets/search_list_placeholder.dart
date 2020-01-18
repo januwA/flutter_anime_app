@@ -51,13 +51,13 @@ class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
         for (ListSearchDto data in _listData)
           ListTile(
             onTap: () {
-              router.navigator.pushNamed('/anime-detail/${data.id}');
+              router.pushNamed('/anime-detail/${data.id}');
             },
             title: Text(data.text),
             trailing: IconButton(
               onPressed: () {
                 String url = 'http://www.nicotv.me${data.href}';
-                router.navigator.pushNamed('/nicotv', arguments: url);
+                router.pushNamed('/nicotv', arguments: url);
               },
               color: Theme.of(context).primaryColor,
               icon: Icon(Icons.open_in_new),

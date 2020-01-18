@@ -7,12 +7,7 @@ import 'package:flutter_video_app/shared/widgets/sliver_loading.dart';
 
 final RecentlyUpdatedStore store = RecentlyUpdatedStore();
 
-class RecentlyUpdatedPage extends StatefulWidget {
-  @override
-  createState() => _RecentlyUpdatedPageState();
-}
-
-class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage> {
+class RecentlyUpdatedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,20 +17,17 @@ class _RecentlyUpdatedPageState extends State<RecentlyUpdatedPage> {
           key: PageStorageKey('recently_updated'),
           slivers: <Widget>[
             SliverAppBar(
-              title: Text(AnimeLocalizations.of(context).recentTitle),
-              floating: true,
-            ),
+                title: Text(AnimeLocalizations.of(context).recentTitle),
+                floating: true),
             Observer(
               builder: (context) {
-                if (store.animeList == null) {
-                  return SliverLoading();
-                } else {
-                  return AnimeGridView(
-                    key: ValueKey('recently_updated'),
-                    sliver: true,
-                    animes: store.animeList,
-                  );
-                }
+                return store.animeList == null
+                    ? SliverLoading()
+                    : AnimeGridView(
+                        key: ValueKey('recently_updated'),
+                        sliver: true,
+                        animes: store.animeList,
+                      );
               },
             ),
           ],

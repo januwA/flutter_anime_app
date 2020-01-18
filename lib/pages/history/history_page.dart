@@ -66,8 +66,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     actionExtentRatio: 0.2,
                     child: InkWell(
                       onTap: () {
-                        router.navigator
-                            .pushNamed('/anime-detail/${h.animeId}');
+                        router.pushNamed('/anime-detail/${h.animeId}');
                       },
                       child: Card(
                         child: Container(

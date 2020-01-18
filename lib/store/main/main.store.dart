@@ -9,8 +9,7 @@ class MainStore = _MainStore with _$MainStore;
 
 abstract class _MainStore with Store {
   /// 获取新版本 APK
-  final GithubReleasesService versionService =
-      GithubReleasesService(repo: REPO, owner: OWNER);
+  final GithubReleasesService versionService = GithubReleasesService(repo: REPO, owner: OWNER);
 
   /// 收藏anime服务
   final CollectionsService collectionsService = CollectionsService();

@@ -7,12 +7,7 @@ import 'package:flutter_video_app/shared/widgets/sliver_loading.dart';
 
 RecommendStore store = RecommendStore();
 
-class RecommendPage extends StatefulWidget {
-  @override
-  _RecommendPageState createState() => _RecommendPageState();
-}
-
-class _RecommendPageState extends State<RecommendPage> {
+class RecommendPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

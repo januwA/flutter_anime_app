@@ -18,37 +18,29 @@ dependencies:
   cupertino_icons: ^0.1.2
   rxdart: ^0.23.1
   built_value:
-  built_collection: ^4.3.0
-
-  # 打开浏览器
-  url_launcher: ^5.4.1
-  mobx: ^0.3.10
-  flutter_mobx: ^0.3.4+1
-
-  # 视频播放器
-  video_box: ^0.8.1
-
-  # 解析html字符串
-  html: ^0.14.0+3
-
-  # webview
-  webview_flutter: ^0.3.18+1
-
-  # sqlite
-  moor_flutter: ^1.7.0
+  built_collection:
+  url_launcher:
+  mobx:
+  flutter_mobx:
+  html:
+  webview_flutter:
+  moor_flutter:
+  package_info:
 
   # 在通知用户时需要更多自定义的snackbar
   flushbar: ^1.9.1
 
   # apk升级策略
-  flutter_github_releases_service: ^0.4.0
+  flutter_github_releases_service: ^0.4.2
 
   # 可滑动列表项
   flutter_slidable: ^0.5.4
 
   # 底部泡泡栏
   bubble_bottom_bar: ^1.2.0
-  flutter_ajanuw_router: ^0.2.2
+  
+  video_box: ^0.9.1
+  flutter_ajanuw_router: ^0.3.1
   get_it: ^3.0.3
   http_interceptor:
     git:
@@ -61,8 +53,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^1.7.1
-  built_value_generator: ^6.7.1
+  build_runner:
+  built_value_generator:
   mobx_codegen:
   moor_generator:
 

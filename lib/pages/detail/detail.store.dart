@@ -65,7 +65,7 @@ abstract class _DetailStore with Store {
       tabClick(currentPlayVideo, context);
 
     iframeVideo.listen((String url) {
-      router.navigator.pushNamed('/full-webvideo', arguments: url);
+      router.pushNamed('/full-webvideo', arguments: url);
     });
   }
 
@@ -190,7 +190,7 @@ abstract class _DetailStore with Store {
           vc
             ..setSource(source)
             ..setInitPosition(Duration.zero)
-            ..setAutoplay(true)
+            ..autoplay = true
             ..initialize();
         }
       } else {
@@ -224,7 +224,7 @@ abstract class _DetailStore with Store {
   /// webview 打开
   void openInWebview(context) {
     String url = 'http://www.nicotv.me/video/detail/$animeId.html';
-    router.navigator.pushNamed('/nicotv', arguments: url);
+    router.pushNamed('/nicotv', arguments: url);
   }
 
   /// 收藏 or 取消收藏
