@@ -216,6 +216,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.3.1"
+  flutter_android_pip:
+    dependency: "direct main"
+    description:
+      name: flutter_android_pip
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.2"
   flutter_downloader:
     dependency: transitive
     description:
@@ -569,6 +576,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.23.1"
+  screen:
+    dependency: "direct main"
+    description:
+      name: screen
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.5"
   shelf:
     dependency: transitive
     description:

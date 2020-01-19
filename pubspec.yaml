@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.2
+version: 0.6.3
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
@@ -49,6 +49,8 @@ dependencies:
   
   toast: ^0.1.5
   breakpoints: ^0.2.0
+  screen:
+  flutter_android_pip:
 
 dev_dependencies:
   flutter_test:

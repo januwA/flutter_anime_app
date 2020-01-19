@@ -55,6 +55,7 @@ class _DetailPageState extends State<DetailPage>
         break;
       case AppLifecycleState.inactive:
         // 应用程序处于非活动状态，并且未接收用户输入
+        store.pip();
         break;
       case AppLifecycleState.paused:
         // 用户当前看不到应用程序，没有响应
@@ -75,9 +76,7 @@ class _DetailPageState extends State<DetailPage>
         return SafeArea(
           child: Scaffold(
             body: store.loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? Center(child: CircularProgressIndicator())
                 : CustomScrollView(
                     controller: store.controller,
                     slivers: [
@@ -304,7 +303,7 @@ class _DetailPageState extends State<DetailPage>
           ),
         ),
         ColumnButton(
-          onPressed: () => store.openInWebview(context),
+          onPressed: store.openInWebview,
           icon: Icon(Icons.open_in_new),
           label: Padding(
             padding: const EdgeInsets.only(top: 4.0),

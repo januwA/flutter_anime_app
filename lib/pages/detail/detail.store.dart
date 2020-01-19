@@ -11,6 +11,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:video_box/video.controller.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flushbar/flushbar.dart';
+import 'package:screen/screen.dart';
+import 'package:flutter_android_pip/flutter_android_pip.dart';
 
 import '../../router/router.dart';
 
@@ -60,9 +62,10 @@ abstract class _DetailStore with Store {
         ..boxUrl = history.playCurrentBoxUrl,
     );
 
-    // 百度地址不自动打开
-    if (history.playCurrent.isNotEmpty && currentPlayVideo.boxUrl.isEmpty)
+    // 网盘地址不自动打开
+    if (history.playCurrent.isNotEmpty && currentPlayVideo.boxUrl.isEmpty) {
       tabClick(currentPlayVideo, context);
+    }
 
     iframeVideo.listen((String url) {
       router.pushNamed('/full-webvideo', arguments: url);
@@ -103,7 +106,7 @@ abstract class _DetailStore with Store {
 
   @action
   nextPlay(BuildContext context) {
-    var pis = parseCurentPlay();
+    var pis = _parseCurentPlay();
     int pvIndex = pis[0];
     int currentPlayingIndex = pis[1];
     TabsDto pv = detail.tabsValues[pvIndex];
@@ -116,7 +119,7 @@ abstract class _DetailStore with Store {
 
   @computed
   bool get hasNextPlay {
-    var pis = parseCurentPlay();
+    var pis = _parseCurentPlay();
     int pvIndex = pis[0];
     int currentPlayingIndex = pis[1];
     TabsDto pv = detail.tabsValues[pvIndex];
@@ -127,7 +130,7 @@ abstract class _DetailStore with Store {
 
   @action
   prevPlay(BuildContext context) {
-    var pis = parseCurentPlay();
+    var pis = _parseCurentPlay();
     int pvIndex = pis[0];
     int currentPlayingIndex = pis[1];
     TabsDto pv = detail.tabsValues[pvIndex];
@@ -141,14 +144,14 @@ abstract class _DetailStore with Store {
 
   @computed
   bool get hasPrevPlay {
-    var pis = parseCurentPlay();
+    var pis = _parseCurentPlay();
     int currentPlayingIndex = pis[1];
     var prevIndex = currentPlayingIndex - 1;
     if (prevIndex >= 0) return true;
     return false;
   }
 
-  List<int> parseCurentPlay() {
+  List<int> _parseCurentPlay() {
     String id = currentPlayVideo.id;
     List<String> idSplit = id.split('-');
     int pvIndex = int.parse(idSplit[1]) - 1;
@@ -185,7 +188,12 @@ abstract class _DetailStore with Store {
             initPosition: isInitVideoPosition
                 ? Duration(seconds: history.position)
                 : null,
-          )..initialize();
+          )
+            ..initialize()
+            ..addFullScreenChangeListener((VideoController c) {
+              print(c.isFullScreen);
+              Screen.keepOn(c.isFullScreen);
+            });
         } else {
           vc
             ..setSource(source)
@@ -222,9 +230,11 @@ abstract class _DetailStore with Store {
   }
 
   /// webview 打开
-  void openInWebview(context) {
-    String url = 'http://www.nicotv.me/video/detail/$animeId.html';
-    router.pushNamed('/nicotv', arguments: url);
+  void openInWebview() {
+    router.pushNamed(
+      '/nicotv',
+      arguments: 'http://www.nicotv.me/video/detail/$animeId.html',
+    );
   }
 
   /// 收藏 or 取消收藏
@@ -259,10 +269,18 @@ abstract class _DetailStore with Store {
     )..show(context);
   }
 
+  /// 画中画
+  pip() {
+    if (vc != null && vc.value.isPlaying) {
+      FlutterAndroidPip.enterPictureInPictureMode;
+    }
+  }
+
   void dispose() {
     updateHistory();
     vc?.dispose();
     tabController?.dispose();
     _iframeVideoSubject?.close();
+    controller.dispose();
   }
 }
