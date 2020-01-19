@@ -11,7 +11,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:video_box/video.controller.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flushbar/flushbar.dart';
-import 'package:screen/screen.dart';
+import 'package:flutter_screen/flutter_screen.dart';
 import 'package:flutter_android_pip/flutter_android_pip.dart';
 
 import '../../router/router.dart';
@@ -191,8 +191,7 @@ abstract class _DetailStore with Store {
           )
             ..initialize()
             ..addFullScreenChangeListener((VideoController c) {
-              print(c.isFullScreen);
-              Screen.keepOn(c.isFullScreen);
+              FlutterScreen.keepOn(c.isFullScreen);
             });
         } else {
           vc

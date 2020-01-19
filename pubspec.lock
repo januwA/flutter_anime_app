@@ -249,6 +249,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.3.4+2"
+  flutter_screen:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: f2e3fb4bea16c203ea679d9bbb5da526e7630bd9
+      url: "https://github.com/januwA/flutter_screen"
+    source: git
+    version: "0.1.0"
   flutter_slidable:
     dependency: "direct main"
     description:
@@ -576,13 +585,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.23.1"
-  screen:
-    dependency: "direct main"
-    description:
-      name: screen
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.5"
   shelf:
     dependency: transitive
     description:

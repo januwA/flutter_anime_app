@@ -16,7 +16,7 @@ dependencies:
   intl_translation:
 
   cupertino_icons: ^0.1.2
-  rxdart: ^0.23.1
+  rxdart:
   built_value:
   built_collection:
   url_launcher:
@@ -28,7 +28,7 @@ dependencies:
   package_info:
 
   # 在通知用户时需要更多自定义的snackbar
-  flushbar: ^1.9.1
+  flushbar:
 
   # apk升级策略
   flutter_github_releases_service: ^0.4.2
@@ -47,9 +47,12 @@ dependencies:
       url: https://github.com/januwA/http_interceptor.git
       ref: master
   
-  toast: ^0.1.5
+  toast:
   breakpoints: ^0.2.0
-  screen:
+  flutter_screen:
+    git:
+      url: https://github.com/januwA/flutter_screen
+      ref: master
   flutter_android_pip:
 
 dev_dependencies:
