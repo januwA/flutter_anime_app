@@ -271,7 +271,7 @@ abstract class _DetailStore with Store {
   /// 画中画
   pip() {
     if (vc != null && vc.value.isPlaying) {
-      FlutterAndroidPip.enterPictureInPictureMode;
+      FlutterAndroidPip.pip();
     }
   }
 

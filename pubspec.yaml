@@ -49,11 +49,16 @@ dependencies:
   
   toast:
   breakpoints: ^0.2.0
+  
   flutter_screen:
     git:
       url: https://github.com/januwA/flutter_screen
       ref: master
+
   flutter_android_pip:
+    git:
+      url: https://github.com/januwA/flutter_android_pip
+      ref: master
 
 dev_dependencies:
   flutter_test:
