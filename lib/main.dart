@@ -11,10 +11,10 @@ GetIt getIt = GetIt.instance;
 
 void main() {
   getIt..registerSingleton<NicoTvService>(NicoTvService());
-  runApp(MyApp());
+  runApp(_MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class _MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

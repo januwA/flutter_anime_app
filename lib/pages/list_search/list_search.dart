@@ -15,7 +15,7 @@ class ListSearchPage extends SearchDelegate<String> {
   appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       textTheme: TextTheme(
-        title: TextStyle(color: Colors.white),
+        headline6: TextStyle(color: Colors.white),
       ),
     );
   }

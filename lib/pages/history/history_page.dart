@@ -100,14 +100,12 @@ class _HistoryPageState extends State<HistoryPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Text(
-                                            h.title,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body1,
-                                          ),
+                                          Text(h.title,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText2),
                                           SizedBox(
                                             height: 5,
                                           ),

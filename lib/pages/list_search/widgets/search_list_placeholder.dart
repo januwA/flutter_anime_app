@@ -45,7 +45,7 @@ class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
         ListTile(
           title: Text(
             '热门搜索：',
-            style: Theme.of(context).textTheme.title,
+            style: Theme.of(context).textTheme.headline6,
           ),
         ),
         for (ListSearchDto data in _listData)
