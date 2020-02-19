@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.4
+version: 0.6.5
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -39,8 +39,8 @@ dependencies:
   # 底部泡泡栏
   bubble_bottom_bar: ^1.2.0
 
-  video_box: ^0.9.1
-  flutter_ajanuw_router: ^0.3.1
+  video_box: ^0.10.1
+  flutter_ajanuw_router: ^0.3.3
   get_it: ^3.0.3
   toast:
   breakpoints: ^0.2.0

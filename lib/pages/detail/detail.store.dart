@@ -188,6 +188,7 @@ abstract class _DetailStore with Store {
             initPosition: isInitVideoPosition
                 ? Duration(seconds: history.position)
                 : null,
+            bottomPadding: EdgeInsets.only(bottom: 4),
           )
             ..initialize()
             ..addFullScreenChangeListener((VideoController c) {
@@ -271,7 +272,7 @@ abstract class _DetailStore with Store {
   /// 画中画
   pip() {
     if (vc != null && vc.value.isPlaying) {
-      FlutterAndroidPip.pip();
+      FlutterAndroidPip.pip(aspectRatio: const PipRational(16, 9));
     }
   }
 

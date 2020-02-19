@@ -12,7 +12,7 @@ import 'widgets/network_image_placeholder.dart';
 import 'widgets/tab_Indicator.dart';
 import 'widgets/wrap_text.dart';
 
-class DetailPage extends StatefulWidget {
+class DetailPage extends StatefulObserverWidget {
   DetailPage({
     Key key,
     @required this.animeId,
@@ -31,12 +31,7 @@ class _DetailPageState extends State<DetailPage>
   @override
   void initState() {
     super.initState();
-    store.initState(
-      this,
-      context,
-      widget.animeId,
-    );
-
+    store.initState(this, context, widget.animeId);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -71,65 +66,66 @@ class _DetailPageState extends State<DetailPage>
 
   @override
   Widget build(BuildContext context) {
-    return Observer(
-      builder: (_) {
-        return SafeArea(
-          child: Scaffold(
-            body: store.loading
-                ? Center(child: CircularProgressIndicator())
-                : CustomScrollView(
-                    controller: store.controller,
-                    slivers: [
-                      SliverList(
-                        delegate: SliverChildListDelegate(
-                          [
-                            AspectRatio(
-                              aspectRatio: 16 / 9,
-                              child: _createVideoBox(),
-                            ),
-                            Card(
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: _detailInfo(),
-                                  ),
-                                  _buildButtonBar(context),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: DetailText(store.detail.plot),
-                                  ),
-                                  SizedBox(height: 10),
-                                ],
-                              ),
-                            ),
-                            Card(
-                              child: Column(
-                                children: <Widget>[
-                                  _createTabbar(),
-                                  Container(
-                                    height: 90,
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 12.0),
-                                    child: TabBarView(
-                                      controller: store.tabController,
-                                      children: <Widget>[
-                                        for (var tv in store.detail.tabsValues)
-                                          _createTabBarViewItem(tv),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+    return SafeArea(
+      child: Scaffold(
+        body: store.loading
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: _createVideoBox(),
                   ),
-          ),
-        );
-      },
+                  Expanded(
+                    child: ListView(
+                      controller: store.controller,
+                      children: <Widget>[
+                        // 信息区
+                        Card(
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: _detailInfo(),
+                              ),
+                              _buildButtonBar(context),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: DetailText(store.detail.plot),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        ),
+
+                        // 资源区
+                        Card(
+                          child: Column(
+                            children: <Widget>[
+                              _createTabbar(),
+                              Container(
+                                height: 90,
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 12.0),
+                                child: TabBarView(
+                                  controller: store.tabController,
+                                  children: <Widget>[
+                                    for (var tv in store.detail.tabsValues)
+                                      _createTabBarViewItem(tv),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 
@@ -198,15 +194,13 @@ class _DetailPageState extends State<DetailPage>
                                 Expanded(
                                   child: ListView(
                                     children: <Widget>[
-                                      Observer(
-                                        builder: (_) => Center(
-                                          child: Wrap(
-                                            alignment: WrapAlignment.start,
-                                            children: <Widget>[
-                                              for (var t in tv.tabs)
-                                                _buildRaisedButton(t, context),
-                                            ],
-                                          ),
+                                      Center(
+                                        child: Wrap(
+                                          alignment: WrapAlignment.start,
+                                          children: <Widget>[
+                                            for (var t in tv.tabs)
+                                              _buildRaisedButton(t, context),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -233,9 +227,8 @@ class _DetailPageState extends State<DetailPage>
             child: ListView(
               key: PageStorageKey(tv),
               scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                for (var t in tv.tabs) _buildRaisedButton(t, context),
-              ],
+              children:
+                  tv.tabs.map((e) => _buildRaisedButton(e, context)).toList(),
             ),
           ),
         ],
@@ -259,32 +252,30 @@ class _DetailPageState extends State<DetailPage>
   List<Widget> _videoBoxChildren() {
     const Color disabledColor = Colors.white60;
     return [
-      Observer(
-        builder: (_) => Align(
-          alignment: Alignment(-0.5, 0),
-          child: IconButton(
-            iconSize: VideoBox.centerIconSize,
-            disabledColor: disabledColor,
-            icon: Icon(Icons.skip_previous),
-            onPressed: store.hasPrevPlay ? () => store.prevPlay(context) : null,
-          ),
+      Align(
+        alignment: Alignment(-0.5, 0),
+        child: IconButton(
+          iconSize: VideoBox.centerIconSize,
+          disabledColor: disabledColor,
+          icon: Icon(Icons.skip_previous),
+          onPressed: store.hasPrevPlay ? () => store.prevPlay(context) : null,
         ),
       ),
-      Observer(
-        builder: (context) => Align(
-          alignment: Alignment(0.5, 0),
-          child: IconButton(
-            iconSize: VideoBox.centerIconSize,
-            disabledColor: disabledColor,
-            icon: Icon(Icons.skip_next),
-            onPressed: store.hasNextPlay ? () => store.nextPlay(context) : null,
-          ),
+      Align(
+        alignment: Alignment(0.5, 0),
+        child: IconButton(
+          iconSize: VideoBox.centerIconSize,
+          disabledColor: disabledColor,
+          icon: Icon(Icons.skip_next),
+          onPressed: store.hasNextPlay ? () => store.nextPlay(context) : null,
         ),
       ),
     ];
   }
 
   Widget _buildButtonBar(BuildContext context) {
+    final __padding = const EdgeInsets.only(top: 4.0);
+    final __style = const TextStyle(fontSize: 12);
     return ButtonBar(
       alignment: MainAxisAlignment.start,
       children: <Widget>[
@@ -295,22 +286,16 @@ class _DetailPageState extends State<DetailPage>
             color: store.isCollections ? Colors.blue : Colors.black45,
           ),
           label: Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Text(
-              '收藏',
-              style: TextStyle(fontSize: 12),
-            ),
+            padding: __padding,
+            child: Text('收藏', style: __style),
           ),
         ),
         ColumnButton(
           onPressed: store.openInWebview,
           icon: Icon(Icons.open_in_new),
           label: Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Text(
-              '浏览器',
-              style: TextStyle(fontSize: 12),
-            ),
+            padding: __padding,
+            child: Text('浏览器', style: __style),
           ),
         ),
       ],
@@ -322,8 +307,13 @@ class _DetailPageState extends State<DetailPage>
     bool isActive = t.text == store.currentPlayVideo?.text;
     ShapeBorder shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0));
-    TextStyle style = TextStyle(
-      fontSize: theme.textTheme.caption.fontSize,
+    final __onPressed = () => store.tabClick(t, context);
+    final __textTheme = ButtonTextTheme.primary;
+    final __child = Text(
+      t.text,
+      style: TextStyle(
+        fontSize: theme.textTheme.caption.fontSize,
+      ),
     );
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.0),
@@ -331,22 +321,17 @@ class _DetailPageState extends State<DetailPage>
       child: isActive
           ? RaisedButton(
               shape: shape,
-              textTheme: ButtonTextTheme.primary,
+              textTheme: __textTheme,
               color: theme.primaryColor,
-              onPressed: () => store.tabClick(t, context),
-              child: Text(
-                t.text,
-                style: style,
-              ),
+              onPressed: __onPressed,
+              child: __child,
             )
           : OutlineButton(
               shape: shape,
-              borderSide: BorderSide(
-                color: theme.primaryColor,
-              ),
-              textTheme: ButtonTextTheme.primary,
-              onPressed: () => store.tabClick(t, context),
-              child: Text(t.text, style: style),
+              borderSide: BorderSide(color: theme.primaryColor),
+              textTheme: __textTheme,
+              onPressed: __onPressed,
+              child: __child,
             ),
     );
   }
