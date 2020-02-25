@@ -18,7 +18,7 @@ final ThemeData myTheme = ThemeData(
   splashColor: Color(0x66c8c8c8),
   selectedRowColor: Color(0xfff5f5f5),
   unselectedWidgetColor: Color(0x8a000000),
-  disabledColor: Color(0x61000000),
+  disabledColor: Colors.white60,
   buttonColor: Color(0xffe0e0e0),
   toggleableActiveColor: Color(0xffd81b60),
   secondaryHeaderColor: Color(0xfffce4ec),

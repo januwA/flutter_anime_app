@@ -3,5 +3,3 @@ const String githubIssuesUrl = 'https://github.com/januwA/flutter_anime_app/issu
 
 const String REPO = 'flutter_anime_app';
 const String OWNER = 'januwA';
-
-const String nicoTvBaseUrl = 'http://www.nicotv.me';

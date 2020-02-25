@@ -4,12 +4,14 @@ import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/theme/theme.dart';
 import 'package:get_it/get_it.dart';
+import 'package:ajanuw_http/ajanuw_http.dart' show AjanuwHttp;
 
 import 'anime_localizations.dart';
 
 GetIt getIt = GetIt.instance;
 
 void main() {
+  AjanuwHttp.basePath = 'http://www.nicotv.me';
   getIt..registerSingleton<NicoTvService>(NicoTvService());
   runApp(_MyApp());
 }

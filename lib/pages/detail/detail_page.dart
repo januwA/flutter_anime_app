@@ -26,7 +26,7 @@ class DetailPage extends StatefulObserverWidget {
 
 class _DetailPageState extends State<DetailPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  DetailStore store = DetailStore();
+  var store = DetailStore();
 
   @override
   void initState() {
@@ -160,13 +160,13 @@ class _DetailPageState extends State<DetailPage>
                 Expanded(child: Text('选集')),
                 GestureDetector(
                   onTap: () {
-                    // showBottomSheet(
                     showModalBottomSheet(
                         context: context,
-                        backgroundColor: Colors.white,
+                        backgroundColor: Colors.transparent,
                         builder: (context) {
                           return Container(
                             decoration: BoxDecoration(
+                              color: Colors.white,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15),
@@ -184,9 +184,8 @@ class _DetailPageState extends State<DetailPage>
                                       Text('选集 (${tv.tabs.length})'),
                                       IconButton(
                                         icon: Icon(Icons.close),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
                                       ),
                                     ],
                                   ),
@@ -195,12 +194,14 @@ class _DetailPageState extends State<DetailPage>
                                   child: ListView(
                                     children: <Widget>[
                                       Center(
-                                        child: Wrap(
-                                          alignment: WrapAlignment.start,
-                                          children: <Widget>[
-                                            for (var t in tv.tabs)
-                                              _buildRaisedButton(t, context),
-                                          ],
+                                        child: Observer(
+                                          builder: (_) => Wrap(
+                                            alignment: WrapAlignment.start,
+                                            children: tv.tabs
+                                                .map((e) => _buildRaisedButton(
+                                                    e, context))
+                                                .toList(),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -252,22 +253,26 @@ class _DetailPageState extends State<DetailPage>
   List<Widget> _videoBoxChildren() {
     const Color disabledColor = Colors.white60;
     return [
-      Align(
-        alignment: Alignment(-0.5, 0),
-        child: IconButton(
-          iconSize: VideoBox.centerIconSize,
-          disabledColor: disabledColor,
-          icon: Icon(Icons.skip_previous),
-          onPressed: store.hasPrevPlay ? () => store.prevPlay(context) : null,
+      Observer(
+        builder: (_) => Align(
+          alignment: Alignment(-0.5, 0),
+          child: IconButton(
+            iconSize: VideoBox.centerIconSize,
+            disabledColor: disabledColor,
+            icon: Icon(Icons.skip_previous),
+            onPressed: store.hasPrevPlay ? () => store.prevPlay(context) : null,
+          ),
         ),
       ),
-      Align(
-        alignment: Alignment(0.5, 0),
-        child: IconButton(
-          iconSize: VideoBox.centerIconSize,
-          disabledColor: disabledColor,
-          icon: Icon(Icons.skip_next),
-          onPressed: store.hasNextPlay ? () => store.nextPlay(context) : null,
+      Observer(
+        builder: (_) => Align(
+          alignment: Alignment(0.5, 0),
+          child: IconButton(
+            iconSize: VideoBox.centerIconSize,
+            disabledColor: disabledColor,
+            icon: Icon(Icons.skip_next),
+            onPressed: store.hasNextPlay ? () => store.nextPlay(context) : null,
+          ),
         ),
       ),
     ];

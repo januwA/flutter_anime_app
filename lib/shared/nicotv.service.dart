@@ -4,17 +4,15 @@ import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html;
-
+import 'package:ajanuw_http/ajanuw_http.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
-
-import 'nicotv_http.dart';
 
 dom.Element $(parent, String select) => parent.querySelector(select);
 List<dom.Element> $$(parent /*Element|Document*/, String select) =>
     parent.querySelectorAll(select);
 
 Future<dom.Document> $document(String url) =>
-    nicoTvHttp.get(url).then((r) => html.parse(r.body));
+    url.get().then((r) => html.parse(r.body));
 
 class NicoTvService {
   /// 获取一周更新的amines
@@ -223,7 +221,7 @@ class NicoTvService {
     dom.Document document = await $document(url);
     String scriptSrc = _findScript($$(document, 'script'));
 
-    var r2 = await nicoTvHttp.get(scriptSrc);
+    var r2 = await scriptSrc.get();
     Map<String, dynamic> jsonMap = _parseResponseToObject(r2.body);
 
     // 解码url字段

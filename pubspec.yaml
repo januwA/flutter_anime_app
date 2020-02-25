@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.5
+version: 0.6.6
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -44,11 +44,7 @@ dependencies:
   get_it: ^3.0.3
   toast:
   breakpoints: ^0.2.0
-
-  http_interceptor:
-    git:
-      url: https://github.com/januwA/http_interceptor.git
-      ref: master
+  ajanuw_http:
 
   flutter_screen:
     git:
