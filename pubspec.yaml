@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.6
+version: 0.6.7
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -22,6 +22,7 @@ dependencies:
   url_launcher:
   mobx:
   flutter_mobx:
+  sensors:
   html:
   webview_flutter:
   moor_flutter:

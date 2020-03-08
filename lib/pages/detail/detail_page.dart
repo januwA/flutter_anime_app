@@ -66,6 +66,7 @@ class _DetailPageState extends State<DetailPage>
 
   @override
   Widget build(BuildContext context) {
+    var deviceData = MediaQuery.of(context);
     return SafeArea(
       child: Scaffold(
         body: store.loading
@@ -74,10 +75,12 @@ class _DetailPageState extends State<DetailPage>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: _createVideoBox(),
-                  ),
+                  deviceData.orientation == Orientation.portrait
+                      ? AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: _createVideoBox(),
+                        )
+                      : Expanded(child: _createVideoBox()),
                   Expanded(
                     child: ListView(
                       controller: store.controller,
