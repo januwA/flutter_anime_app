@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.7
+version: 0.6.8
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -27,25 +27,22 @@ dependencies:
   webview_flutter:
   moor_flutter:
   package_info:
-
-  # 在通知用户时需要更多自定义的snackbar
-  flushbar:
-
-  # apk升级策略
-  flutter_github_releases_service: ^0.4.2
-
+  
   # 可滑动列表项
   flutter_slidable: ^0.5.4
-
+  
   # 底部泡泡栏
   bubble_bottom_bar: ^1.2.0
-
-  video_box: ^0.10.1
-  flutter_ajanuw_router: ^0.3.3
-  get_it: ^3.0.3
-  toast:
+  
+  video_box: ^0.11.2
+  flutter_ajanuw_router: ^0.3.5
+  ajanuw_http: ^0.2.0
+  # apk升级策略
+  flutter_github_releases_service: ^0.4.2
   breakpoints: ^0.2.0
-  ajanuw_http:
+  
+  get_it: ^4.0.1
+  toast:
 
   flutter_screen:
     git:

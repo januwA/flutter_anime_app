@@ -4,10 +4,19 @@ import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:mobx/mobx.dart';
 part 'recommend.store.g.dart';
 
-class RecommendStore = _RecommendStore with _$RecommendStore;
+class RecommendStore extends _RecommendStore with _$RecommendStore {
+  static RecommendStore _cache;
+
+  RecommendStore._();
+
+  factory RecommendStore() {
+    _cache ??= RecommendStore._();
+    return _cache;
+  }
+}
 
 abstract class _RecommendStore with Store {
-    final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
+  final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
   _RecommendStore() {
     _getData();
   }

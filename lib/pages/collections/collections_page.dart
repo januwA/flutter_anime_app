@@ -24,8 +24,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
           StreamBuilder<List<Collection>>(
             stream: mainStore.collectionsService.collections$,
             builder: (context, AsyncSnapshot<List<Collection>> snap) {
-              var status = snap.connectionState;
-              if (status == ConnectionState.waiting) {
+              if (snap.connectionState == ConnectionState.waiting) {
                 return SliverToBoxAdapter(child: centerLoading);
               }
 

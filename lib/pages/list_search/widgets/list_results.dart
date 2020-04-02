@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/pages/list_search/widgets/search_list_placeholder.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 
@@ -20,18 +21,15 @@ class _ListResultsState extends State<ListResults> {
   Widget build(BuildContext context) {
     String query = widget.query;
 
-    if (query.isEmpty) return Center(child: Text('搜索关键词'));
+    if (query.isEmpty) return SearchListPlaceholder();
 
     return FutureBuilder(
       future: nicoTvService.getSearch(query),
       builder: (context, AsyncSnapshot<List<LiData>> snapshot) {
-        if (!snapshot.hasData) {
-          return Text('loading...');
-        }
+        if (!snapshot.hasData) Center(child: CircularProgressIndicator());
+
         List<LiData> list = snapshot.data;
-        if (list?.isEmpty ?? true) {
-          return Center(child: Text('$query共有0个视频!'));
-        }
+        if (list?.isEmpty ?? true) Center(child: Text('$query共有0个视频!'));
         return _displayResultList(list);
       },
     );
@@ -62,13 +60,15 @@ class _ListResultsState extends State<ListResults> {
           ),
         ),
         SliverGrid.count(
-          crossAxisCount: 2, // 每行显示几列
-          mainAxisSpacing: 2.0, // 每行的上下间距
-          crossAxisSpacing: 2.0, // 每列的间距
-          childAspectRatio: AnimeCard.aspectRatio, //每个孩子的横轴与主轴范围的比率
-          children: <Widget>[
-            for (var anime in list) AnimeCard(animeData: anime),
-          ],
+          crossAxisCount: 2,
+          // 每行显示几列
+          mainAxisSpacing: 2.0,
+          // 每行的上下间距
+          crossAxisSpacing: 2.0,
+          // 每列的间距
+          childAspectRatio: AnimeCard.aspectRatio,
+          //每个孩子的横轴与主轴范围的比率
+          children: list.map((t) => AnimeCard(animeData: t)).toList(),
         ),
       ],
     );

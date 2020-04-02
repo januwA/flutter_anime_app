@@ -15,7 +15,7 @@ class ListSearchPage extends SearchDelegate<String> {
   appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       textTheme: TextTheme(
-        headline6: TextStyle(color: Colors.white),
+        title: TextStyle(color: Colors.white),
       ),
     );
   }
@@ -25,9 +25,7 @@ class ListSearchPage extends SearchDelegate<String> {
     return [
       IconButton(
         icon: Icon(Icons.close),
-        onPressed: () {
-          query = '';
-        },
+        onPressed: () => query = '',
       ),
     ];
   }
@@ -36,21 +34,15 @@ class ListSearchPage extends SearchDelegate<String> {
   Widget buildLeading(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, '');
-      },
+      onPressed: () => close(context, ''),
     );
   }
 
   /// 用户从搜索页面提交搜索后显示的结果
   @override
-  Widget buildResults(BuildContext context) {
-    return ListResults(query: query);
-  }
+  Widget buildResults(BuildContext context) => ListResults(query: query);
 
   /// 当用户在搜索字段中键入查询时，在搜索页面正文中显示的建议
   @override
-  Widget buildSuggestions(BuildContext context) {
-    return SearchListPlaceholder();
-  }
+  Widget buildSuggestions(BuildContext context) => SearchListPlaceholder();
 }

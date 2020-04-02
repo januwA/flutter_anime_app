@@ -12,7 +12,8 @@ import 'widgets/network_image_placeholder.dart';
 import 'widgets/tab_Indicator.dart';
 import 'widgets/wrap_text.dart';
 
-class DetailPage extends StatefulObserverWidget {
+// class DetailPage extends StatefulObserverWidget {
+class DetailPage extends StatefulWidget {
   DetailPage({
     Key key,
     @required this.animeId,
@@ -20,6 +21,7 @@ class DetailPage extends StatefulObserverWidget {
 
   /// anime的id
   final String animeId;
+
   @override
   _DetailPageState createState() => _DetailPageState();
 }
@@ -66,68 +68,67 @@ class _DetailPageState extends State<DetailPage>
 
   @override
   Widget build(BuildContext context) {
-    var deviceData = MediaQuery.of(context);
     return SafeArea(
-      child: Scaffold(
-        body: store.loading
-            ? Center(child: CircularProgressIndicator())
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  deviceData.orientation == Orientation.portrait
-                      ? AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: _createVideoBox(),
-                        )
-                      : Expanded(child: _createVideoBox()),
-                  Expanded(
-                    child: ListView(
-                      controller: store.controller,
-                      children: <Widget>[
-                        // 信息区
-                        Card(
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: _detailInfo(),
-                              ),
-                              _buildButtonBar(context),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: DetailText(store.detail.plot),
-                              ),
-                              SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-
-                        // 资源区
-                        Card(
-                          child: Column(
-                            children: <Widget>[
-                              _createTabbar(),
-                              Container(
-                                height: 90,
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 12.0),
-                                child: TabBarView(
-                                  controller: store.tabController,
-                                  children: <Widget>[
-                                    for (var tv in store.detail.tabsValues)
-                                      _createTabBarViewItem(tv),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+      child: Observer(
+        builder: (context) => Scaffold(
+          body: store.loading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: _createVideoBox(),
                     ),
-                  ),
-                ],
-              ),
+                    Expanded(
+                      child: ListView(
+                        controller: store.controller,
+                        children: <Widget>[
+                          // 信息区
+                          Card(
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: _detailInfo(),
+                                ),
+                                _buildButtonBar(context),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: DetailText(store.detail.plot),
+                                ),
+                                SizedBox(height: 10),
+                              ],
+                            ),
+                          ),
+
+                          // 资源区
+                          Card(
+                            child: Column(
+                              children: <Widget>[
+                                _createTabbar(),
+                                Container(
+                                  height: 90,
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 12.0),
+                                  child: TabBarView(
+                                    controller: store.tabController,
+                                    children: <Widget>[
+                                      for (var tv in store.detail.tabsValues)
+                                        _createTabBarViewItem(tv),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -245,9 +246,11 @@ class _DetailPageState extends State<DetailPage>
     return store.currentPlayVideo != null &&
             store.animeVideoType == AnimeVideoType.haokanBaidu &&
             mounted
-        ? VideoBox(
-            controller: store.vc,
-            children: _videoBoxChildren(),
+        ? Observer(
+            builder: (_) => VideoBox(
+              controller: store.vc,
+              children: _videoBoxChildren(),
+            ),
           )
         : NetworkImagePlaceholder(store.detail.cover);
   }
@@ -284,18 +287,18 @@ class _DetailPageState extends State<DetailPage>
   Widget _buildButtonBar(BuildContext context) {
     final __padding = const EdgeInsets.only(top: 4.0);
     final __style = const TextStyle(fontSize: 12);
+    var __color = store.isCollections ? Colors.blue : Colors.black45;
     return ButtonBar(
       alignment: MainAxisAlignment.start,
       children: <Widget>[
-        ColumnButton(
-          onPressed: () => store.collections(context),
-          icon: Icon(
-            Icons.collections,
-            color: store.isCollections ? Colors.blue : Colors.black45,
-          ),
-          label: Padding(
-            padding: __padding,
-            child: Text('收藏', style: __style),
+        Builder(
+          builder: (context) => ColumnButton(
+            onPressed: () => store.collections(context),
+            icon: Icon(Icons.collections, color: __color),
+            label: Padding(
+              padding: __padding,
+              child: Text('收藏', style: __style),
+            ),
           ),
         ),
         ColumnButton(

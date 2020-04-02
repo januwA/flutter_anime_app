@@ -4,7 +4,16 @@ import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:mobx/mobx.dart';
 part 'recently_updated.store.g.dart';
 
-class RecentlyUpdatedStore = _RecentlyUpdatedStore with _$RecentlyUpdatedStore;
+class RecentlyUpdatedStore extends _RecentlyUpdatedStore with _$RecentlyUpdatedStore {
+  static RecentlyUpdatedStore _cache;
+
+  RecentlyUpdatedStore._();
+
+  factory RecentlyUpdatedStore() {
+    _cache ??= RecentlyUpdatedStore._();
+    return _cache;
+  }
+}
 
 abstract class _RecentlyUpdatedStore with Store {
   final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入

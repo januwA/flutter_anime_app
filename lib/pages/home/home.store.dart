@@ -8,7 +8,17 @@ part 'home.store.g.dart';
 
 /// 一周有7天
 const int WEEK_LEN = 7;
-class HomeStore = _HomeStore with _$HomeStore;
+
+class HomeStore extends _HomeStore with _$HomeStore {
+  static HomeStore _cache;
+
+  HomeStore._();
+
+  factory HomeStore() {
+    _cache ??= HomeStore._();
+    return _cache;
+  }
+}
 
 abstract class _HomeStore with Store {
   final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入

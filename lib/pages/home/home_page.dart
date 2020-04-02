@@ -6,7 +6,7 @@ import 'package:flutter_video_app/pages/list_search/list_search.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
 
-final HomeStore store = HomeStore();
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,6 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  final HomeStore store = HomeStore();
+
   @override
   void initState() {
     super.initState();

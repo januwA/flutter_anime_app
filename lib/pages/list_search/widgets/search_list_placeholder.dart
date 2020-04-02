@@ -4,6 +4,10 @@ import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';
 
+/// 使用全局变量缓存列表
+/// 懒惰加载
+List<ListSearchDto> _listData;
+
 class SearchListPlaceholder extends StatefulWidget {
   @override
   _SearchListPlaceholderState createState() => _SearchListPlaceholderState();
@@ -11,7 +15,6 @@ class SearchListPlaceholder extends StatefulWidget {
 
 class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
   final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
-  List<ListSearchDto> _listData;
   bool loading = true;
 
   @override
@@ -21,22 +24,16 @@ class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
   }
 
   Future<void> _init() async {
-    setState(() {
-      loading = true;
-    });
-    _listData = await nicoTvService.getSearchListPlaceholder();
-    setState(() {
-      loading = false;
-    });
+    setState(() => loading = true);
+    _listData ??= await nicoTvService.getSearchListPlaceholder();
+    setState(() => loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return SizedBox();
-    }
-
-    return _popularSearches();
+    return loading
+        ? Center(child: CircularProgressIndicator())
+        : _popularSearches();
   }
 
   _popularSearches() {
@@ -45,7 +42,7 @@ class _SearchListPlaceholderState extends State<SearchListPlaceholder> {
         ListTile(
           title: Text(
             '热门搜索：',
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.title,
           ),
         ),
         for (ListSearchDto data in _listData)

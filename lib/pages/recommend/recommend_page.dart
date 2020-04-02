@@ -5,9 +5,8 @@ import 'package:flutter_video_app/pages/recommend/recommend.store.dart';
 import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
 import 'package:flutter_video_app/shared/widgets/sliver_loading.dart';
 
-RecommendStore store = RecommendStore();
-
 class RecommendPage extends StatelessWidget {
+  final RecommendStore store = RecommendStore();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

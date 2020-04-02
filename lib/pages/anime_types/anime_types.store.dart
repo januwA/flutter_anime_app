@@ -6,7 +6,16 @@ import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
 part 'anime_types.store.g.dart';
 
-class AnimeTypesStore = _AnimeTypesStore with _$AnimeTypesStore;
+class AnimeTypesStore extends _AnimeTypesStore with _$AnimeTypesStore {
+  static AnimeTypesStore _cache;
+
+  AnimeTypesStore._();
+
+  factory AnimeTypesStore() {
+    _cache ??= AnimeTypesStore._();
+    return _cache;
+  }
+}
 
 abstract class _AnimeTypesStore with Store {
   final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入

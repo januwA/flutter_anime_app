@@ -5,8 +5,6 @@ import 'package:flutter_video_app/pages/anime_types/anime_types.store.dart';
 import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
 import 'package:flutter_video_app/utils/debounce.dart';
 
-AnimeTypesStore store = AnimeTypesStore();
-
 class AnimeTypesPage extends StatefulWidget {
   @override
   _AnimeTypesPageState createState() => _AnimeTypesPageState();
@@ -14,6 +12,7 @@ class AnimeTypesPage extends StatefulWidget {
 
 class _AnimeTypesPageState extends State<AnimeTypesPage>
     with TickerProviderStateMixin {
+  final AnimeTypesStore store = AnimeTypesStore();
   @override
   void initState() {
     super.initState();

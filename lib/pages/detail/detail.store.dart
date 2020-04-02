@@ -10,7 +10,7 @@ import 'package:moor/moor.dart' as moor;
 import 'package:rxdart/rxdart.dart';
 import 'package:video_box/video.controller.dart';
 import 'package:video_player/video_player.dart';
-import 'package:flushbar/flushbar.dart';
+// import 'package:flushbar/flushbar.dart';
 import 'package:flutter_screen/flutter_screen.dart';
 import 'package:flutter_android_pip/flutter_android_pip.dart';
 
@@ -239,7 +239,7 @@ abstract class _DetailStore with Store {
 
   /// 收藏 or 取消收藏
   @action
-  Future<void> collections(BuildContext context) async {
+  Future<bool> collections(BuildContext context) async {
     if (!isCollections) {
       mainStore.collectionsService.insertCollection(CollectionsCompanion(
         animeId: moor.Value(animeId),
@@ -251,22 +251,21 @@ abstract class _DetailStore with Store {
       isCollections = false;
       _showSnackbar(context, '已取消收藏!');
     }
+    return isCollections;
   }
 
   void _showSnackbar(BuildContext context, String content) {
-    Flushbar<Object> flush;
-    flush = Flushbar(
-      message: content,
+    Scaffold.of(context).showSnackBar(SnackBar(
       duration: Duration(seconds: 3),
-      backgroundColor: Theme.of(context).primaryColor,
-      mainButton: FlatButton(
-        onPressed: () => flush.dismiss(true),
-        child: Text("OK", style: TextStyle(color: Colors.amber)),
+      shape: RoundedRectangleBorder(),
+      content: Text(content),
+      action: SnackBarAction(
+        label: 'OK',
+        onPressed: () {
+          // Some code to undo the change.
+        },
       ),
-      margin: EdgeInsets.all(8),
-      borderRadius: 8,
-      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
-    )..show(context);
+    ));
   }
 
   /// 画中画
