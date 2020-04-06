@@ -1,7 +1,7 @@
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/db/historys.table.dart';
 import 'package:mobx/mobx.dart';
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:moor/moor.dart';
 
 part 'history.service.g.dart';
 
@@ -13,30 +13,22 @@ abstract class _HistoryService with Store {
   HistoryDao get _historyDao => _db.historyDao;
 
   /// 创建一条历史记录
-  Future<History> create(Insertable<History> history) async {
-    return await _historyDao.createHistory(history);
+  Future<History> create(Insertable<History> history) {
+    return _historyDao.createHistory(history);
   }
 
   /// 更新一条历史记录
-  update(History history) {
-    _historyDao.updateHistory(history);
-  }
+  update(History history) => _historyDao.updateHistory(history);
 
   /// 删除历史记录
-  delete(History history) {
-    _historyDao.deleteHistory(history);
-  }
+  delete(History history) => _historyDao.deleteHistory(history);
 
   /// 检测该anime是否存在
-  Future<bool> exist(String animeId) async {
-    return await _historyDao.existHistory(animeId);
-  }
+  Future<bool> exist(String animeId) => _historyDao.existHistory(animeId);
 
   /// 所有历史记录列表
   Stream<List<History>> get historys$ => _historyDao.findAll$();
 
   /// 获取指定anime的历史记录
-  Future<History> findOneByAnimeId(String animeId) async {
-    return await _historyDao.findOneByAnimeId(animeId);
-  }
+  Future<History> findOneByAnimeId(String animeId) => _historyDao.findOneByAnimeId(animeId);
 }

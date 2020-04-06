@@ -1,5 +1,4 @@
-import 'package:moor_flutter/moor_flutter.dart';
-
+import 'package:moor/moor.dart';
 import 'app_database.dart';
 
 part 'collections.table.g.dart';
@@ -12,8 +11,7 @@ class Collections extends Table {
 @UseDao(tables: [Collections])
 class CollectionDao extends DatabaseAccessor<AppDatabase>
     with _$CollectionDaoMixin {
-  final AppDatabase db;
-  CollectionDao(this.db) : super(db);
+  CollectionDao(AppDatabase db) : super(db);
 
   Future<List<Collection>> getAllCollections() => select(collections).get();
 

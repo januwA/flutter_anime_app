@@ -13,16 +13,6 @@ class _UpdateTileState extends State<UpdateTile> {
   GithubReleasesService grs = mainStore.versionService;
   bool isNeddUpdate = true;
 
-  /// 下载apk事件
-  Future<void> _downloadApk(bool isNeedUpdate) async {
-    return isNeedUpdate && await _showDialogView()
-        ? grs.downloadApk(
-            downloadUrl: grs.latestSync.assets.first.browserDownloadUrl,
-            apkName: grs.latestSync.assets.first.name,
-          )
-        : null;
-  }
-
   /// 展示弹窗显示新版本和旧版本的版本号
   Future<bool> _showDialogView() async {
     String localVersion = await grs.localVersion;
@@ -62,9 +52,8 @@ class _UpdateTileState extends State<UpdateTile> {
     );
   }
 
-  /// 点击检查是否需要更新
-  Future<void> _checkVersion() async {
-    showDialog(
+  Future<void> _checkDialog() {
+    return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
@@ -85,14 +74,28 @@ class _UpdateTileState extends State<UpdateTile> {
         );
       },
     );
-    bool isUpdate = await grs.isNeedUpdate;
-    if (!isUpdate) {
-      setState(() {
-        isNeddUpdate = false;
-      });
+  }
+
+  /// 1. 点击检查是否需要更新
+  /// 2. 有新版本则提醒用户是否更新
+  /// 3. 用户同意后，下载APK
+  Future<void> _checkVersion() async {
+    // 1
+    _checkDialog();
+    bool isNeedUpdate = await grs.isNeedUpdate;
+    if (!isNeedUpdate) {
+      setState(() => isNeddUpdate = false);
     }
     router.pop();
-    _downloadApk(isUpdate);
+
+    // 2
+    if (isNeedUpdate && await _showDialogView()) {
+      /// 3
+      grs.downloadApk(
+        downloadUrl: grs.latestSync.assets.first.browserDownloadUrl,
+        apkName: grs.latestSync.assets.first.name,
+      );
+    }
   }
 
   @override

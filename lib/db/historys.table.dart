@@ -1,5 +1,4 @@
-
-import 'package:moor_flutter/moor_flutter.dart';
+import 'package:moor/moor.dart';
 
 import 'app_database.dart';
 
@@ -21,11 +20,9 @@ class Historys extends Table {
       integer().withDefault(const Constant(0))(); // 总时长 用秒存储
 }
 
-
 @UseDao(tables: [Historys])
 class HistoryDao extends DatabaseAccessor<AppDatabase> with _$HistoryDaoMixin {
-  final AppDatabase db;
-  HistoryDao(this.db) : super(db);
+  HistoryDao(AppDatabase db) : super(db);
 
   Stream<List<History>> findAll$() => (select(historys)
         ..orderBy([
@@ -34,17 +31,11 @@ class HistoryDao extends DatabaseAccessor<AppDatabase> with _$HistoryDaoMixin {
         ]))
       .watch();
 
-  Future<History> findOneByAnimeId(String animeId) async {
-    var data = await (select(historys)..where((t) => t.animeId.equals(animeId)))
-        .getSingle();
-    return data;
-  }
+  Future<History> findOneByAnimeId(String animeId) =>
+      (select(historys)..where((t) => t.animeId.equals(animeId))).getSingle();
 
-  Future<History> findOneById(int id) async {
-    var data =
-        await (select(historys)..where((t) => t.id.equals(id))).getSingle();
-    return data;
-  }
+  Future<History> findOneById(int id) =>
+      (select(historys)..where((t) => t.id.equals(id))).getSingle();
 
   Future<History> createHistory(Insertable<History> history) async {
     int id = await into(historys).insert(history);

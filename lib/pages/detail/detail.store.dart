@@ -1,16 +1,17 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/store/main/main.store.dart';
+import 'package:flutter_video_app/utils/get_extraction_code.dart';
 import 'package:flutter_video_app/utils/open_browser.dart';
 import 'package:mobx/mobx.dart';
 import 'package:moor/moor.dart' as moor;
 import 'package:rxdart/rxdart.dart';
 import 'package:video_box/video.controller.dart';
 import 'package:video_player/video_player.dart';
-// import 'package:flushbar/flushbar.dart';
 import 'package:flutter_screen/flutter_screen.dart';
 import 'package:flutter_android_pip/flutter_android_pip.dart';
 
@@ -159,20 +160,45 @@ abstract class _DetailStore with Store {
     return [pvIndex, currentPlayingIndex];
   }
 
+  @action
+  void _createVc(VideoPlayerController source, bool isInitVideoPosition) {
+    if (vc == null) {
+      // 第一次初始化
+      vc = VideoController(
+        source: source,
+        autoplay: true,
+        initPosition:
+            isInitVideoPosition ? Duration(seconds: history.position) : null,
+        bottomPadding: EdgeInsets.only(bottom: 4),
+      )
+        ..initialize()
+        ..addFullScreenChangeListener((VideoController c) {
+          // 监听开启全屏，和关闭全屏的事件
+          FlutterScreen.keepOn(c.isFullScreen);
+        });
+    } else {
+      // 切换资源，如上一季，下一集之类的
+      vc
+        ..setSource(source)
+        ..setInitPosition(Duration.zero)
+        ..autoplay = true
+        ..initialize();
+    }
+  }
+
   /// 点击播放每一集
   @action
   Future<void> tabClick(TabsValueDto t, BuildContext context) async {
     currentPlayVideo = t;
-    String boxUrl = t.boxUrl;
-    if (boxUrl.isNotEmpty) {
-      // 网盘资源
-      openBrowser(boxUrl);
+    if (t.boxUrl.isNotEmpty) {
+      // 网盘资源, 将网盘提取密码写入粘贴板
+      Clipboard.setData(ClipboardData(text: getExtractionCode(t.text)));
+      openBrowser(t.boxUrl);
     } else {
       // 视频资源,准备切换播放点击的视频
       String vSrc = await _idGetSrc(t.id);
       if (vSrc == null || vSrc.isEmpty) {
-        _showSnackbar(context, '获取播放地址错误');
-        return;
+        return _showSnackbar(context, '获取播放地址错误');
       }
 
       if (animeVideoType == AnimeVideoType.haokanBaidu) {
@@ -181,26 +207,7 @@ abstract class _DetailStore with Store {
         // 存在历史记录，并且是相同的一集，才初始化播放时间
         bool isInitVideoPosition =
             history != null && t.id == history.playCurrentId;
-        if (vc == null) {
-          vc = VideoController(
-            source: source,
-            autoplay: true,
-            initPosition: isInitVideoPosition
-                ? Duration(seconds: history.position)
-                : null,
-            bottomPadding: EdgeInsets.only(bottom: 4),
-          )
-            ..initialize()
-            ..addFullScreenChangeListener((VideoController c) {
-              FlutterScreen.keepOn(c.isFullScreen);
-            });
-        } else {
-          vc
-            ..setSource(source)
-            ..setInitPosition(Duration.zero)
-            ..autoplay = true
-            ..initialize();
-        }
+        _createVc(source, isInitVideoPosition);
       } else {
         _iframeVideoSubject.add(vSrc);
         vc?.pause();
