@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.9
+version: 0.6.10
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

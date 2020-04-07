@@ -5,6 +5,7 @@ void main() {
   group('util Test', () {
     test('getExtractionCode Test', () {
       expect(getExtractionCode('更新至01集,提取码:cx7z'), 'cx7z');
+      expect(getExtractionCode('更新至01集,提取码：cx7z'), 'cx7z');
     });
   });
 }
