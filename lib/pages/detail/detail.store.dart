@@ -10,12 +10,12 @@ import 'package:flutter_video_app/utils/open_browser.dart';
 import 'package:mobx/mobx.dart';
 import 'package:moor/moor.dart' as moor;
 import 'package:rxdart/rxdart.dart';
-import 'package:video_box/video.controller.dart';
-import 'package:video_player/video_player.dart';
+import 'package:video_box/video_box.dart';
 import 'package:flutter_screen/flutter_screen.dart';
-import 'package:flutter_android_pip/flutter_android_pip.dart';
+import 'package:flutter_ajanuw_android_pip/flutter_ajanuw_android_pip.dart';
 
 import '../../router/router.dart';
+import 'widgets/custom_full_screen.dart';
 
 part 'detail.store.g.dart';
 
@@ -161,7 +161,8 @@ abstract class _DetailStore with Store {
   }
 
   @action
-  void _createVc(VideoPlayerController source, bool isInitVideoPosition) {
+  void _createVc(String src, bool isInitVideoPosition) {
+    var source = VideoPlayerController.network(src);
     if (vc == null) {
       // 第一次初始化
       vc = VideoController(
@@ -169,18 +170,19 @@ abstract class _DetailStore with Store {
         autoplay: true,
         initPosition:
             isInitVideoPosition ? Duration(seconds: history.position) : null,
-        bottomPadding: EdgeInsets.only(bottom: 4),
+        bottomPadding: EdgeInsets.only(bottom: 8),
+        customFullScreen: const MyCustomFullScreen(),
       )
         ..initialize()
-        ..addFullScreenChangeListener((VideoController c) {
+        ..addFullScreenChangeListener((VideoController c, isFullScreen) {
           // 监听开启全屏，和关闭全屏的事件
-          FlutterScreen.keepOn(c.isFullScreen);
+          FlutterScreen.keepOn(isFullScreen);
         });
     } else {
       // 切换资源，如上一季，下一集之类的
       vc
         ..setSource(source)
-        ..setInitPosition(Duration.zero)
+        ..initPosition = Duration.zero
         ..autoplay = true
         ..initialize();
     }
@@ -202,12 +204,10 @@ abstract class _DetailStore with Store {
       }
 
       if (animeVideoType == AnimeVideoType.haokanBaidu) {
-        var source = VideoPlayerController.network(vSrc);
-
-        // 存在历史记录，并且是相同的一集，才初始化播放时间
+        // 在历史记录中存在，并且是相同的一集，才初始化播放时间
         bool isInitVideoPosition =
             history != null && t.id == history.playCurrentId;
-        _createVc(source, isInitVideoPosition);
+        _createVc(vSrc, isInitVideoPosition);
       } else {
         _iframeVideoSubject.add(vSrc);
         vc?.pause();

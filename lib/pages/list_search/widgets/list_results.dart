@@ -25,12 +25,18 @@ class _ListResultsState extends State<ListResults> {
 
     return FutureBuilder(
       future: nicoTvService.getSearch(query),
+      initialData: List<LiData>(),
       builder: (context, AsyncSnapshot<List<LiData>> snapshot) {
-        if (!snapshot.hasData) Center(child: CircularProgressIndicator());
-
-        List<LiData> list = snapshot.data;
-        if (list?.isEmpty ?? true) Center(child: Text('$query共有0个视频!'));
-        return _displayResultList(list);
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.done:
+            List<LiData> list = snapshot.data;
+            if (list?.isEmpty ?? true) Center(child: Text('$query共有0个视频!'));
+            return _displayResultList(list);
+          default:
+            return SizedBox();
+        }
       },
     );
   }

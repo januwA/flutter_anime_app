@@ -244,6 +244,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_ajanuw_android_pip:
+    dependency: "direct main"
+    description:
+      name: flutter_ajanuw_android_pip
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.1.1"
   flutter_ajanuw_router:
     dependency: "direct main"
     description:
@@ -251,15 +258,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.3.5"
-  flutter_android_pip:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: master
-      resolved-ref: b8e0db761b8b9dc97bc8f5d6e5227b62d6f1634f
-      url: "https://github.com/januwA/flutter_android_pip"
-    source: git
-    version: "0.1.0"
   flutter_downloader:
     dependency: transitive
     description:
@@ -778,7 +776,7 @@ packages:
       name: video_box
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.11.2"
+    version: "0.12.0"
   video_player:
     dependency: transitive
     description:
