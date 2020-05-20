@@ -20,7 +20,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
           DrawerHeader(
             padding: EdgeInsets.zero,
             child: Image.asset(
-              'assets/images/drawer_header.jpg',
+              'assets/drawer_header.jpg',
               fit: BoxFit.cover,
             ),
           ),

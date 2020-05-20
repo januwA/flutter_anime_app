@@ -1,6 +1,6 @@
 name: flutter_video_app
 description: a play anime app
-version: 0.6.11
+version: 0.7.0
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -67,7 +67,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/drawer_header.jpg
+    - assets/
   # fonts:
   #   - family: Schyler
   #     fonts:

@@ -62,6 +62,10 @@ abstract class LiData implements Built<LiData, LiDataBuilder> {
   String get img;
   @BuiltValueField(wireName: 'current')
   String get current;
+
+  @BuiltValueField(wireName: 'isNew')
+  bool get isNew;
+  
   String toJson() {
     return jsonEncode(serializers.serializeWith(LiData.serializer, this));
   }

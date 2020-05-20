@@ -29,6 +29,14 @@ class AnimeCard extends StatelessWidget {
                 ),
               ),
             ),
+            if (animeData.isNew)
+              Opacity(
+                opacity: .95,
+                child: Image.asset(
+                  'assets/new_ico.png',
+                  scale: 1.5,
+                ),
+              ),
             Positioned(
               top: 0,
               right: 0,

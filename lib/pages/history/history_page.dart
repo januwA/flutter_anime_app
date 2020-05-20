@@ -105,7 +105,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                               overflow: TextOverflow.ellipsis,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .body1),
+                                                  .bodyText2),
                                           SizedBox(
                                             height: 5,
                                           ),

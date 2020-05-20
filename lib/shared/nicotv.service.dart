@@ -35,12 +35,14 @@ class NicoTvService {
     String title = $(li, 'h2 a').attributes['title'];
     String img = $(li, 'p a img').attributes['data-original'];
     String current = $(li, 'p a span.continu').innerHtml.trim();
+    dom.Element isnew = $(li, 'p a .new-icon') ?? null;
     return {
       'link': link,
       'id': id,
       'title': title,
       'img': img,
       "current": current,
+      "isNew": isnew != null,
     };
   }
 
@@ -79,6 +81,7 @@ class NicoTvService {
             "title": $(li, 'h2 a').attributes['title'],
             "img": $(li, 'p a img').attributes['data-original'],
             "current": $(li, 'p a span.continu').innerHtml.trim(),
+            "isNew": false,
           }),
         );
       },
@@ -228,7 +231,7 @@ class NicoTvService {
     String jsonUrl = Uri.decodeFull(jsonMap['url']);
 
     var name = jsonMap['name'].trim();
-    print('video url type: ' + name);
+    // print('video url type: ' + name);
     if (name == 'haokan_baidu') {
       final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
       // 避免没有拿到视频播放地址时的意外情况发生
@@ -293,6 +296,7 @@ class NicoTvService {
           "title": $(mediaBody, 'h2 a').innerHtml.trim(),
           "img": $(document, '.media-left img').attributes['data-original'],
           "current": $(mediaBody, 'h2 small').innerHtml.trim(),
+          "isNew": false,
         },
       ),
     );
