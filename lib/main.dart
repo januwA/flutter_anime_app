@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_video_app/service/collections.service.dart';
+import 'package:flutter_video_app/service/history.service.dart';
 import 'package:flutter_video_app/router/router.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'package:flutter_video_app/theme/theme.dart';
 import 'package:get_it/get_it.dart';
 
 import 'anime_localizations.dart';
+import 'shared/globals.dart';
 
 GetIt getIt = GetIt.instance;
 
 void main() {
-  getIt..registerSingleton<NicoTvService>(NicoTvService());
+  getIt
+    ..registerSingleton<NicoTvService>(NicoTvService())
+    ..registerSingleton<GithubReleasesService>(
+        GithubReleasesService(repo: REPO, owner: OWNER))
+    ..registerSingleton<CollectionsService>(CollectionsService())
+    ..registerSingleton<HistoryService>(HistoryService());
   runApp(_MyApp());
 }
 

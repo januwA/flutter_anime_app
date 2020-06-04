@@ -1,14 +1,15 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/service/collections.service.dart';
+import 'package:flutter_video_app/service/history.service.dart';
 import 'package:flutter_video_app/shared/nicotv.service.dart';
-import 'package:flutter_video_app/store/main/main.store.dart';
+import 'package:flutter_video_app/sqflite_db/model/collection.dart';
+import 'package:flutter_video_app/sqflite_db/model/history.dart';
 import 'package:flutter_video_app/utils/get_extraction_code.dart';
 import 'package:flutter_video_app/utils/open_browser.dart';
 import 'package:mobx/mobx.dart';
-import 'package:moor/moor.dart' as moor;
 import 'package:rxdart/rxdart.dart';
 import 'package:video_box/video_box.dart';
 import 'package:flutter_screen/flutter_screen.dart';
@@ -22,6 +23,8 @@ part 'detail.store.g.dart';
 class DetailStore = _DetailStore with _$DetailStore;
 
 abstract class _DetailStore with Store {
+  final CollectionsService collectionsService = getIt<CollectionsService>();
+  final HistoryService historyService = getIt<HistoryService>();
   final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
 
   @action
@@ -38,23 +41,23 @@ abstract class _DetailStore with Store {
       length: detail.tabs.length,
       vsync: vsync,
     );
-    isCollections = await mainStore.collectionsService.exist(animeId);
+    isCollections = await collectionsService.exist(animeId);
 
-    if (await mainStore.historyService.exist(animeId)) {
-      history = await mainStore.historyService.findOneByAnimeId(animeId);
+    if (await historyService.exist(animeId)) {
+      history = await historyService.findOneByAnimeId(animeId);
     } else {
-      var newHistory = HistorysCompanion(
-        animeId: moor.Value(animeId),
-        cover: moor.Value(detail.cover),
-        title: moor.Value(detail.videoName),
-        time: moor.Value(DateTime.now()),
-        playCurrent: moor.Value(''),
-        playCurrentId: moor.Value('0'),
-        playCurrentBoxUrl: moor.Value(''),
-        position: moor.Value(0),
-        duration: moor.Value(0),
+      var newHistory = History(
+        animeId: animeId,
+        cover: detail.cover,
+        title: detail.videoName,
+        time: DateTime.now(),
+        playCurrent: '',
+        playCurrentId: '0',
+        playCurrentBoxUrl: '',
+        position: 0,
+        duration: 0,
       );
-      history = await mainStore.historyService.create(newHistory);
+      history = await historyService.create(newHistory);
     }
     var currentPlayVideo = TabsValueDto(
       (b) => b
@@ -217,7 +220,8 @@ abstract class _DetailStore with Store {
   }
 
   void updateHistory() {
-    mainStore.historyService.update(history.copyWith(
+    if(history == null) return;
+    historyService.update(history.copyWith(
       time: DateTime.now(),
       playCurrent: currentPlayVideo?.text ?? '',
       playCurrentId: currentPlayVideo?.id,
@@ -248,13 +252,11 @@ abstract class _DetailStore with Store {
   @action
   Future<bool> collections(BuildContext context) async {
     if (!isCollections) {
-      mainStore.collectionsService.insertCollection(CollectionsCompanion(
-        animeId: moor.Value(animeId),
-      ));
+      collectionsService.insertCollection(Collection(animeId: animeId));
       isCollections = true;
       _showSnackbar(context, '收藏成功 >_<');
     } else {
-      mainStore.collectionsService.deleteCollection(animeId);
+      collectionsService.deleteCollection(animeId);
       isCollections = false;
       _showSnackbar(context, '已取消收藏!');
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
 import 'package:flutter_video_app/anime_localizations.dart';
+import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/router/router.dart';
-import 'package:flutter_video_app/store/main/main.store.dart';
 
 class UpdateTile extends StatefulWidget {
   @override
@@ -10,7 +10,8 @@ class UpdateTile extends StatefulWidget {
 }
 
 class _UpdateTileState extends State<UpdateTile> {
-  GithubReleasesService grs = mainStore.versionService;
+  final GithubReleasesService grs = getIt<GithubReleasesService>();
+
   bool isNeddUpdate = true;
 
   /// 展示弹窗显示新版本和旧版本的版本号

@@ -1,13 +1,16 @@
 import 'package:breakpoints/breakpoints.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/db/app_database.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
-import 'package:flutter_video_app/store/main/main.store.dart';
+import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/service/collections.service.dart';
+import 'package:flutter_video_app/sqflite_db/model/collection.dart';
 
 import 'anime_card.dart';
 
 /// anime的Grid列表
 class AnimeGridView extends StatelessWidget {
+  final CollectionsService collectionsService = getIt<CollectionsService>();
+
   final Key key;
   final List<LiData> animes;
   final bool sliver;
@@ -16,7 +19,7 @@ class AnimeGridView extends StatelessWidget {
   final bool wait;
   final List<Collection> waitAnimes;
 
-  const AnimeGridView({
+  AnimeGridView({
     @required this.key,
     this.animes,
     this.waitAnimes,
@@ -34,17 +37,19 @@ class AnimeGridView extends StatelessWidget {
 
     var _result;
     if (wait) {
-      _result = waitAnimes.map((Collection c) => FutureBuilder(
-          future: mainStore.collectionsService.getAnime(c.animeId),
-          builder: (context, AsyncSnapshot<LiData> snap) {
-            if (snap.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (snap.connectionState == ConnectionState.done) {
-              return AnimeCard(animeData: snap.data);
-            }
-            return SizedBox();
-          })).toList();
+      _result = waitAnimes
+          .map((Collection c) => FutureBuilder(
+              future: collectionsService.getAnime(c.animeId),
+              builder: (context, AsyncSnapshot<LiData> snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snap.connectionState == ConnectionState.done) {
+                  return AnimeCard(animeData: snap.data);
+                }
+                return SizedBox();
+              }))
+          .toList();
     } else {
       _result = animes
           .map((anime) => AnimeCard(key: ValueKey(anime.id), animeData: anime))

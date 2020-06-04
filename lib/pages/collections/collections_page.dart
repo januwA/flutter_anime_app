@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/anime_localizations.dart';
-import 'package:flutter_video_app/db/app_database.dart';
+import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/service/collections.service.dart';
 import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
-import 'package:flutter_video_app/store/main/main.store.dart';
+import 'package:flutter_video_app/sqflite_db/model/collection.dart';
 
 /// 我的收藏页面
 class CollectionsPage extends StatefulWidget {
@@ -11,6 +12,7 @@ class CollectionsPage extends StatefulWidget {
 }
 
 class _CollectionsPageState extends State<CollectionsPage> {
+  final CollectionsService collectionsService = getIt<CollectionsService>();
   @override
   Widget build(BuildContext context) {
     var centerLoading = Center(child: CircularProgressIndicator());
@@ -21,8 +23,8 @@ class _CollectionsPageState extends State<CollectionsPage> {
             title: Text(AnimeLocalizations.of(context).collectionList),
             floating: true,
           ),
-          StreamBuilder<List<Collection>>(
-            stream: mainStore.collectionsService.collections$,
+          FutureBuilder<List<Collection>>(
+            future: collectionsService.collections,
             builder: (context, AsyncSnapshot<List<Collection>> snap) {
               if (snap.connectionState == ConnectionState.waiting) {
                 return SliverToBoxAdapter(child: centerLoading);

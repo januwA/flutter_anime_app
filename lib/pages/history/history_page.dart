@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/anime_localizations.dart';
-import 'package:flutter_video_app/db/app_database.dart';
+import 'package:flutter_video_app/main.dart';
+import 'package:flutter_video_app/service/history.service.dart';
 import 'package:flutter_video_app/router/router.dart';
-import 'package:flutter_video_app/store/main/main.store.dart';
+import 'package:flutter_video_app/sqflite_db/model/history.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_video_app/utils/duration_string.dart';
 
@@ -12,6 +13,8 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  final HistoryService historyService = getIt<HistoryService>();
+
   final Color _greyColor = Colors.grey[600];
   TextStyle get _textRichStyle =>
       Theme.of(context).textTheme.caption.copyWith(color: _greyColor);
@@ -40,17 +43,18 @@ class _HistoryPageState extends State<HistoryPage> {
         title: Text(AnimeLocalizations.of(context).historicalRecord),
       ),
       body: Center(
-        child: StreamBuilder<List<History>>(
-          stream: mainStore.historyService.historys$,
+        child: FutureBuilder<List<History>>(
+          future: historyService.historys,
           builder: (context, AsyncSnapshot<List<History>> snap) {
             if (snap.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             }
-            if (snap.connectionState == ConnectionState.active) {
+            if (snap.connectionState == ConnectionState.done) {
               if (snap.hasError) {
                 return Center(child: Text('${snap.error}'));
               }
               List<History> historys = snap.data;
+              print(historys.length);
               if (historys.isEmpty) {
                 return Center(
                     child: Text(AnimeLocalizations.of(context).notData));
@@ -156,7 +160,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           caption: 'delete',
                           color: Colors.red,
                           icon: Icons.delete,
-                          onTap: () => mainStore.historyService.delete(h),
+                          onTap: () => historyService.delete(h),
                         ),
                       ),
                     ],
