@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
 
 class NetworkImagePlaceholder extends StatelessWidget {
   final String src;
@@ -21,8 +22,9 @@ class NetworkImagePlaceholder extends StatelessWidget {
           child: Center(
             child: Hero(
               tag: src,
-              child: Image.network(
-                src,
+              child: AjanuwImage(
+                image: AjanuwNetworkImage(src),
+                frameBuilder: AjanuwImage.defaultFrameBuilder,
                 fit: BoxFit.contain,
               ),
             ),

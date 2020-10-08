@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
 import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/router/router.dart';
 
@@ -21,8 +22,9 @@ class AnimeCard extends StatelessWidget {
               tag: animeData.img,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4.0),
-                child: Image.network(
-                  animeData.img,
+                child: AjanuwImage(
+                  image: AjanuwNetworkImage(animeData.img),
+                  frameBuilder: AjanuwImage.defaultFrameBuilder,
                   fit: BoxFit.fill,
                   width: double.infinity,
                   height: double.infinity,

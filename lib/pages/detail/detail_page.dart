@@ -10,6 +10,7 @@ import 'package:flutter_video_app/shared/nicotv.service.dart';
 import 'widgets/detail_text.dart';
 import 'widgets/network_image_placeholder.dart';
 import 'widgets/tab_Indicator.dart';
+import 'widgets/video_bar.dart';
 import 'widgets/wrap_text.dart';
 
 // class DetailPage extends StatefulObserverWidget {
@@ -247,9 +248,11 @@ class _DetailPageState extends State<DetailPage>
             store.animeVideoType == AnimeVideoType.haokanBaidu &&
             mounted
         ? Observer(
-            builder: (_) => VideoBox(
-              controller: store.vc,
-              children: _videoBoxChildren(),
+            builder: (_) => SizedBox(
+              child: VideoBox(
+                controller: store.vc,
+                children: _videoBoxChildren(),
+              ),
             ),
           )
         : NetworkImagePlaceholder(store.detail.cover);
@@ -259,6 +262,10 @@ class _DetailPageState extends State<DetailPage>
   List<Widget> _videoBoxChildren() {
     const Color disabledColor = Colors.white60;
     return [
+      VideoBar(
+        vc: store.vc,
+        title: Text(store.detail.videoName),
+      ),
       Observer(
         builder: (_) => Align(
           alignment: Alignment(-0.5, 0),

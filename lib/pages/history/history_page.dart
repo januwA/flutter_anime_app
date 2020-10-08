@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
 import 'package:flutter_video_app/anime_localizations.dart';
 import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/service/history.service.dart';
@@ -87,9 +88,10 @@ class _HistoryPageState extends State<HistoryPage> {
                       borderRadius: BorderRadius.circular(4.0),
                       child: AspectRatio(
                         aspectRatio: 5 / 5,
-                        child: Image.network(
-                          h.cover,
+                        child: AjanuwImage(
+                          image: AjanuwNetworkImage(h.cover),
                           fit: BoxFit.fitWidth,
+                          frameBuilder: AjanuwImage.defaultFrameBuilder,
                         ),
                       ),
                     ),
