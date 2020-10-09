@@ -38,7 +38,7 @@ class VideoBar extends StatelessWidget {
                               return ListView(
                                 children: speeds
                                     .map((e) => ListTile(
-                                          title: Text(e.toString()),
+                                          title: Text(e.toString() + '倍'),
                                           onTap: () =>
                                               Navigator.of(context).pop(e),
                                         ))

@@ -39,21 +39,21 @@ class AnimeCard extends StatelessWidget {
                   scale: 1.5,
                 ),
               ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white70,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  color: Colors.green,
-                  icon: Icon(Icons.open_in_new),
-                  onPressed: _toNicotvPage,
-                ),
-              ),
-            ),
+            // Positioned(
+            //   top: 0,
+            //   right: 0,
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: Colors.white70,
+            //       shape: BoxShape.circle,
+            //     ),
+            //     child: IconButton(
+            //       color: Colors.green,
+            //       icon: Icon(Icons.open_in_new),
+            //       onPressed: _toNicotvPage,
+            //     ),
+            //   ),
+            // ),
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
@@ -106,8 +106,8 @@ class AnimeCard extends StatelessWidget {
     router.pushNamed('/anime-detail/${animeData.id}');
   }
 
-  _toNicotvPage() {
-    String url = 'http://www.nicotv.me/video/detail/${animeData.id}.html';
-    router.pushNamed('/nicotv', arguments: url);
-  }
+  // _toNicotvPage() {
+  //   String url = 'http://www.nicotv.me/video/detail/${animeData.id}.html';
+  //   router.pushNamed('/nicotv', arguments: url);
+  // }
 }

@@ -13,7 +13,6 @@ import 'widgets/tab_Indicator.dart';
 import 'widgets/video_bar.dart';
 import 'widgets/wrap_text.dart';
 
-// class DetailPage extends StatefulObserverWidget {
 class DetailPage extends StatefulWidget {
   DetailPage({
     Key key,

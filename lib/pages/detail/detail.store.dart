@@ -16,8 +16,6 @@ import 'package:flutter_screen/flutter_screen.dart';
 import 'package:flutter_ajanuw_android_pip/flutter_ajanuw_android_pip.dart';
 
 import '../../router/router.dart';
-import 'widgets/custom_full_screen.dart';
-
 part 'detail.store.g.dart';
 
 class DetailStore = _DetailStore with _$DetailStore;
@@ -173,8 +171,7 @@ abstract class _DetailStore with Store {
         autoplay: true,
         initPosition:
             isInitVideoPosition ? Duration(seconds: history.position) : null,
-        bottomPadding: EdgeInsets.only(bottom: 8),
-        customFullScreen: const MyCustomFullScreen(),
+        // customFullScreen: const MyCustomFullScreen(),
       )
         ..initialize()
         ..addFullScreenChangeListener((VideoController c, isFullScreen) {
@@ -182,7 +179,7 @@ abstract class _DetailStore with Store {
           FlutterScreen.keepOn(isFullScreen);
         });
     } else {
-      // 切换资源，如上一季，下一集之类的
+      // 切换资源，如上一集，下一集之类的
       vc
         ..setSource(source)
         ..initPosition = Duration.zero
@@ -240,12 +237,9 @@ abstract class _DetailStore with Store {
     return source.src;
   }
 
-  /// webview 打开
+  /// 浏览器打开
   void openInWebview() {
-    router.pushNamed(
-      '/nicotv',
-      arguments: 'http://www.nicotv.me/video/detail/$animeId.html',
-    );
+     openBrowser('http://www.nicotv.me/video/detail/$animeId.html');
   }
 
   /// 收藏 or 取消收藏

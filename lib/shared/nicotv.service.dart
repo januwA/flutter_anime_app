@@ -193,8 +193,26 @@ class NicoTvService {
     }));
   }
 
-  String _createH5VidelUrl(Map<String, dynamic> jsonMap) =>
-      """${jsonMap['jiexi']}${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+  /// 尽可能的从iframe地址中解析出MP4地址
+  Future<void> _createH5VidelUrl(
+      Map<String, dynamic> jsonMap, AnimeSource ras) async {
+    var iframeUrl =
+        """${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
+    try {
+      var r = await $document(iframeUrl);
+      var scripts = $$(r, 'script');
+
+      var scriptText = scripts.last.text;
+      var m = RegExp(r'''src="([^"]+)"\s''').firstMatch(scriptText);
+      var mp4Src = m[1];
+      if (mp4Src.trim().isEmpty) throw Error();
+      ras.src = mp4Src;
+      ras.type = AnimeVideoType.haokanBaidu;
+    } catch (_) {
+      ras.src = jsonMap['jiexi'] + iframeUrl;
+      ras.type = AnimeVideoType.other;
+    }
+  }
 
   Map<String, dynamic> _parseResponseToObject(String r) {
     String jsonData = r
@@ -217,8 +235,7 @@ class NicoTvService {
   /// 先获取所有的script的src
   /// 找到合适的src发起请求，处理返回的数据
   Future<AnimeSource> getAnimeSource(String id) async {
-    var animeVideoType;
-    String result;
+    var r = AnimeSource();
     String url = '/video/play/$id.html';
 
     dom.Document document = await $document(url);
@@ -230,28 +247,21 @@ class NicoTvService {
     // 解码url字段
     String jsonUrl = Uri.decodeFull(jsonMap['url']);
 
-    var name = jsonMap['name'].trim();
+    String name = jsonMap['name'].trim();
     // print('video url type: ' + name);
-    if (name == 'haokan_baidu') {
+    if (name.contains('haokan_baidu')) {
       final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
       // 避免没有拿到视频播放地址时的意外情况发生
       if (videoUrl != null) {
-        animeVideoType = AnimeVideoType.haokanBaidu;
-        result = videoUrl;
+        r.type = AnimeVideoType.haokanBaidu;
+        r.src = videoUrl;
       } else {
-        animeVideoType = AnimeVideoType.other;
-        result = _createH5VidelUrl(jsonMap);
+        await _createH5VidelUrl(jsonMap, r);
       }
     } else {
-      animeVideoType = AnimeVideoType.other;
-      result = _createH5VidelUrl(jsonMap);
-      // if (name == '360biaofan') {
-      //   result = _createH5VidelUrl(jsonMap);
-      // } else {
-      //   result = """https://5.5252e.com/jx.php?url=${jsonMap['url']}""";
-      // }
+      await _createH5VidelUrl(jsonMap, r);
     }
-    return AnimeSource(src: result, type: animeVideoType);
+    return r;
   }
 
   Future<List<LiData>> getAnimeTypes(String url, int pageCount) async {
@@ -313,8 +323,7 @@ enum AnimeVideoType {
 
 /// 每集的资源
 class AnimeSource {
-  final AnimeVideoType type;
-  final String src;
-
+  AnimeVideoType type;
+  String src;
   AnimeSource({this.type, this.src});
 }

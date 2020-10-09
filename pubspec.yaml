@@ -2,7 +2,7 @@ name: flutter_video_app
 description: a play anime app
 publish_to: "none"
 
-version: 0.8.2
+version: 0.8.3
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
@@ -16,7 +16,7 @@ dependencies:
   intl:
   intl_translation:
 
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.0
   rxdart: ^0.24.1
   built_value:
   built_collection:
@@ -37,7 +37,7 @@ dependencies:
   # 底部泡泡栏
   bubble_bottom_bar: ^1.2.0
 
-  video_box: ^0.14.2
+  video_box: ^0.15.0
   flutter_ajanuw_router: ^0.3.5
   ajanuw_http: ^0.2.0
   # apk升级策略
