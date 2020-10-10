@@ -2,7 +2,7 @@ name: flutter_video_app
 description: a play anime app
 publish_to: "none"
 
-version: 0.8.3
+version: 0.8.4
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
@@ -53,7 +53,7 @@ dependencies:
       url: https://github.com/januwA/flutter_screen
       ref: master
 
-  flutter_ajanuw_android_pip:
+  flutter_ajanuw_android_pip: ^0.1.2
 
 dev_dependencies:
   flutter_test:
