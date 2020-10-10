@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
 import 'package:flutter_video_app/anime_localizations.dart';
-import 'package:flutter_video_app/pages/home/widgets/update_tile.dart';
 import 'package:package_info/package_info.dart';
 
 import 'package:flutter_video_app/shared/globals.dart';
 import 'package:flutter_video_app/utils/open_browser.dart';
+
+import '../../../main.dart';
 
 class HomeDrawer extends StatefulWidget {
   @override
@@ -12,6 +14,45 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
+  var grs = getIt<GithubReleasesService>();
+
+  /// 展示弹窗显示新版本和旧版本的版本号
+  Future<bool> _showDialogView() async {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(AnimeLocalizations.of(context).canUpdateAppTitle),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                SelectableText('Current Version: v${grs.localVersion}'),
+                SelectableText('Latest  Version: v${grs.latestVersion}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            RaisedButton(
+              child: Text(
+                MaterialLocalizations.of(context).okButtonLabel,
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -34,7 +75,27 @@ class _HomeDrawerState extends State<HomeDrawer> {
             title: Text(AnimeLocalizations.of(context).historicalRecord),
             onTap: () => Navigator.of(context).popAndPushNamed('/history'),
           ),
-          UpdateTile(),
+          FutureBuilder(
+            future: grs.initialized,
+            builder: (c, snap) => snap.connectionState == ConnectionState.done
+                ? ListTile(
+                    leading: Icon(Icons.autorenew),
+                    title: Text(grs.isNeedUpdate
+                        ? AnimeLocalizations.of(context).checkUpdate
+                        : AnimeLocalizations.of(context).noNewVersion),
+                    onTap: () async {
+                      // 用户同意后下载新版本apk
+                      if (grs.isNeedUpdate && await _showDialogView()) {
+                        grs.downloadApk(
+                          downloadUrl:
+                              grs.latest.assets.first.browserDownloadUrl,
+                          apkName: grs.latest.assets.first.name,
+                        );
+                      }
+                    },
+                  )
+                : SizedBox(),
+          ),
           FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder: (context, snap) => snap.hasData

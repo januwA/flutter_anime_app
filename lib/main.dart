@@ -14,10 +14,14 @@ import 'shared/globals.dart';
 GetIt getIt = GetIt.instance;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   getIt
     ..registerSingleton<NicoTvService>(NicoTvService())
-    ..registerSingleton<GithubReleasesService>(
-        GithubReleasesService(repo: REPO, owner: OWNER))
+    ..registerSingleton<GithubReleasesService>(GithubReleasesService(
+      repo: REPO,
+      owner: OWNER,
+      api: GithubReleasesService.gitee,
+    ))
     ..registerSingleton<CollectionsService>(CollectionsService())
     ..registerSingleton<HistoryService>(HistoryService());
   runApp(_MyApp());
