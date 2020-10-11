@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/dto/week_data/serializers.dart';
 
 part 'week_data_dto.g.dart';
@@ -47,33 +48,4 @@ abstract class WeekData implements Built<WeekData, WeekDataBuilder> {
   }
 
   static Serializer<WeekData> get serializer => _$weekDataSerializer;
-}
-
-abstract class LiData implements Built<LiData, LiDataBuilder> {
-  LiData._();
-
-  factory LiData([updates(LiDataBuilder b)]) = _$LiData;
-
-  @BuiltValueField(wireName: 'id')
-  String get id;
-  @BuiltValueField(wireName: 'title')
-  String get title;
-  @BuiltValueField(wireName: 'img')
-  String get img;
-  @BuiltValueField(wireName: 'current')
-  String get current;
-
-  @BuiltValueField(wireName: 'isNew')
-  bool get isNew;
-  
-  String toJson() {
-    return jsonEncode(serializers.serializeWith(LiData.serializer, this));
-  }
-
-  static LiData fromJson(String jsonString) {
-    return serializers.deserializeWith(
-        LiData.serializer, jsonDecode(jsonString));
-  }
-
-  static Serializer<LiData> get serializer => _$liDataSerializer;
 }

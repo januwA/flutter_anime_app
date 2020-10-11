@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
-import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
+import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/router/router.dart';
 
 /// 每个anime的展示卡片
@@ -18,17 +18,14 @@ class AnimeCard extends StatelessWidget {
       child: Card(
         child: Stack(
           children: [
-            Hero(
-              tag: animeData.img,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4.0),
-                child: AjanuwImage(
-                  image: AjanuwNetworkImage(animeData.img),
-                  frameBuilder: AjanuwImage.defaultFrameBuilder,
-                  fit: BoxFit.fill,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4.0),
+              child: AjanuwImage(
+                image: AjanuwNetworkImage(animeData.img),
+                frameBuilder: AjanuwImage.defaultFrameBuilder,
+                fit: BoxFit.fill,
+                width: double.infinity,
+                height: double.infinity,
               ),
             ),
             if (animeData.isNew)
@@ -39,21 +36,6 @@ class AnimeCard extends StatelessWidget {
                   scale: 1.5,
                 ),
               ),
-            // Positioned(
-            //   top: 0,
-            //   right: 0,
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //       color: Colors.white70,
-            //       shape: BoxShape.circle,
-            //     ),
-            //     child: IconButton(
-            //       color: Colors.green,
-            //       icon: Icon(Icons.open_in_new),
-            //       onPressed: _toNicotvPage,
-            //     ),
-            //   ),
-            // ),
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
@@ -73,16 +55,13 @@ class AnimeCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Hero(
-                      tag: animeData.title,
-                      child: Text(
-                        animeData.title,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+                    Text(
+                      animeData.title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
                       ),
                     ),
                     Text(

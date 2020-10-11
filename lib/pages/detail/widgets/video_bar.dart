@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:video_box/video_box.dart';
+
+import '../detail.store.dart';
 
 class VideoBar extends StatelessWidget {
-  final VideoController vc;
-  final Widget title;
+  final DetailStore store;
 
-  VideoBar({Key key, @required this.vc, this.title}) : super(key: key);
+  VideoBar({Key key, @required this.store}) : super(key: key);
 
   final List<double> speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
   @override
@@ -16,9 +16,23 @@ class VideoBar extends StatelessWidget {
       right: 0,
       child: AppBar(
         backgroundColor: Colors.transparent,
-        title: title ?? SizedBox(),
+        title: Text(store.detail.videoName) ?? SizedBox(),
         elevation: 0,
         actions: [
+          // 收藏
+          IconButton(
+            icon: Icon(Icons.collections),
+            color: store.isCollections ? Colors.blue : Colors.white,
+            onPressed: () => store.collections(context),
+          ),
+
+          // 浏览器打开
+          IconButton(
+            icon: Icon(Icons.open_in_new),
+            onPressed: store.openInWebview,
+          ),
+
+          // options
           IconButton(
             icon: Icon(Icons.more_vert),
             onPressed: () {
@@ -46,7 +60,7 @@ class VideoBar extends StatelessWidget {
                               );
                             },
                           ).then((value) {
-                            if (value != null) vc.setPlaybackSpeed(value);
+                            if (value != null) store.vc.setPlaybackSpeed(value);
                             Navigator.of(context).pop();
                           });
                         },

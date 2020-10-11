@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:flutter_video_app/dto/detail/serializers.dart';
+import 'package:flutter_video_app/dto/li_data/li_data.dart';
 
 part 'detail.dto.g.dart';
 
@@ -34,8 +35,16 @@ abstract class DetailDto implements Built<DetailDto, DetailDtoBuilder> {
   String get plot;
   @BuiltValueField(wireName: 'tabs')
   BuiltList<String> get tabs;
+
   @BuiltValueField(wireName: 'tabsValues')
   BuiltList<TabsDto> get tabsValues;
+
+  @BuiltValueField(wireName: 'listUnstyledTitle')
+  BuiltList<String> get listUnstyledTitle;
+
+  @BuiltValueField(wireName: 'listUnstyled')
+  BuiltList<ListUnstyledItem> get listUnstyled;
+
   String toJson() {
     return jsonEncode(serializers.serializeWith(DetailDto.serializer, this));
   }
@@ -89,4 +98,37 @@ abstract class TabsValueDto
   }
 
   static Serializer<TabsValueDto> get serializer => _$tabsValueDtoSerializer;
+}
+
+/// ListUnstyledItem
+abstract class ListUnstyledItem
+    implements Built<ListUnstyledItem, ListUnstyledItemBuilder> {
+  ListUnstyledItem._();
+
+  factory ListUnstyledItem([updates(ListUnstyledItemBuilder b)]) =
+      _$ListUnstyledItem;
+
+  @nullable
+  @BuiltValueField(wireName: 'item')
+  BuiltList<LiData> get item;
+
+  String toJson() {
+    return jsonEncode(
+        serializers.serializeWith(ListUnstyledItem.serializer, this));
+  }
+
+  static ListUnstyledItem fromJson(String jsonString) {
+    return serializers
+        .deserializeWith(ListUnstyledItem.serializer, jsonDecode(jsonString))
+        .rebuild((b) => b..item ??= ListBuilder<LiData>());
+  }
+
+  static List<ListUnstyledItem> fromListJson(String jsonString) {
+    return jsonDecode(jsonString)
+        .map<ListUnstyledItem>((e) => fromJson(jsonEncode(e)))
+        .toList();
+  }
+
+  static Serializer<ListUnstyledItem> get serializer =>
+      _$listUnstyledItemSerializer;
 }

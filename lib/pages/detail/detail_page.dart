@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/pages/detail/detail.store.dart';
-import 'package:flutter_video_app/shared/widgets/column_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:video_box/video_box.dart';
 
 import 'package:flutter_video_app/shared/nicotv.service.dart';
@@ -87,19 +87,16 @@ class _DetailPageState extends State<DetailPage>
                         children: <Widget>[
                           // 信息区
                           Card(
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: _detailInfo(),
-                                ),
-                                _buildButtonBar(context),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: DetailText(store.detail.plot),
-                                ),
-                                SizedBox(height: 10),
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  _detailInfo(),
+                                  SizedBox(height: 8),
+                                  DetailText(store.detail.plot),
+                                ],
+                              ),
                             ),
                           ),
 
@@ -123,6 +120,50 @@ class _DetailPageState extends State<DetailPage>
                               ],
                             ),
                           ),
+
+                          ...store.detail.listUnstyled
+                              .map((ListUnstyledItem item) {
+                            return Card(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          store.detail.listUnstyledTitle[store
+                                              .detail.listUnstyled
+                                              .indexOf(item)],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 220,
+                                    child: ListView.builder(
+                                      itemCount: item.item.length,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (_, index) {
+                                        var anime = item.item[index];
+                                        return SizedBox(
+                                          width: 166,
+                                          child: AnimeCard(
+                                            key: ValueKey(anime.id),
+                                            animeData: anime,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
                         ],
                       ),
                     ),
@@ -261,10 +302,7 @@ class _DetailPageState extends State<DetailPage>
   List<Widget> _videoBoxChildren() {
     const Color disabledColor = Colors.white60;
     return [
-      VideoBar(
-        vc: store.vc,
-        title: Text(store.detail.videoName),
-      ),
+      VideoBar(store: store),
       Observer(
         builder: (_) => Align(
           alignment: Alignment(-0.5, 0),
@@ -288,35 +326,6 @@ class _DetailPageState extends State<DetailPage>
         ),
       ),
     ];
-  }
-
-  Widget _buildButtonBar(BuildContext context) {
-    final __padding = const EdgeInsets.only(top: 4.0);
-    final __style = const TextStyle(fontSize: 12);
-    var __color = store.isCollections ? Colors.blue : Colors.black45;
-    return ButtonBar(
-      alignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Builder(
-          builder: (context) => ColumnButton(
-            onPressed: () => store.collections(context),
-            icon: Icon(Icons.collections, color: __color),
-            label: Padding(
-              padding: __padding,
-              child: Text('收藏', style: __style),
-            ),
-          ),
-        ),
-        ColumnButton(
-          onPressed: store.openInWebview,
-          icon: Icon(Icons.open_in_new),
-          label: Padding(
-            padding: __padding,
-            child: Text('浏览器', style: __style),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildRaisedButton(TabsValueDto t, BuildContext context) {
@@ -354,60 +363,47 @@ class _DetailPageState extends State<DetailPage>
   }
 
   Widget _detailInfo() {
-    Widget br = SizedBox(height: 4);
-    return DefaultTextStyle(
-      style: TextStyle(
-        inherit: true,
-        fontSize: 14,
-        color: Colors.black87,
-      ),
-      child: Container(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Hero(
-              tag: store.detail.videoName,
-              child: SelectableText(
-                store.detail.videoName,
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            br,
-            SelectableText(
-              store.detail.curentText,
-              style: TextStyle(fontSize: 12),
-            ),
-            SizedBox(height: 10),
-            WrapText(
-              tag: '主演',
-              texts: store.detail.starring.toList(),
-            ),
-            br,
-            WrapText(
-              tag: '导演',
-              texts: [store.detail.director],
-            ),
-            br,
-            WrapText(
-              tag: '类型',
-              texts: store.detail.types.toList(),
-            ),
-            br,
-            WrapText(
-              tag: '地区',
-              texts: [store.detail.area],
-            ),
-            br,
-            WrapText(
-              tag: '年份',
-              texts: [store.detail.years],
-            ),
-          ],
+    Widget br = const SizedBox(height: 4);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SelectableText(
+          store.detail.videoName,
+          style: TextStyle(
+            fontSize: 16,
+          ),
         ),
-      ),
+        br,
+        SelectableText(
+          store.detail.curentText,
+          style: TextStyle(fontSize: 12),
+        ),
+        SizedBox(height: 8),
+        WrapText(
+          tag: '主演:',
+          texts: store.detail.starring.toList(),
+        ),
+        br,
+        WrapText(
+          tag: '导演:',
+          texts: [store.detail.director],
+        ),
+        br,
+        WrapText(
+          tag: '类型:',
+          texts: store.detail.types.toList(),
+        ),
+        br,
+        WrapText(
+          tag: '地区:',
+          texts: [store.detail.area],
+        ),
+        br,
+        WrapText(
+          tag: '年份:',
+          texts: [store.detail.years],
+        ),
+      ],
     );
   }
 }

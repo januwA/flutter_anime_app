@@ -11,12 +11,11 @@ class WrapText extends StatelessWidget {
     return Wrap(
       spacing: 8,
       runSpacing: 4,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: <Widget>[
         Text(
-          '$tag:',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          tag,
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         for (String t in texts) Text(t),
       ],

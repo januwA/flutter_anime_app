@@ -1,6 +1,6 @@
 import 'package:breakpoints/breakpoints.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
+import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/service/collections.service.dart';
 import 'package:flutter_video_app/sqflite_db/model/collection.dart';
@@ -20,7 +20,7 @@ class AnimeGridView extends StatelessWidget {
   final List<Collection> waitAnimes;
 
   AnimeGridView({
-    @required this.key,
+    this.key,
     this.animes,
     this.waitAnimes,
     this.sliver = false,
@@ -30,8 +30,11 @@ class AnimeGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final int crossAxisCount =
-        Breakpoints.isXs(width) ? 2 : Breakpoints.isSm(width) ? 3 : 4; // 每行显示几列
+    final int crossAxisCount = Breakpoints.isXs(width)
+        ? 2
+        : Breakpoints.isSm(width)
+            ? 3
+            : 4; // 每行显示几列
     final double mainAxisSpacing = 2.0; // 每行的上下间距
     final double crossAxisSpacing = 2.0; // 每列的间距
 

@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
+import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
+import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/shared/nicotv_http.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html;
-import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 
 dom.Element $(parent, String select) => parent.querySelector(select);
 List<dom.Element> $$(parent /*Element|Document*/, String select) =>
@@ -23,25 +24,27 @@ class NicoTvService {
       List<dom.Element> list = $$(w, 'div.ff-col ul li');
       return WeekData.fromJson(jsonEncode({
         "index": weekList.indexOf(w),
-        "liData": list.map((dom.Element li) => _queryLi(li)).toList(),
+        "liData": list.map((dom.Element li) => _parseLi(li)).toList(),
       }));
     }).toList();
   }
 
+  RegExp _parseIdExp = RegExp(r"(?<id>\d+)(?=\.html$)");
+
   /// 从每个li中解析出数据
-  Map<String, dynamic> _queryLi(dom.Element li) {
-    String link = $(li, 'p a').attributes['href'];
-    String id = RegExp(r"(?<id>\d+)(?=\.html$)").stringMatch(link);
-    String title = $(li, 'h2 a').attributes['title'];
-    String img = $(li, 'p a img').attributes['data-original'];
-    String current = $(li, 'p a span.continu').innerHtml.trim();
+  Map<String, dynamic> _parseLi(dom.Element li) {
+    var a = $(li, 'p a');
+    var img = $(a, 'img');
+
     dom.Element isnew = $(li, 'p a .new-icon') ?? null;
+    String link = a.attributes['href'];
+    String id = _parseIdExp.stringMatch(link);
     return {
       'link': link,
       'id': id,
-      'title': title,
-      'img': img,
-      "current": current,
+      'title': img.attributes['alt'],
+      'img': img.attributes['data-original'],
+      "current": $(a, 'span.continu').text.trim(),
       "isNew": isnew != null,
     };
   }
@@ -116,13 +119,14 @@ class NicoTvService {
   Future<DetailDto> getAnime(String animeId) async {
     dom.Document document = await $document('/video/detail/$animeId.html');
 
+    // 播放通道tabs
     dom.Element ul = $(document, '.nav.nav-tabs.ff-playurl-tab');
-    List<dom.Element> ulLis = $$(ul, 'li');
-    List<String> tabs = ulLis.map((dom.Element el) => $(el, 'a').text).toList();
+    List<String> tabs = ul != null
+        ? $$(ul, 'li').map((el) => $(el, 'a').text.trim()).toList()
+        : [];
 
+    // 每个通道的所有资源列表
     dom.Element ffPlayurlTab = $(document, '.tab-content.ff-playurl-tab');
-
-    // ul组
     List<dom.Element> ffPlayurlTabUls = $$(ffPlayurlTab, 'ul');
 
     // [ { 'tabs': [{id, text, isBox}] } ]
@@ -156,6 +160,19 @@ class NicoTvService {
     String director = directorEl != null
         ? directorEl.innerHtml.trim()
         : dds[1].innerHtml.trim();
+
+    List<Map<String, List<Map<String, dynamic>>>> listUnstyled =
+        $$(document, 'ul.list-unstyled.vod-item-img')
+            .map((ul) => $$(ul, 'li'))
+            .map((lis) => {'item': lis.map((li) => _parseLi(li)).toList()})
+            .toList();
+    List<String> listUnstyledTitle = [];
+    $$(document, '.page-header').forEach((e) {
+      if (null == $(e, 'a')) {
+        listUnstyledTitle.add(e.text.trim());
+      }
+    });
+
     return DetailDto.fromJson(jsonEncode({
       /// 封面
       'cover': $(document, '.media-left img').attributes['data-original'],
@@ -190,6 +207,9 @@ class NicoTvService {
 
       /// 对应[tabs]每个资源下所有的视频资源
       'tabsValues': tabsValues,
+
+      'listUnstyled': listUnstyled,
+      'listUnstyledTitle': listUnstyledTitle,
     }));
   }
 
@@ -297,7 +317,7 @@ class NicoTvService {
 
   /// 获取Anime简单的展示数据
   Future<LiData> getAnimeInfo(String animeId) async {
-    dom.Document document = await $document('/video/detail/$animeId.html');
+    var document = await $document('/video/detail/$animeId.html');
     dom.Element mediaBody = $(document, '.media-body');
     return LiData.fromJson(
       jsonEncode(
