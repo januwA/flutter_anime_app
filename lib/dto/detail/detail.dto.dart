@@ -1,4 +1,4 @@
-library deyail.dto;
+library detail.dto;
 
 import 'dart:convert';
 

@@ -20,8 +20,15 @@ class AnimeCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(4.0),
-              child: AjanuwImage(
-                image: AjanuwNetworkImage(animeData.img),
+              // child: AjanuwImage(
+              //   image: AjanuwNetworkImage(animeData.img),
+              //   frameBuilder: AjanuwImage.defaultFrameBuilder,
+              //   fit: BoxFit.fill,
+              //   width: double.infinity,
+              //   height: double.infinity,
+              // ),
+              child: Image.network(
+                animeData.img,
                 frameBuilder: AjanuwImage.defaultFrameBuilder,
                 fit: BoxFit.fill,
                 width: double.infinity,
@@ -31,10 +38,7 @@ class AnimeCard extends StatelessWidget {
             if (animeData.isNew)
               Opacity(
                 opacity: .95,
-                child: Image.asset(
-                  'assets/new_ico.png',
-                  scale: 1.5,
-                ),
+                child: Image.asset('assets/new_ico.png', scale: 1.5),
               ),
             Align(
               alignment: Alignment.bottomLeft,

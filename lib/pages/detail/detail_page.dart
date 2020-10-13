@@ -125,6 +125,7 @@ class _DetailPageState extends State<DetailPage>
                               .map((ListUnstyledItem item) {
                             return Card(
                               child: Column(
+                                mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
@@ -150,8 +151,8 @@ class _DetailPageState extends State<DetailPage>
                                       scrollDirection: Axis.horizontal,
                                       itemBuilder: (_, index) {
                                         var anime = item.item[index];
-                                        return SizedBox(
-                                          width: 166,
+                                        return AspectRatio(
+                                          aspectRatio: AnimeCard.aspectRatio,
                                           child: AnimeCard(
                                             key: ValueKey(anime.id),
                                             animeData: anime,
