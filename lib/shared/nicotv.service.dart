@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:dart_printf/dart_printf.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
@@ -7,6 +10,7 @@ import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
 import 'package:flutter_video_app/shared/nicotv_http.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html;
+import 'package:webview_flutter/webview_flutter.dart';
 
 dom.Element $(parent, String select) => parent.querySelector(select);
 List<dom.Element> $$(parent /*Element|Document*/, String select) =>
@@ -214,23 +218,66 @@ class NicoTvService {
   }
 
   /// 尽可能的从iframe地址中解析出MP4地址
-  Future<void> _createH5VidelUrl(
-      Map<String, dynamic> jsonMap, AnimeSource ras) async {
+  Future<void> _createH5VidelUrl(Map<String, dynamic> jsonMap, AnimeSource res,
+      BuildContext context) async {
     var iframeUrl =
         """${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
     try {
+      // iframe中获取MP4
       var r = await $document(iframeUrl);
       var scripts = $$(r, 'script');
-
       var scriptText = scripts.last.text;
       var m = RegExp(r'''src="([^"]+)"\s''').firstMatch(scriptText);
       var mp4Src = m[1];
       if (mp4Src.trim().isEmpty) throw Error();
-      ras.src = mp4Src;
-      ras.type = AnimeVideoType.haokanBaidu;
+      res.src = mp4Src;
+      res.type = AnimeVideoType.mp4;
     } catch (_) {
-      ras.src = jsonMap['jiexi'] + iframeUrl;
-      ras.type = AnimeVideoType.other;
+      res.src = jsonMap['jiexi'] + iframeUrl;
+      printf('[iframe url] %s', res.src);
+
+      // 获取m3u8
+      // https://api.jxyiyi.com/v2/m3u8
+      var url = await showDialog<String>(
+        context: context,
+        child: Center(
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 8),
+                  Text('获取视频资源中.', style: Theme.of(context).textTheme.subtitle2),
+                  SizedBox(
+                    height: 10,
+                    width: 10,
+                    child: WebView(
+                      initialUrl: res.src,
+                      javascriptMode: JavascriptMode.unrestricted,
+                      onRequest: (url) {
+                        if (url.contains('api.jxyiyi.com/v2/m3u8')) {
+                          Navigator.of(context).pop(url);
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // 用户手动返回
+      if (url == null) {
+        res.type = AnimeVideoType.webview;
+      } else {
+        res.src = url;
+        res.type = AnimeVideoType.m3u8;
+      }
     }
   }
 
@@ -254,7 +301,7 @@ class NicoTvService {
 
   /// 先获取所有的script的src
   /// 找到合适的src发起请求，处理返回的数据
-  Future<AnimeSource> getAnimeSource(String id) async {
+  Future<AnimeSource> getAnimeSource(String id, BuildContext context) async {
     var r = AnimeSource();
     String url = '/video/play/$id.html';
 
@@ -269,17 +316,19 @@ class NicoTvService {
 
     String name = jsonMap['name'].trim();
     // print('video url type: ' + name);
+
+    // 策略: 获取MP4 -> 在iframe中获取MP4 -> 使用webview获取m3u8 -> 使用webview播放
     if (name.contains('haokan_baidu')) {
       final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
       // 避免没有拿到视频播放地址时的意外情况发生
       if (videoUrl != null) {
-        r.type = AnimeVideoType.haokanBaidu;
+        r.type = AnimeVideoType.mp4;
         r.src = videoUrl;
       } else {
-        await _createH5VidelUrl(jsonMap, r);
+        await _createH5VidelUrl(jsonMap, r, context);
       }
     } else {
-      await _createH5VidelUrl(jsonMap, r);
+      await _createH5VidelUrl(jsonMap, r, context);
     }
     return r;
   }
@@ -335,10 +384,12 @@ class NicoTvService {
 
 enum AnimeVideoType {
   /// 能够获取到mp4的播放地址, 高速通道
-  haokanBaidu,
+  mp4,
+
+  m3u8,
 
   /// 依靠解析，使用webview播放
-  other,
+  webview,
 }
 
 /// 每集的资源

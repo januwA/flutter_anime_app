@@ -20,20 +20,20 @@ class AnimeCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(4.0),
-              // child: AjanuwImage(
-              //   image: AjanuwNetworkImage(animeData.img),
-              //   frameBuilder: AjanuwImage.defaultFrameBuilder,
-              //   fit: BoxFit.fill,
-              //   width: double.infinity,
-              //   height: double.infinity,
-              // ),
-              child: Image.network(
-                animeData.img,
+              child: AjanuwImage(
+                image: AjanuwNetworkImage(animeData.img),
                 frameBuilder: AjanuwImage.defaultFrameBuilder,
                 fit: BoxFit.fill,
                 width: double.infinity,
                 height: double.infinity,
               ),
+              // child: Image.network(
+              //   animeData.img,
+              //   frameBuilder: AjanuwImage.defaultFrameBuilder,
+              //   fit: BoxFit.fill,
+              //   width: double.infinity,
+              //   height: double.infinity,
+              // ),
             ),
             if (animeData.isNew)
               Opacity(

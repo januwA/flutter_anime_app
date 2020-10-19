@@ -163,7 +163,11 @@ abstract class _DetailStore with Store {
 
   @action
   void _createVc(String src, bool isInitVideoPosition) {
-    var source = VideoPlayerController.network(src);
+    var source = VideoPlayerController.network(
+      src,
+      formatHint:
+          animeVideoType == AnimeVideoType.m3u8 ? VideoFormat.hls : null,
+    );
     if (vc == null) {
       // 第一次初始化
       vc = VideoController(
@@ -198,12 +202,13 @@ abstract class _DetailStore with Store {
       openBrowser(t.boxUrl);
     } else {
       // 视频资源,准备切换播放点击的视频
-      String vSrc = await _idGetSrc(t.id);
+      String vSrc = await _idGetSrc(t.id, context);
       if (vSrc == null || vSrc.isEmpty) {
         return _showSnackbar(context, '获取播放地址错误');
       }
 
-      if (animeVideoType == AnimeVideoType.haokanBaidu) {
+      if (animeVideoType == AnimeVideoType.mp4 ||
+          animeVideoType == AnimeVideoType.m3u8) {
         // 在历史记录中存在，并且是相同的一集，才初始化播放时间
         bool isInitVideoPosition =
             history != null && t.id == history.playCurrentId;
@@ -217,7 +222,7 @@ abstract class _DetailStore with Store {
   }
 
   void updateHistory() {
-    if(history == null) return;
+    if (history == null) return;
     historyService.update(history.copyWith(
       time: DateTime.now(),
       playCurrent: currentPlayVideo?.text ?? '',
@@ -231,15 +236,15 @@ abstract class _DetailStore with Store {
   /// 先获取所有的script的src
   /// 找到合适的src发起请求，处理返回的数据
   @action
-  Future<String> _idGetSrc(String id) async {
-    var source = await nicoTvService.getAnimeSource(id);
+  Future<String> _idGetSrc(String id, BuildContext context) async {
+    var source = await nicoTvService.getAnimeSource(id, context);
     animeVideoType = source.type;
     return source.src;
   }
 
   /// 浏览器打开
   void openInWebview() {
-     openBrowser('http://www.nicotv.me/video/detail/$animeId.html');
+    openBrowser('http://www.nicotv.me/video/detail/$animeId.html');
   }
 
   /// 收藏 or 取消收藏

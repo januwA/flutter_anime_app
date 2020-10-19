@@ -286,8 +286,8 @@ class _DetailPageState extends State<DetailPage>
   /// 播放时显示video，反之显示占位图像
   Widget _createVideoBox() {
     return store.currentPlayVideo != null &&
-            store.animeVideoType == AnimeVideoType.haokanBaidu &&
-            mounted
+                store.animeVideoType == AnimeVideoType.mp4 ||
+            store.animeVideoType == AnimeVideoType.m3u8 && mounted
         ? Observer(
             builder: (_) => SizedBox(
               child: VideoBox(

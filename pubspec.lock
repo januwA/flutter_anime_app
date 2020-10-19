@@ -885,10 +885,12 @@ packages:
   webview_flutter:
     dependency: "direct main"
     description:
-      name: webview_flutter
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.1"
+      path: "."
+      ref: main
+      resolved-ref: "182b65ce110c841f287233e0f96d850ad0142725"
+      url: "https://github.com/januwA/webview_flutter-1.0.3"
+    source: git
+    version: "1.0.4"
   win32:
     dependency: transitive
     description:
