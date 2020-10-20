@@ -217,70 +217,6 @@ class NicoTvService {
     }));
   }
 
-  /// 尽可能的从iframe地址中解析出MP4地址
-  Future<void> _createH5VidelUrl(Map<String, dynamic> jsonMap, AnimeSource res,
-      BuildContext context) async {
-    var iframeUrl =
-        """${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}""";
-    try {
-      // iframe中获取MP4
-      var r = await $document(iframeUrl);
-      var scripts = $$(r, 'script');
-      var scriptText = scripts.last.text;
-      var m = RegExp(r'''src="([^"]+)"\s''').firstMatch(scriptText);
-      var mp4Src = m[1];
-      if (mp4Src.trim().isEmpty) throw Error();
-      res.src = mp4Src;
-      res.type = AnimeVideoType.mp4;
-    } catch (_) {
-      res.src = jsonMap['jiexi'] + iframeUrl;
-      printf('[iframe url] %s', res.src);
-
-      // 获取m3u8
-      // https://api.jxyiyi.com/v2/m3u8
-      var url = await showDialog<String>(
-        context: context,
-        child: Center(
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 8),
-                  Text('获取视频资源中.', style: Theme.of(context).textTheme.subtitle2),
-                  SizedBox(
-                    height: 10,
-                    width: 10,
-                    child: WebView(
-                      initialUrl: res.src,
-                      javascriptMode: JavascriptMode.unrestricted,
-                      onRequest: (url) {
-                        if (url.contains('api.jxyiyi.com/v2/m3u8')) {
-                          Navigator.of(context).pop(url);
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-
-      // 用户手动返回
-      if (url == null) {
-        res.type = AnimeVideoType.webview;
-      } else {
-        res.src = url;
-        res.type = AnimeVideoType.m3u8;
-      }
-    }
-  }
-
   Map<String, dynamic> _parseResponseToObject(String r) {
     String jsonData = r
         .replaceFirst('var cms_player =', '')
@@ -299,38 +235,104 @@ class NicoTvService {
     throw '没有找到指定的script标签，尝试检查API';
   }
 
-  /// 先获取所有的script的src
-  /// 找到合适的src发起请求，处理返回的数据
-  Future<AnimeSource> getAnimeSource(String id, BuildContext context) async {
-    var r = AnimeSource();
-    String url = '/video/play/$id.html';
-
-    dom.Document document = await $document(url);
+  /// 获取视频的播放源
+  Future<AnimeSource> getAnimeSource(
+    String videoId,
+    BuildContext context,
+  ) async {
+    var res = AnimeSource();
+    var document = await $document('/video/play/$videoId.html');
     String scriptSrc = _findScript($$(document, 'script'));
+    Map<String, dynamic> jsonMap =
+        _parseResponseToObject(await nicotvHttp.read(scriptSrc));
 
-    var r2 = await nicotvHttp.get(scriptSrc);
-    Map<String, dynamic> jsonMap = _parseResponseToObject(r2.body);
+    printf('[[ Get Anime Source JsonMap ]] %o', jsonMap);
 
     // 解码url字段
     String jsonUrl = Uri.decodeFull(jsonMap['url']);
 
     String name = jsonMap['name'].trim();
-    // print('video url type: ' + name);
+    printf('[[ Source Name ]] %s', name);
 
     // 策略: 获取MP4 -> 在iframe中获取MP4 -> 使用webview获取m3u8 -> 使用webview播放
-    if (name.contains('haokan_baidu')) {
-      final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
-      // 避免没有拿到视频播放地址时的意外情况发生
-      if (videoUrl != null) {
-        r.type = AnimeVideoType.mp4;
-        r.src = videoUrl;
-      } else {
-        await _createH5VidelUrl(jsonMap, r, context);
+    try {
+      // 获取MP4
+      if (!name.contains('haokan_baidu')) throw 'next';
+
+      var videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
+      if (videoUrl == null) throw 'next';
+
+      printf('[[ MP4 Source ]] %s', videoUrl);
+      res.type = AnimeVideoType.mp4;
+      res.src = videoUrl;
+    } catch (e) {
+      var iframeUrl =
+          "${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}";
+
+      printf('[[ Iframe Url ]] %s', iframeUrl);
+      try {
+        // iframe中获取MP4
+        var iframeDoc = await $document(iframeUrl);
+        var scriptText = $$(iframeDoc, 'script').last.text;
+        var m = RegExp(r'''src="([^"]+)"\s''').firstMatch(scriptText);
+        var mp4Src = m[1];
+        if (mp4Src?.trim()?.isEmpty ?? true) throw 'next';
+        printf('[[ MP4 Source ]] %s', mp4Src);
+        res.src = mp4Src;
+        res.type = AnimeVideoType.mp4;
+      } catch (_) {
+        // 获取m3u8
+        res.src = jsonMap['jiexi'] + iframeUrl;
+        printf('[[ Iframe Url Get m3u8 ]] %s', iframeUrl);
+
+        var url = await showDialog<String>(
+          context: context,
+          child: Center(
+            child: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 8),
+                    Text('获取视频资源中.',
+                        style: Theme.of(context).textTheme.subtitle2),
+                    SizedBox(
+                      height: 10,
+                      width: 10,
+                      child: WebView(
+                        initialUrl: res.src,
+                        javascriptMode: JavascriptMode.unrestricted,
+                        onRequest: (url) {
+                          printf('[[ %s ]]', url);
+                          if (url.contains('m3u8')) {
+                            Navigator.of(context).pop(url);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        printf('[[ Source m3u8 ]] %s', url);
+
+        // 用户手动返回
+        if (url == null) {
+          // res.type = AnimeVideoType.webview;
+          res.type = AnimeVideoType.none;
+        } else {
+          res.src = url;
+          res.type = AnimeVideoType.m3u8;
+        }
       }
-    } else {
-      await _createH5VidelUrl(jsonMap, r, context);
     }
-    return r;
+    return res;
   }
 
   Future<List<LiData>> getAnimeTypes(String url, int pageCount) async {
@@ -390,6 +392,8 @@ enum AnimeVideoType {
 
   /// 依靠解析，使用webview播放
   webview,
+
+  none,
 }
 
 /// 每集的资源

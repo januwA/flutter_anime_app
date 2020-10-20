@@ -1,3 +1,4 @@
+import 'package:dart_printf/dart_printf.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
@@ -23,7 +24,9 @@ class DetailStore = _DetailStore with _$DetailStore;
 abstract class _DetailStore with Store {
   final CollectionsService collectionsService = getIt<CollectionsService>();
   final HistoryService historyService = getIt<HistoryService>();
-  final NicoTvService nicoTvService = getIt<NicoTvService>(); // 注入
+  final NicoTvService nicoTvService = getIt<NicoTvService>();
+
+  bool isDispose = false;
 
   @action
   Future<void> initState(
@@ -201,9 +204,13 @@ abstract class _DetailStore with Store {
       Clipboard.setData(ClipboardData(text: getExtractionCode(t.text)));
       openBrowser(t.boxUrl);
     } else {
+      printf('[[ Video ID ]] %s', t.id);
       // 视频资源,准备切换播放点击的视频
       String vSrc = await _idGetSrc(t.id, context);
-      if (vSrc == null || vSrc.isEmpty) {
+      
+      if (isDispose) return; // 避免获取资源速度过慢时，用户退出页面后视频还处于播放状态
+
+      if (vSrc?.isEmpty ?? true) {
         return _showSnackbar(context, '获取播放地址错误');
       }
 
@@ -239,6 +246,7 @@ abstract class _DetailStore with Store {
   Future<String> _idGetSrc(String id, BuildContext context) async {
     var source = await nicoTvService.getAnimeSource(id, context);
     animeVideoType = source.type;
+    if (animeVideoType == AnimeVideoType.none) return null;
     return source.src;
   }
 
@@ -284,6 +292,7 @@ abstract class _DetailStore with Store {
   }
 
   void dispose() {
+    isDispose = true;
     updateHistory();
     vc?.dispose();
     tabController?.dispose();
