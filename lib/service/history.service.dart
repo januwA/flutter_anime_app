@@ -7,8 +7,18 @@ class HistoryService {
   AnimeDB _db = AnimeDB();
 
   /// 创建一条历史记录
-  Future<History> create(History history) {
-    return _db.createHistory(history);
+  Future<History> create(String animeId, String cover, String videoName) {
+    return _db.createHistory(History(
+      animeId: animeId,
+      cover: cover,
+      title: videoName,
+      time: DateTime.now(),
+      playCurrent: '',
+      playCurrentId: '0',
+      playCurrentBoxUrl: '',
+      position: 0,
+      duration: 0,
+    ));
   }
 
   /// 更新一条历史记录
@@ -16,9 +26,6 @@ class HistoryService {
 
   /// 删除历史记录
   delete(History history) => _db.deleteHistory(history);
-
-  /// 检测该anime是否存在
-  Future<bool> exist(String animeId) => _db.existHistory(animeId);
 
   /// 所有历史记录列表
   Future<List<History>> get historys => _db.findAllHistorys();

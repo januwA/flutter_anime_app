@@ -1,6 +1,6 @@
 import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/shared/nicotv.service.dart';
+import 'package:flutter_video_app/service/nicotv.service.dart';
 import 'package:flutter_video_app/sqflite_db/model/collection.dart';
 import 'package:flutter_video_app/sqflite_db/sqflite_db.dart';
 

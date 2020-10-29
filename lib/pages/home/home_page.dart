@@ -6,8 +6,6 @@ import 'package:flutter_video_app/pages/list_search/list_search.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
 
-
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -43,31 +41,45 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Observer(
       builder: (_) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(AnimeLocalizations.of(context).homeTitle),
-            actions: _buildActions(),
-            bottom: TabBar(
-              isScrollable: true,
-              controller: store.tabController,
-              tabs: tabs,
-            ),
-          ),
           drawer: HomeDrawer(),
-          body: store.isLoading
-              ? Center(child: CircularProgressIndicator())
-              : TabBarView(
-                  controller: store.tabController,
-                  children: [
-                    for (var data in store.weekData)
-                      RefreshIndicator(
-                        onRefresh: store.refresh,
-                        child: AnimeGridView(
-                          key: PageStorageKey<int>(data.index),
-                          animes: data.liData.toList(),
-                        ),
-                      ),
-                  ],
+          body: NestedScrollView(
+            floatHeaderSlivers: true,
+            headerSliverBuilder: (context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverOverlapAbsorber(
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: SliverAppBar(
+                    // pinned: true,
+                    floating: true,
+                    forceElevated: innerBoxIsScrolled,
+                    title: Text(AnimeLocalizations.of(context).homeTitle),
+                    actions: _buildActions(),
+                    bottom: TabBar(
+                      isScrollable: true,
+                      controller: store.tabController,
+                      tabs: tabs,
+                    ),
+                  ),
                 ),
+              ];
+            },
+            body: store.isLoading
+                ? Center(child: CircularProgressIndicator())
+                : TabBarView(
+                    controller: store.tabController,
+                    children: [
+                      for (var data in store.weekData)
+                        RefreshIndicator(
+                          onRefresh: store.refresh,
+                          child: AnimeGridView(
+                            key: PageStorageKey<int>(data.index),
+                            animes: data.liData.toList(),
+                          ),
+                        ),
+                    ],
+                  ),
+          ),
         );
       },
     );

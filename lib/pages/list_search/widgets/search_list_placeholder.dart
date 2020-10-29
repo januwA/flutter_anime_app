@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
 import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/router/router.dart';
-import 'package:flutter_video_app/shared/nicotv.service.dart';
+import 'package:flutter_video_app/service/nicotv.service.dart';
 
 /// 使用全局变量缓存列表
 /// 懒惰加载

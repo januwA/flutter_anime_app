@@ -110,9 +110,7 @@ class AnimeDB {
     final Database db = await database;
     final List<Map<String, dynamic>> datas =
         await db.query(historyTable, orderBy: "time desc");
-    return List.generate(datas.length, (i) {
-      return History.from(datas[i]);
-    });
+    return datas.map((e) => History.from(e)).toList();
   }
 
   /// 返回指定的历史记录
@@ -123,8 +121,8 @@ class AnimeDB {
       where: "animeId = ?",
       whereArgs: [animeId],
     );
-    if(datas == null || datas.isEmpty) return null;
-    return History.from(datas?.first);
+    if (datas == null || datas.isEmpty) return null;
+    return History.from(datas.first);
   }
 
   Future<History> findOneById(int id) async {
@@ -134,16 +132,14 @@ class AnimeDB {
       where: "id = ?",
       whereArgs: [id],
     );
-    if(datas == null || datas.isEmpty) return null;
-    return History.from(datas[0]);
+    if (datas == null || datas.isEmpty) return null;
+    return History.from(datas.first);
   }
 
   Future<History> createHistory(History history) async {
     final Database db = await database;
     int id = await db.insert(historyTable, history.toMap());
-    if (id != null) {
-      return findOneById(id);
-    }
+    if (id != null) return findOneById(id);
     return null;
   }
 
@@ -161,10 +157,5 @@ class AnimeDB {
   Future<int> deleteHistory(History history) async {
     final Database db = await database;
     return db.delete(historyTable, where: "id = ?", whereArgs: [history.id]);
-  }
-
-  Future<bool> existHistory(String animeId) async {
-    var data = await findOneByAnimeId(animeId);
-    return data != null;
   }
 }

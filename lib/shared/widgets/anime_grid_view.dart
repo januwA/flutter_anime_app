@@ -71,6 +71,7 @@ class AnimeGridView extends StatelessWidget {
     }
     return GridView.count(
       key: key,
+      padding: EdgeInsets.zero,
       crossAxisCount: crossAxisCount,
       mainAxisSpacing: mainAxisSpacing,
       crossAxisSpacing: crossAxisSpacing,

@@ -324,7 +324,6 @@ class NicoTvService {
 
         // 用户手动返回
         if (url == null) {
-          // res.type = AnimeVideoType.webview;
           res.type = AnimeVideoType.none;
         } else {
           res.src = url;
@@ -389,9 +388,6 @@ enum AnimeVideoType {
   mp4,
 
   m3u8,
-
-  /// 依靠解析，使用webview播放
-  webview,
 
   none,
 }

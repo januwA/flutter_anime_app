@@ -2,7 +2,7 @@ name: flutter_video_app
 description: a play anime app
 publish_to: "none"
 
-version: 0.9.3
+version: 0.9.4
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
@@ -43,7 +43,7 @@ dependencies:
 
   video_box: ^0.15.0
   flutter_ajanuw_router: ^0.3.5
-  ajanuw_http: ^0.2.0
+  ajanuw_http:
   # apk升级策略
   flutter_github_releases_service: ^0.5.0
   breakpoints: ^0.2.0
@@ -58,6 +58,7 @@ dependencies:
       ref: master
 
   flutter_ajanuw_android_pip: ^0.1.2
+  shared_preferences: '>=0.5.12+2 <2.0.0' # key-value 储存数据
 
 dev_dependencies:
   flutter_test:

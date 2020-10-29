@@ -1,32 +1,33 @@
+import 'dart:async';
+
 import 'package:dart_printf/dart_printf.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/service/collections.service.dart';
 import 'package:flutter_video_app/service/history.service.dart';
-import 'package:flutter_video_app/shared/nicotv.service.dart';
-import 'package:flutter_video_app/sqflite_db/model/collection.dart';
+import 'package:flutter_video_app/service/nicotv.service.dart';
+import 'package:flutter_video_app/service/playback_speed.service.dart';
 import 'package:flutter_video_app/sqflite_db/model/history.dart';
 import 'package:flutter_video_app/utils/get_extraction_code.dart';
 import 'package:flutter_video_app/utils/open_browser.dart';
+import 'package:flutter_video_app/utils/show_snackbar.dart';
 import 'package:mobx/mobx.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:video_box/video_box.dart';
 import 'package:flutter_screen/flutter_screen.dart';
 import 'package:flutter_ajanuw_android_pip/flutter_ajanuw_android_pip.dart';
 
-import '../../router/router.dart';
 part 'detail.store.g.dart';
 
 class DetailStore = _DetailStore with _$DetailStore;
 
 abstract class _DetailStore with Store {
-  final CollectionsService collectionsService = getIt<CollectionsService>();
-  final HistoryService historyService = getIt<HistoryService>();
-  final NicoTvService nicoTvService = getIt<NicoTvService>();
+  final historyService = getIt<HistoryService>();
+  final nicoTvService = getIt<NicoTvService>();
+  final playbackSpeedService = getIt<PlaybackSpeedService>();
 
   bool isDispose = false;
+  StreamSubscription<double> _cancel;
 
   @action
   Future<void> initState(
@@ -35,46 +36,31 @@ abstract class _DetailStore with Store {
     String animeId,
   ) async {
     this.animeId = animeId;
-    var data = await nicoTvService.getAnime(animeId);
-    detail = data;
-    loading = false;
+    detail = await nicoTvService.getAnime(animeId);
     tabController = TabController(
       length: detail.tabs.length,
       vsync: vsync,
     );
-    isCollections = await collectionsService.exist(animeId);
+    loading = false;
 
-    if (await historyService.exist(animeId)) {
-      history = await historyService.findOneByAnimeId(animeId);
-    } else {
-      var newHistory = History(
-        animeId: animeId,
-        cover: detail.cover,
-        title: detail.videoName,
-        time: DateTime.now(),
-        playCurrent: '',
-        playCurrentId: '0',
-        playCurrentBoxUrl: '',
-        position: 0,
-        duration: 0,
-      );
-      history = await historyService.create(newHistory);
-    }
-    var currentPlayVideo = TabsValueDto(
+    history = await historyService.findOneByAnimeId(animeId);
+    history ??=
+        await historyService.create(animeId, detail.cover, detail.videoName);
+
+    currentPlayVideo = TabsValueDto(
       (b) => b
         ..text = history.playCurrent
         ..id = history.playCurrentId
         ..boxUrl = history.playCurrentBoxUrl,
     );
 
+    _cancel = playbackSpeedService.speed$
+        .listen((value) => vc?.setPlaybackSpeed(value));
+
     // 网盘地址不自动打开
     if (history.playCurrent.isNotEmpty && currentPlayVideo.boxUrl.isEmpty) {
       tabClick(currentPlayVideo, context);
     }
-
-    iframeVideo.listen((String url) {
-      router.pushNamed('/full-webvideo', arguments: url);
-    });
   }
 
   ScrollController controller = ScrollController();
@@ -100,14 +86,7 @@ abstract class _DetailStore with Store {
   @observable
   AnimeVideoType animeVideoType;
 
-  @observable
-  bool isCollections = false;
-
   History history;
-
-  /// iframe 播放时的流
-  Stream<String> get iframeVideo => _iframeVideoSubject.stream;
-  final _iframeVideoSubject = BehaviorSubject<String>();
 
   @action
   nextPlay(BuildContext context) {
@@ -123,7 +102,7 @@ abstract class _DetailStore with Store {
   }
 
   @computed
-  bool get hasNextPlay {
+  bool get canNextPlay {
     var pis = _parseCurentPlay();
     int pvIndex = pis[0];
     int currentPlayingIndex = pis[1];
@@ -148,7 +127,7 @@ abstract class _DetailStore with Store {
   }
 
   @computed
-  bool get hasPrevPlay {
+  bool get canPrevPlay {
     var pis = _parseCurentPlay();
     int currentPlayingIndex = pis[1];
     var prevIndex = currentPlayingIndex - 1;
@@ -164,8 +143,9 @@ abstract class _DetailStore with Store {
     return [pvIndex, currentPlayingIndex];
   }
 
+  /// 创建video controller
   @action
-  void _createVc(String src, bool isInitVideoPosition) {
+  void _createVC(String src, bool isInitVideoPosition) {
     var source = VideoPlayerController.network(
       src,
       formatHint:
@@ -193,6 +173,7 @@ abstract class _DetailStore with Store {
         ..autoplay = true
         ..initialize();
     }
+    playbackSpeedService.setPlaybackSpeed();
   }
 
   /// 点击播放每一集
@@ -203,29 +184,23 @@ abstract class _DetailStore with Store {
       // 网盘资源, 将网盘提取密码写入粘贴板
       Clipboard.setData(ClipboardData(text: getExtractionCode(t.text)));
       openBrowser(t.boxUrl);
-    } else {
-      printf('[[ Video ID ]] %s', t.id);
-      // 视频资源,准备切换播放点击的视频
-      String vSrc = await _idGetSrc(t.id, context);
-      
-      if (isDispose) return; // 避免获取资源速度过慢时，用户退出页面后视频还处于播放状态
-
-      if (vSrc?.isEmpty ?? true) {
-        return _showSnackbar(context, '获取播放地址错误');
-      }
-
-      if (animeVideoType == AnimeVideoType.mp4 ||
-          animeVideoType == AnimeVideoType.m3u8) {
-        // 在历史记录中存在，并且是相同的一集，才初始化播放时间
-        bool isInitVideoPosition =
-            history != null && t.id == history.playCurrentId;
-        _createVc(vSrc, isInitVideoPosition);
-      } else {
-        _iframeVideoSubject.add(vSrc);
-        vc?.pause();
-      }
-      updateHistory();
+      return;
     }
+
+    printf('[[ Video ID ]] %s', t.id);
+    // 视频资源,准备切换播放点击的视频
+    String vSrc = await getVideoSrc(t.id, context);
+
+    if (isDispose) return; // 避免获取资源速度过慢时，用户退出页面后视频还处于播放状态
+
+    if (animeVideoType == AnimeVideoType.none || vSrc == null || vSrc.isEmpty) {
+      return showSnackbar(context, '获取播放地址错误');
+    }
+
+    // 在历史记录中存在，并且是相同的一集，才初始化播放时间
+    bool isInitVideoPosition = history != null && t.id == history.playCurrentId;
+    _createVC(vSrc, isInitVideoPosition);
+    updateHistory();
   }
 
   void updateHistory() {
@@ -240,48 +215,12 @@ abstract class _DetailStore with Store {
     ));
   }
 
-  /// 先获取所有的script的src
-  /// 找到合适的src发起请求，处理返回的数据
   @action
-  Future<String> _idGetSrc(String id, BuildContext context) async {
-    var source = await nicoTvService.getAnimeSource(id, context);
+  Future<String> getVideoSrc(String videoId, BuildContext context) async {
+    var source = await nicoTvService.getAnimeSource(videoId, context);
     animeVideoType = source.type;
     if (animeVideoType == AnimeVideoType.none) return null;
     return source.src;
-  }
-
-  /// 浏览器打开
-  void openInWebview() {
-    openBrowser('http://www.nicotv.me/video/detail/$animeId.html');
-  }
-
-  /// 收藏 or 取消收藏
-  @action
-  Future<bool> collections(BuildContext context) async {
-    if (!isCollections) {
-      collectionsService.insertCollection(Collection(animeId: animeId));
-      isCollections = true;
-      _showSnackbar(context, '收藏成功 >_<');
-    } else {
-      collectionsService.deleteCollection(animeId);
-      isCollections = false;
-      _showSnackbar(context, '已取消收藏!');
-    }
-    return isCollections;
-  }
-
-  void _showSnackbar(BuildContext context, String content) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-      duration: Duration(seconds: 3),
-      shape: RoundedRectangleBorder(),
-      content: Text(content),
-      action: SnackBarAction(
-        label: 'OK',
-        onPressed: () {
-          // Some code to undo the change.
-        },
-      ),
-    ));
   }
 
   /// 画中画
@@ -296,7 +235,7 @@ abstract class _DetailStore with Store {
     updateHistory();
     vc?.dispose();
     tabController?.dispose();
-    _iframeVideoSubject?.close();
     controller.dispose();
+    _cancel.cancel();
   }
 }

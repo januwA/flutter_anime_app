@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
 import 'package:video_box/video_box.dart';
 
-import 'package:flutter_video_app/shared/nicotv.service.dart';
+import 'package:flutter_video_app/service/nicotv.service.dart';
 import 'widgets/detail_text.dart';
 import 'widgets/network_image_placeholder.dart';
 import 'widgets/tab_Indicator.dart';
@@ -311,7 +311,7 @@ class _DetailPageState extends State<DetailPage>
             iconSize: VideoBox.centerIconSize,
             disabledColor: disabledColor,
             icon: Icon(Icons.skip_previous),
-            onPressed: store.hasPrevPlay ? () => store.prevPlay(context) : null,
+            onPressed: store.canPrevPlay ? () => store.prevPlay(context) : null,
           ),
         ),
       ),
@@ -322,7 +322,7 @@ class _DetailPageState extends State<DetailPage>
             iconSize: VideoBox.centerIconSize,
             disabledColor: disabledColor,
             icon: Icon(Icons.skip_next),
-            onPressed: store.hasNextPlay ? () => store.nextPlay(context) : null,
+            onPressed: store.canNextPlay ? () => store.nextPlay(context) : null,
           ),
         ),
       ),

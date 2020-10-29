@@ -4,7 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_video_app/service/collections.service.dart';
 import 'package:flutter_video_app/service/history.service.dart';
 import 'package:flutter_video_app/router/router.dart';
-import 'package:flutter_video_app/shared/nicotv.service.dart';
+import 'package:flutter_video_app/service/nicotv.service.dart';
+import 'package:flutter_video_app/service/playback_speed.service.dart';
 import 'package:flutter_video_app/theme/theme.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,13 +18,20 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   getIt
     ..registerSingleton<NicoTvService>(NicoTvService())
-    ..registerSingleton<GithubReleasesService>(GithubReleasesService(
-      repo: REPO,
-      owner: OWNER,
-      api: GithubReleasesService.gitee,
-    ))
+    ..registerSingleton<GithubReleasesService>(
+      GithubReleasesService(
+        repo: REPO,
+        owner: OWNER,
+        api: GithubReleasesService.gitee,
+      ),
+      dispose: (s) => s.dispose(),
+    )
     ..registerSingleton<CollectionsService>(CollectionsService())
-    ..registerSingleton<HistoryService>(HistoryService());
+    ..registerSingleton<HistoryService>(HistoryService())
+    ..registerSingleton<PlaybackSpeedService>(
+      PlaybackSpeedService(),
+      dispose: (s) => s.dispose(),
+    );
   runApp(_MyApp());
 }
 

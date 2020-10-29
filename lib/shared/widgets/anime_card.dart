@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
 import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/router/router.dart';
+import './new_tag.dart';
 
 /// 每个anime的展示卡片
 class AnimeCard extends StatelessWidget {
@@ -20,26 +22,23 @@ class AnimeCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(4.0),
-              child: AjanuwImage(
-                image: AjanuwNetworkImage(animeData.img),
-                frameBuilder: AjanuwImage.defaultFrameBuilder,
-                fit: BoxFit.fill,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-              // child: Image.network(
-              //   animeData.img,
-              //   frameBuilder: AjanuwImage.defaultFrameBuilder,
-              //   fit: BoxFit.fill,
-              //   width: double.infinity,
-              //   height: double.infinity,
-              // ),
+              child: kReleaseMode
+                  ? Image.network(
+                      animeData.img,
+                      frameBuilder: AjanuwImage.defaultFrameBuilder,
+                      fit: BoxFit.fill,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                  : AjanuwImage(
+                      image: AjanuwNetworkImage(animeData.img),
+                      frameBuilder: AjanuwImage.defaultFrameBuilder,
+                      fit: BoxFit.fill,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
             ),
-            if (animeData.isNew)
-              Opacity(
-                opacity: .95,
-                child: Image.asset('assets/new_ico.png', scale: 1.5),
-              ),
+            if (animeData.isNew) const NewTag(),
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
