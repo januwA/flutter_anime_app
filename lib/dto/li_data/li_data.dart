@@ -1,4 +1,3 @@
-
 library li_data;
 
 import 'dart:convert';
@@ -36,7 +35,9 @@ abstract class LiData implements Built<LiData, LiDataBuilder> {
   }
 
   static List<LiData> fromListJson(String jsonString) {
-    return jsonDecode(jsonString).map<LiData>((e) => fromJson(jsonEncode(e))).toList();
+    return jsonDecode(jsonString)
+        .map<LiData>((e) => fromJson(jsonEncode(e)))
+        .toList();
   }
 
   static Serializer<LiData> get serializer => _$liDataSerializer;

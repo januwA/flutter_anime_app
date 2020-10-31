@@ -32,5 +32,11 @@ abstract class ListSearchDto
         ListSearchDto.serializer, jsonDecode(jsonString));
   }
 
+  static List<ListSearchDto> fromListJson(String jsonString) {
+    return jsonDecode(jsonString)
+        .map<ListSearchDto>((e) => fromJson(jsonEncode(e)))
+        .toList();
+  }
+
   static Serializer<ListSearchDto> get serializer => _$listSearchDtoSerializer;
 }

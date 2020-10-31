@@ -21,19 +21,23 @@ Future<dom.Document> $document(String url) =>
 
 class NicoTvService {
   /// 获取一周更新的amines
-  Future<List<WeekData>> getWeekAnimes() async {
-    dom.Document document = await $document('/');
-    List<dom.Element> weekList = $$(document, '.weekDayContent');
-    return weekList.map((dom.Element w) {
-      List<dom.Element> list = $$(w, 'div.ff-col ul li');
-      return WeekData.fromJson(jsonEncode({
-        "index": weekList.indexOf(w),
-        "liData": list.map((dom.Element li) => _parseLi(li)).toList(),
-      }));
-    }).toList();
-  }
+  Future<List<WeekData>> getWeekAnimes() async => WeekData.fromListJson(
+        jsonEncode(
+          $$(await $document('/'), '.weekDayContent')
+              .asMap()
+              .entries
+              .map((e) => {
+                    "index": e.key,
+                    "liData": $$(e.value, 'div.ff-col ul li')
+                        .map((li) => _parseLi(li))
+                        .toList(),
+                  })
+              .toList(),
+        ),
+      );
 
-  RegExp _parseIdExp = RegExp(r"(?<id>\d+)(?=\.html$)");
+  // RegExp _getAnimeIdExp = RegExp(r"(?<id>\d+)(?=\.html$)");
+  RegExp _getAnimeIdExp = RegExp(r"\d+");
 
   /// 从每个li中解析出数据
   Map<String, dynamic> _parseLi(dom.Element li) {
@@ -42,7 +46,7 @@ class NicoTvService {
 
     dom.Element isnew = $(li, 'p a .new-icon') ?? null;
     String link = a.attributes['href'];
-    String id = _parseIdExp.stringMatch(link);
+    String id = _getAnimeIdExp.stringMatch(link);
     return {
       'link': link,
       'id': id,
@@ -54,46 +58,31 @@ class NicoTvService {
   }
 
   /// 用户开始搜索前，显示搜索建议
-  Future<List<ListSearchDto>> getSearchListPlaceholder() async {
-    dom.Document document = await $document('/ajax-search.html');
-    List<dom.Element> aEls = $$(document, 'dd a');
-    return aEls
-        .map(
-          (dom.Element a) => ListSearchDto.fromJson(jsonEncode({
-            'id': RegExp(r"\d+").stringMatch(a.attributes['href']),
-            'text': a.innerHtml.trim(),
-            'href': a.attributes['href'],
-          })),
-        )
-        .toList();
-  }
+  Future<List<ListSearchDto>> getSearchListPlaceholder() async =>
+      ListSearchDto.fromListJson(
+        jsonEncode(
+          $$(await $document('/ajax-search.html'), 'dd a')
+              .map(
+                (a) => {
+                  'id': _getAnimeIdExp.stringMatch(a.attributes['href']),
+                  'text': a.innerHtml.trim(),
+                  'href': a.attributes['href'],
+                },
+              )
+              .toList(),
+        ),
+      );
 
   /// 搜索
   Future<List<LiData>> getSearch(String query) async {
-    dom.Document document = await $document('/video/search/$query.html');
-    dom.Element ul = $(document, 'ul.list-unstyled');
-    List<dom.Element> list = $$(ul, 'li');
-    return _createAnimeList(list);
+    return _createAnimeList($$(
+        await $document('/video/search/$query.html'), 'ul.list-unstyled li'));
   }
 
   /// 把抓取的dom列表，转化为dto数据，方便用于在卡片上面
   List<LiData> _createAnimeList(List<dom.Element> list) {
-    List<LiData> animeList = list.map<LiData>(
-      (dom.Element li) {
-        var link = $(li, 'p a').attributes['href'];
-        RegExp exp = new RegExp(r"(\d+)(?=\.html$)");
-        return LiData.fromJson(
-          jsonEncode({
-            "id": exp.stringMatch(link),
-            "title": $(li, 'h2 a').attributes['title'],
-            "img": $(li, 'p a img').attributes['data-original'],
-            "current": $(li, 'p a span.continu').innerHtml.trim(),
-            "isNew": false,
-          }),
-        );
-      },
-    ).toList();
-    return animeList;
+    return LiData.fromListJson(
+        jsonEncode(list.map((li) => _parseLi(li)).toList()));
   }
 
   /// 获取最近更新模块的animes
@@ -217,6 +206,7 @@ class NicoTvService {
     }));
   }
 
+  /// 解析player.php返回的类容
   Map<String, dynamic> _parseResponseToObject(String r) {
     String jsonData = r
         .replaceFirst('var cms_player =', '')
@@ -357,7 +347,7 @@ class NicoTvService {
     }
 
     /// 获取页面数据
-    List<dom.Element> listUnstyledLi = $$(document, '.list-unstyled li');
+    var listUnstyledLi = $$(document, '.list-unstyled li');
     if (listUnstyledLi.isEmpty) {
       return List<LiData>();
     }
@@ -368,7 +358,7 @@ class NicoTvService {
   /// 获取Anime简单的展示数据
   Future<LiData> getAnimeInfo(String animeId) async {
     var document = await $document('/video/detail/$animeId.html');
-    dom.Element mediaBody = $(document, '.media-body');
+    var mediaBody = $(document, '.media-body');
     return LiData.fromJson(
       jsonEncode(
         {

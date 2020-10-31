@@ -47,5 +47,11 @@ abstract class WeekData implements Built<WeekData, WeekDataBuilder> {
         WeekData.serializer, jsonDecode(jsonString));
   }
 
+  static List<WeekData> fromListJson(String jsonString) {
+    return jsonDecode(jsonString)
+        .map<WeekData>((e) => fromJson(jsonEncode(e)))
+        .toList();
+  }
+
   static Serializer<WeekData> get serializer => _$weekDataSerializer;
 }
