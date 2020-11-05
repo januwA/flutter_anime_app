@@ -63,7 +63,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
       AnimeLocalizations.of(context).types15,
       AnimeLocalizations.of(context).types16,
     ];
-    List<String> eras = [
+    List<String> yras = [
       AnimeLocalizations.of(context).all,
       "2020",
       "2019",
@@ -114,7 +114,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
                         SizedBox(height: 10),
                         _createTab(
                           store.tabErasCtrl,
-                          eras,
+                          yras,
                           onTap: debounce(store.setErasCurrent),
                         ),
                         SizedBox(height: 10),

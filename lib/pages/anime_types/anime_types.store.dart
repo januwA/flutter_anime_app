@@ -1,3 +1,4 @@
+import 'package:dart_printf/dart_printf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_app/dto/li_data/li_data.dart';
 import 'package:flutter_video_app/main.dart';
@@ -39,7 +40,7 @@ abstract class _AnimeTypesStore with Store {
 
     tabErasCtrl = TabController(
       vsync: vsync,
-      length: _eras.length,
+      length: _yras.length,
       initialIndex: erasCurrent,
     );
     tabClassifyCtrl = TabController(
@@ -88,7 +89,7 @@ abstract class _AnimeTypesStore with Store {
   List<String> areas = ["全部", "日本", "大陆", "欧美", "其他"];
 
   /// 年代
-  List<String> _eras = [
+  List<String> _yras = [
     "全部",
     "2020",
     "2019",
@@ -98,9 +99,9 @@ abstract class _AnimeTypesStore with Store {
     "2015",
     "2014",
     "2013",
-    "2010-2000",
-    "90年代",
-    "更早"
+    "20002010",
+    "19901999",
+    "18001989"
   ];
   List<ClassifyDto> _classify = [
     ClassifyDto(text: "最近热播", url: 'hits'),
@@ -135,7 +136,7 @@ abstract class _AnimeTypesStore with Store {
   String get area => areasCurrent == 0 ? '' : areas[areasCurrent];
 
   @computed
-  String get era => erasCurrent == 0 ? '' : _eras[erasCurrent];
+  String get era => erasCurrent == 0 ? '' : _yras[erasCurrent];
 
   @computed
   String get cify => _classify[classifyCurrent].url;
@@ -193,6 +194,7 @@ abstract class _AnimeTypesStore with Store {
   /// 2. 在获取data
   @action
   Future<void> getData() async {
+    printf('[[ %s ]]', url);
     loading = true;
     var animes = await nicoTvService.getAnimeTypes(url, pageCount);
     if (animes.isNotEmpty) {
