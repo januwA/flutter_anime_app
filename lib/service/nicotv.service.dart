@@ -75,8 +75,8 @@ class NicoTvService {
 
   /// 搜索
   Future<List<LiData>> getSearch(String query) async {
-    return _createAnimeList($$(
-        await $document('/video/search/$query.html'), 'ul.list-unstyled li'));
+    var doc = await $document('/video/search/$query.html');
+    return _createAnimeList($$(doc, '.list-unstyled li'));
   }
 
   /// 把抓取的dom列表，转化为dto数据，方便用于在卡片上面
