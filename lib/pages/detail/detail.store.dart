@@ -235,7 +235,7 @@ abstract class _DetailStore with Store {
     updateHistory();
     vc?.dispose();
     tabController?.dispose();
-    controller.dispose();
-    _cancel.cancel();
+    controller?.dispose();
+    _cancel?.cancel();
   }
 }

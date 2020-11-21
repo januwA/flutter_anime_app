@@ -145,8 +145,7 @@ abstract class _AnimeTypesStore with Store {
   String get pageUrl => pageCount == 1 ? '' : '-$pageCount';
 
   @computed
-  String get url =>
-      'http://www.nicotv.me/video/type3/$type-$area-$era----$cify$pageUrl.html';
+  String get url => '/video/type3/$type-$area-$era----$cify$pageUrl.html';
 
   /// 滚动到底部，加载下一页数据
   @action
@@ -194,7 +193,7 @@ abstract class _AnimeTypesStore with Store {
   /// 2. 在获取data
   @action
   Future<void> getData() async {
-    printf('[[ %s ]]', url);
+    printf('Anime type page [[ %s ]]', url);
     loading = true;
     var animes = await nicoTvService.getAnimeTypes(url, pageCount);
     if (animes.isNotEmpty) {

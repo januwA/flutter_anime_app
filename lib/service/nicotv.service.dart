@@ -16,25 +16,31 @@ dom.Element $(parent, String select) => parent.querySelector(select);
 List<dom.Element> $$(parent /*Element|Document*/, String select) =>
     parent.querySelectorAll(select);
 
-Future<dom.Document> $document(String url) =>
-    nicotvHttp.get(url).then((r) => html.parse(r.body));
+Future<dom.Document> $document(String url) async {
+  var r = await nicotvHttp.get(url);
+  printf('\$document status(%d) %s', r.statusCode, url);
+  return html.parse(r.body);
+}
 
 class NicoTvService {
   /// 获取一周更新的amines
-  Future<List<WeekData>> getWeekAnimes() async => WeekData.fromListJson(
-        jsonEncode(
-          $$(await $document('/'), '.weekDayContent')
-              .asMap()
-              .entries
-              .map((e) => {
-                    "index": e.key,
-                    "liData": $$(e.value, 'div.ff-col ul li')
-                        .map((li) => _parseLi(li))
-                        .toList(),
-                  })
-              .toList(),
-        ),
-      );
+  Future<List<WeekData>> getWeekAnimes() async {
+    var doc = await $document('/');
+    return WeekData.fromListJson(
+      jsonEncode(
+        $$(doc, '.weekDayContent')
+            .asMap()
+            .entries
+            .map((e) => {
+                  "index": e.key,
+                  "liData": $$(e.value, 'div.ff-col ul li')
+                      .map((li) => _parseLi(li))
+                      .toList(),
+                })
+            .toList(),
+      ),
+    );
+  }
 
   // RegExp _getAnimeIdExp = RegExp(r"(?<id>\d+)(?=\.html$)");
   RegExp _getAnimeIdExp = RegExp(r"\d+");
@@ -207,8 +213,8 @@ class NicoTvService {
   }
 
   /// 解析player.php返回的类容
-  Map<String, dynamic> _parseResponseToObject(String r) {
-    String jsonData = r
+  Map<String, dynamic> _parseResponseToMap(String scriptBody) {
+    String jsonData = scriptBody
         .replaceFirst('var cms_player =', '')
         .replaceAll(RegExp(r";document\.write.*"), '');
     return jsonDecode(jsonData);
@@ -219,6 +225,7 @@ class NicoTvService {
     for (var s in scripts) {
       String src = s.attributes['src'];
       if (src != null && src.contains('player.php')) {
+        printf('[[ script src ]] %s', src);
         return src;
       }
     }
@@ -230,18 +237,22 @@ class NicoTvService {
     String videoId,
     BuildContext context,
   ) async {
-    var res = AnimeSource();
-    var document = await $document('/video/play/$videoId.html');
+    final res = AnimeSource(type: AnimeVideoType.none, src: '');
+    final document = await $document('/video/play/$videoId.html');
     String scriptSrc = _findScript($$(document, 'script'));
-    Map<String, dynamic> jsonMap =
-        _parseResponseToObject(await nicotvHttp.read(scriptSrc));
+    printf("[[ scriptSrc ]] %s", scriptSrc);
+    var jsonMap = _parseResponseToMap(await nicotvHttp.read(scriptSrc));
 
     printf('[[ Get Anime Source JsonMap ]] %o', jsonMap);
 
     // 解码url字段
-    String jsonUrl = Uri.decodeFull(jsonMap['url']);
+    final jsonUrl = Uri.decodeFull(jsonMap['url']);
+    final name = jsonMap['name'].trim();
+    //TODO: 解析 name=leapp, http://www.nicotv.club/video/play/11266-2-1.html
 
-    String name = jsonMap['name'].trim();
+    final iframeUrl =
+        "${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}";
+    final jiexiUrl = jsonMap['jiexi'] + iframeUrl;
     printf('[[ Source Name ]] %s', name);
 
     // 策略: 获取MP4 -> 在iframe中获取MP4 -> 使用webview获取m3u8 -> 使用webview播放
@@ -249,16 +260,13 @@ class NicoTvService {
       // 获取MP4
       if (!name.contains('haokan_baidu')) throw 'next';
 
-      var videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
+      final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
       if (videoUrl == null) throw 'next';
 
       printf('[[ MP4 Source ]] %s', videoUrl);
       res.type = AnimeVideoType.mp4;
       res.src = videoUrl;
     } catch (e) {
-      var iframeUrl =
-          "${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}";
-
       printf('[[ Iframe Url ]] %s', iframeUrl);
       try {
         // iframe中获取MP4
@@ -272,10 +280,10 @@ class NicoTvService {
         res.type = AnimeVideoType.mp4;
       } catch (_) {
         // 获取m3u8
-        res.src = jsonMap['jiexi'] + iframeUrl;
-        printf('[[ Iframe Url Get m3u8 ]] %s', iframeUrl);
+        res.src = jiexiUrl;
+        printf('[[ Iframe Url Get m3u8 ]] %s', res.src);
 
-        var url = await showDialog<String>(
+        var result = await showDialog<AnimeSource>(
           context: context,
           child: Center(
             child: Container(
@@ -296,9 +304,11 @@ class NicoTvService {
                         initialUrl: res.src,
                         javascriptMode: JavascriptMode.unrestricted,
                         onRequest: (url) {
-                          printf('[[ %s ]]', url);
+                          printf('Webview onRequest [[ %s ]]', url);
+
                           if (url.contains('m3u8')) {
-                            Navigator.of(context).pop(url);
+                            Navigator.of(context).pop(AnimeSource(
+                                type: AnimeVideoType.m3u8, src: url));
                           }
                         },
                       ),
@@ -310,14 +320,14 @@ class NicoTvService {
           ),
         );
 
-        printf('[[ Source m3u8 ]] %s', url);
+        printf('Source Src: %s', result.src);
 
         // 用户手动返回
-        if (url == null) {
+        if (result == null) {
           res.type = AnimeVideoType.none;
         } else {
-          res.src = url;
-          res.type = AnimeVideoType.m3u8;
+          res.src = result.src;
+          res.type = result.type;
         }
       }
     }
