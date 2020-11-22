@@ -1,197 +1,237 @@
 {
-  "dashHome": "Home",
+  "dashHome": "首页",
   "@dashHome": {
     "type": "text"
   },
-  "dashRecent": "Recent",
+  "dashRecent": "最近",
   "@dashRecent": {
     "type": "text"
   },
-  "dashRecommend": "Recom",
+  "dashRecommend": "推荐",
   "@dashRecommend": {
     "type": "text"
   },
-  "dashClassification": "Classify",
+  "dashClassification": "分类",
   "@dashClassification": {
     "type": "text"
   },
-  "homeTitle": "Chasing table",
+  "homeTitle": "追番表",
   "@homeTitle": {
     "type": "text",
     "placeholders": {}
   },
-  "recentTitle": "Recently updated",
+  "recentTitle": "最近更新",
   "@recentTitle": {
     "type": "text",
     "placeholders": {}
   },
-  "recommendTitle": "Recommended anime",
+  "recommendTitle": "推荐动漫",
   "@recommendTitle": {
     "type": "text",
     "placeholders": {}
   },
-  "monday": "Mon",
+  "monday": "周一",
   "@monday": {
     "type": "text",
     "placeholders": {}
   },
-  "tuesday": "Tues",
+  "tuesday": "周二",
   "@tuesday": {
     "type": "text",
     "placeholders": {}
   },
-  "wednesday": "Wed",
+  "wednesday": "周三",
   "@wednesday": {
     "type": "text",
     "placeholders": {}
   },
-  "thursday": "Thur",
+  "thursday": "周四",
   "@thursday": {
     "type": "text",
     "placeholders": {}
   },
-  "friday": "Fri",
+  "friday": "周五",
   "@friday": {
     "type": "text",
     "placeholders": {}
   },
-  "saturday": "Sat",
+  "saturday": "周六",
   "@saturday": {
     "type": "text",
     "placeholders": {}
   },
-  "sunday": "Sun",
+  "sunday": "周日",
   "@sunday": {
     "type": "text",
     "placeholders": {}
   },
-  "all": "All",
+  "all": "全部",
   "@all": {
     "type": "text",
     "placeholders": {}
   },
-  "types2": "WarmBlood",
+  "types2": "热血",
   "@types2": {
     "type": "text",
     "placeholders": {}
   },
-  "types3": "InLove",
+  "types3": "恋爱",
   "@types3": {
     "type": "text",
     "placeholders": {}
   },
-  "types4": "ScienceFiction",
+  "types4": "科幻",
   "@types4": {
     "type": "text",
     "placeholders": {}
   },
-  "types5": "Fantasy",
+  "types5": "奇幻",
   "@types5": {
     "type": "text",
     "placeholders": {}
   },
-  "types6": "Lily",
+  "types6": "百合",
   "@types6": {
     "type": "text",
     "placeholders": {}
   },
-  "types7": "Harem",
+  "types7": "后宫",
   "@types7": {
     "type": "text",
     "placeholders": {}
   },
-  "types8": "Inspirational",
+  "types8": "励志",
   "@types8": {
     "type": "text",
     "placeholders": {}
   },
-  "types9": "Funny",
+  "types9": "搞笑",
   "@types9": {
     "type": "text",
     "placeholders": {}
   },
-  "types10": "Adventure",
+  "types10": "冒险",
   "@types10": {
     "type": "text",
     "placeholders": {}
   },
-  "types11": "Campus",
+  "types11": "校园",
   "@types11": {
     "type": "text",
     "placeholders": {}
   },
-  "types12": "Fighting",
+  "types12": "战斗",
   "@types12": {
     "type": "text",
     "placeholders": {}
   },
-  "types13": "MachineWar",
+  "types13": "机战",
   "@types13": {
     "type": "text",
     "placeholders": {}
   },
-  "types14": "Motion",
+  "types14": "运动",
   "@types14": {
     "type": "text",
     "placeholders": {}
   },
-  "types15": "War",
+  "types15": "战争",
   "@types15": {
     "type": "text",
     "placeholders": {}
   },
-  "types16": "Loli",
+  "types16": "萝莉",
   "@types16": {
     "type": "text",
     "placeholders": {}
   },
-  "notData": "Not Data!!!",
+  "notData": "没有数据!!!",
   "@notData": {
     "type": "text",
     "placeholders": {}
   },
-  "earlier": "Earlier",
+  "earlier": "更早",
   "@earlier": {
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsRecentlyBroadcasted": "Recent hot broadcast",
+  "classifyTabsRecentlyBroadcasted": "最近热播",
   "@classifyTabsRecentlyBroadcasted": {
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsNewest": "Newest",
+  "classifyTabsNewest": "最新",
   "@classifyTabsNewest": {
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsHighestScore": "Highest Score",
+  "classifyTabsHighestScore": "评分最高",
   "@classifyTabsHighestScore": {
     "type": "text",
     "placeholders": {}
   },
-  "historicalRecord": "Historical Record",
+  "historicalRecord": "历史记录",
   "@historicalRecord": {
     "type": "text",
     "placeholders": {}
   },
-  "collectionList": "Collection List",
+  "collectionList": "收藏列表",
   "@collectionList": {
     "type": "text",
     "placeholders": {}
   },
-  "canUpdateAppTitle": "There is a new version to update!",
+  "canUpdateAppTitle": "有新版本可以更新!",
   "@canUpdateAppTitle": {
     "type": "text",
     "placeholders": {}
   },
-  "checkUpdate": "Check Update",
+  "checkUpdate": "检查更新",
   "@checkUpdate": {
     "type": "text",
     "placeholders": {}
   },
-  "noNewVersion": "No New Version",
+  "noNewVersion": "暂无新版本",
   "@noNewVersion": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "japan": "日本",
+  "@japan": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "china": "大陆",
+  "@china": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "america": "欧美",
+  "@america": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "other": "其它",
+  "@other": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "more": "更多",
+  "@more": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "less": "收起",
+  "@less": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "sourceCode": "Anime App源码",
+  "@sourceCode": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "appDescription": "该app用于学习Flutter",
+  "@appDescription": {
     "type": "text",
     "placeholders": {}
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
-import 'package:flutter_video_app/anime_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:package_info/package_info.dart';
 
 import 'package:flutter_video_app/shared/globals.dart';
@@ -22,7 +22,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(AnimeLocalizations.of(context).canUpdateAppTitle),
+          title: Text(AppLocalizations.of(context).canUpdateAppTitle),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -67,12 +67,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
           ),
           ListTile(
             leading: Icon(Icons.collections),
-            title: Text(AnimeLocalizations.of(context).collectionList),
+            title: Text(AppLocalizations.of(context).collectionList),
             onTap: () => Navigator.of(context).popAndPushNamed('/collections'),
           ),
           ListTile(
             leading: Icon(Icons.history),
-            title: Text(AnimeLocalizations.of(context).historicalRecord),
+            title: Text(AppLocalizations.of(context).historicalRecord),
             onTap: () => Navigator.of(context).popAndPushNamed('/history'),
           ),
           FutureBuilder(
@@ -81,8 +81,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 ? ListTile(
                     leading: Icon(Icons.autorenew),
                     title: Text(grs.isNeedUpdate
-                        ? AnimeLocalizations.of(context).checkUpdate
-                        : AnimeLocalizations.of(context).noNewVersion),
+                        ? AppLocalizations.of(context).checkUpdate
+                        : AppLocalizations.of(context).noNewVersion),
                     onTap: () async {
                       // 用户同意后下载新版本apk
                       if (grs.isNeedUpdate && await _showDialogView()) {
@@ -104,12 +104,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     applicationName: "Anime",
                     applicationIcon: Icon(Icons.copyright),
                     applicationVersion: snap.data.version,
-                    applicationLegalese: "该app用于学习Flutter",
+                    applicationLegalese: AppLocalizations.of(context).appDescription,
                     aboutBoxChildren: <Widget>[
                       ListTile(
                         onTap: () => openBrowser(githubAddress),
                         selected: true,
-                        title: Text('查看Anime源码'),
+                        title: Text(AppLocalizations.of(context).sourceCode),
                         trailing: Icon(Icons.open_in_browser),
                       )
                     ],

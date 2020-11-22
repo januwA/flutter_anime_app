@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
-import 'package:flutter_video_app/anime_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_video_app/main.dart';
 import 'package:flutter_video_app/service/history.service.dart';
 import 'package:flutter_video_app/router/router.dart';
@@ -50,7 +50,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AnimeLocalizations.of(context).historicalRecord),
+        title: Text(AppLocalizations.of(context).historicalRecord),
       ),
       body: Center(
         child: loading
@@ -62,7 +62,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   _buildList(List<History> historys) {
     if (historys.isEmpty) {
-      return Center(child: Text(AnimeLocalizations.of(context).notData));
+      return Center(child: Text(AppLocalizations.of(context).notData));
     }
 
     return ListView.builder(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/anime_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_video_app/pages/home/home.store.dart';
 import 'package:flutter_video_app/pages/home/widgets/home_drawer.dart';
 import 'package:flutter_video_app/pages/list_search/list_search.dart';
@@ -29,13 +29,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final week = <String>[
-      AnimeLocalizations.of(context).monday,
-      AnimeLocalizations.of(context).tuesday,
-      AnimeLocalizations.of(context).wednesday,
-      AnimeLocalizations.of(context).thursday,
-      AnimeLocalizations.of(context).friday,
-      AnimeLocalizations.of(context).saturday,
-      AnimeLocalizations.of(context).sunday,
+      AppLocalizations.of(context).monday,
+      AppLocalizations.of(context).tuesday,
+      AppLocalizations.of(context).wednesday,
+      AppLocalizations.of(context).thursday,
+      AppLocalizations.of(context).friday,
+      AppLocalizations.of(context).saturday,
+      AppLocalizations.of(context).sunday,
     ];
     final tabs = week.map((w) => Tab(text: w)).toList();
     return Observer(
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     // pinned: true,
                     floating: true,
                     forceElevated: innerBoxIsScrolled,
-                    title: Text(AnimeLocalizations.of(context).homeTitle),
+                    title: Text(AppLocalizations.of(context).homeTitle),
                     actions: _buildActions(),
                     bottom: TabBar(
                       isScrollable: true,

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/anime_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_video_app/pages/anime_types/anime_types_page.dart';
 import 'package:flutter_video_app/pages/dash/dash.store.dart';
 import 'package:flutter_video_app/pages/home/home_page.dart';
@@ -44,20 +44,20 @@ class _DashPageState extends State<DashPage> {
   Widget build(BuildContext context) {
     List<NavItem> navList = [
       NavItem(
-        title: AnimeLocalizations.of(context).dashHome,
+        title: AppLocalizations.of(context).dashHome,
         icon: Icons.home,
         color: Colors.pink,
       ),
       NavItem(
-          title: AnimeLocalizations.of(context).dashRecent,
+          title: AppLocalizations.of(context).dashRecent,
           icon: Icons.fiber_new,
           color: Colors.deepPurple),
       NavItem(
-          title: AnimeLocalizations.of(context).dashRecommend,
+          title: AppLocalizations.of(context).dashRecommend,
           icon: Icons.thumb_up,
           color: Colors.orange),
       NavItem(
-          title: AnimeLocalizations.of(context).dashClassification,
+          title: AppLocalizations.of(context).dashClassification,
           icon: Icons.toys,
           color: Colors.green),
     ];

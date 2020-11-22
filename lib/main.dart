@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_video_app/service/collections.service.dart';
 import 'package:flutter_video_app/service/history.service.dart';
 import 'package:flutter_video_app/router/router.dart';
@@ -9,7 +9,6 @@ import 'package:flutter_video_app/service/playback_speed.service.dart';
 import 'package:flutter_video_app/theme/theme.dart';
 import 'package:get_it/get_it.dart';
 
-import 'anime_localizations.dart';
 import 'shared/globals.dart';
 
 GetIt getIt = GetIt.instance;
@@ -42,12 +41,8 @@ class _MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Anime",
       theme: myTheme,
-      localizationsDelegates: [
-        const AnimeLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: AnimeLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       navigatorKey: router.navigatorKey,
       navigatorObservers: [router.navigatorObserver],
       initialRoute: '/',

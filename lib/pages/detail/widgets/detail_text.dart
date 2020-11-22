@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DetailText extends StatefulWidget {
   final String text;
@@ -41,7 +42,9 @@ class _DetailTextState extends State<DetailText> {
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Text(
-              showMore ? "收起" : '查看更多',
+              showMore
+                  ? AppLocalizations.of(context).less
+                  : AppLocalizations.of(context).more,
               style: theme.textTheme.caption.copyWith(
                 color: theme.primaryColor,
               ),
