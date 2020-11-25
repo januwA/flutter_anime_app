@@ -225,7 +225,6 @@ class NicoTvService {
     for (var s in scripts) {
       String src = s.attributes['src'];
       if (src != null && src.contains('player.php')) {
-        printf('[[ script src ]] %s', src);
         return src;
       }
     }
@@ -240,20 +239,20 @@ class NicoTvService {
     final res = AnimeSource(type: AnimeVideoType.none, src: '');
     final document = await $document('/video/play/$videoId.html');
     String scriptSrc = _findScript($$(document, 'script'));
-    printf("[[ scriptSrc ]] %s", scriptSrc);
-    var jsonMap = _parseResponseToMap(await nicotvHttp.read(scriptSrc));
+    printf("[[ script src ]] %s", scriptSrc);
+    var jsonMap = _parseResponseToMap(await nicotvHttp.read(scriptSrc) );
 
     printf('[[ Get Anime Source JsonMap ]] %o', jsonMap);
 
     // 解码url字段
     final jsonUrl = Uri.decodeFull(jsonMap['url']);
-    final name = jsonMap['name'].trim();
+    var name = jsonMap['name'];
     //TODO: 解析 name=leapp, http://www.nicotv.club/video/play/11266-2-1.html
 
     final iframeUrl =
         "${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}";
     final jiexiUrl = jsonMap['jiexi'] + iframeUrl;
-    printf('[[ Source Name ]] %s', name);
+    printf('[[ Source Name ]] %o', name);
 
     // 策略: 获取MP4 -> 在iframe中获取MP4 -> 使用webview获取m3u8 -> 使用webview播放
     try {
