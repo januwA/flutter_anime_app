@@ -3,7 +3,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
 import 'package:flutter_video_app/pages/detail/detail.store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_video_app/pages/detail/widgets/source_button.dart';
 import 'package:flutter_video_app/shared/widgets/anime_card.dart';
+import 'package:flutter_video_app/utils/open_browser.dart';
 import 'package:video_box/video_box.dart';
 
 import 'package:flutter_video_app/service/nicotv.service.dart';
@@ -114,6 +116,7 @@ class _DetailPageState extends State<DetailPage>
                                     children: <Widget>[
                                       for (var tv in store.detail.tabsValues)
                                         _createTabBarViewItem(tv),
+                                      _otherOpenMethods(),
                                     ],
                                   ),
                                 ),
@@ -178,6 +181,8 @@ class _DetailPageState extends State<DetailPage>
   /// 播放类型tabbar
   Widget _createTabbar() {
     var theme = Theme.of(context);
+    final tabs = store.detail.tabs.toList();
+    tabs.add('其他方式打开');
     return Container(
       child: TabBar(
         isScrollable: true,
@@ -185,10 +190,51 @@ class _DetailPageState extends State<DetailPage>
         labelColor: theme.primaryColor,
         controller: store.tabController,
         indicator: TabIndicator(),
-        tabs: store.detail.tabs
-            .map<Widget>((el) => Tab(child: Text(el)))
-            .toList(),
+        tabs: tabs.map<Widget>((el) => Tab(child: Text(el))).toList(),
       ),
+    );
+  }
+
+  Widget _otherOpenMethods() {
+    final name = Uri.encodeComponent(store.detail.videoName);
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children: [
+        Center(
+          child: SourceButton(
+            child: Text('bilibili App'),
+            onPressed: () => openBrowser('bilibili://search?keyword=$name'),
+          ),
+        ),
+        Center(
+          child: SourceButton(
+            child: Text('bilibili'),
+            onPressed: () => openBrowser(
+                'https://search.bilibili.com/bangumi?keyword=$name'),
+          ),
+        ),
+        Center(
+          child: SourceButton(
+            child: Text('dilidili3'),
+            onPressed: () => openBrowser(
+                'http://www.dilidili3.com/public/api.php?app=video&do=search&q=$name'),
+          ),
+        ),
+        Center(
+          child: SourceButton(
+            child: Text('youku'),
+            onPressed: () => openBrowser(
+                'https://so.youku.com/search_video/q_$name?searchfrom=1'),
+          ),
+        ),
+        // Center(
+        //   child: SourceButton(
+        //     child: Text('源地址'),
+        //     onPressed: () => openBrowser(
+        //         'http://www.nicotv.me/video/detail/${store.animeId}.html'),
+        //   ),
+        // ),
+      ],
     );
   }
 
@@ -244,7 +290,7 @@ class _DetailPageState extends State<DetailPage>
                                           builder: (_) => Wrap(
                                             alignment: WrapAlignment.start,
                                             children: tv.tabs
-                                                .map((e) => _buildRaisedButton(
+                                                .map((e) => _buildSouceButton(
                                                     e, context))
                                                 .toList(),
                                           ),
@@ -275,7 +321,7 @@ class _DetailPageState extends State<DetailPage>
               key: PageStorageKey(tv),
               scrollDirection: Axis.horizontal,
               children:
-                  tv.tabs.map((e) => _buildRaisedButton(e, context)).toList(),
+                  tv.tabs.map((e) => _buildSouceButton(e, context)).toList(),
             ),
           ),
         ],
@@ -329,37 +375,16 @@ class _DetailPageState extends State<DetailPage>
     ];
   }
 
-  Widget _buildRaisedButton(TabsValueDto t, BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    bool isActive = t.text == store.currentPlayVideo?.text;
-    ShapeBorder shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0));
-    final __onPressed = () => store.tabClick(t, context);
-    final __textTheme = ButtonTextTheme.primary;
-    final __child = Text(
-      t.text,
-      style: TextStyle(
-        fontSize: theme.textTheme.caption.fontSize,
+  Widget _buildSouceButton(TabsValueDto t, BuildContext context) {
+    return SourceButton(
+      isActive: t.text == store.currentPlayVideo?.text,
+      onPressed: () => store.tabClick(t, context),
+      child: Text(
+        t.text,
+        style: TextStyle(
+          fontSize: Theme.of(context).textTheme.caption.fontSize,
+        ),
       ),
-    );
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.0),
-      padding: EdgeInsets.all(4.0),
-      child: isActive
-          ? RaisedButton(
-              shape: shape,
-              textTheme: __textTheme,
-              color: theme.primaryColor,
-              onPressed: __onPressed,
-              child: __child,
-            )
-          : OutlineButton(
-              shape: shape,
-              borderSide: BorderSide(color: theme.primaryColor),
-              textTheme: __textTheme,
-              onPressed: __onPressed,
-              child: __child,
-            ),
     );
   }
 

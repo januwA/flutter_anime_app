@@ -38,7 +38,7 @@ abstract class _DetailStore with Store {
     this.animeId = animeId;
     detail = await nicoTvService.getAnime(animeId);
     tabController = TabController(
-      length: detail.tabs.length,
+      length: detail.tabs.length + 1,
       vsync: vsync,
     );
     loading = false;

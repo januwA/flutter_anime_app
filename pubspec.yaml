@@ -2,7 +2,7 @@ name: flutter_video_app
 description: a play anime app
 publish_to: "none"
 
-version: 0.10.1
+version: 0.11.0
 environment:
   sdk: ">=2.7.0 <3.0.0"
 

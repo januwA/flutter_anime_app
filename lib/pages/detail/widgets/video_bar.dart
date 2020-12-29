@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_app/service/collections.service.dart';
 import 'package:flutter_video_app/service/playback_speed.service.dart';
 import 'package:flutter_video_app/sqflite_db/model/collection.dart';
-import 'package:flutter_video_app/utils/open_browser.dart';
 import 'package:flutter_video_app/utils/show_snackbar.dart';
 
 import '../../../main.dart';
@@ -54,13 +53,6 @@ class VideoBar extends StatelessWidget {
               }
               return SizedBox();
             },
-          ),
-
-          // 浏览器打开
-          IconButton(
-            icon: Icon(Icons.open_in_new),
-            onPressed: () => openBrowser(
-                'http://www.nicotv.me/video/detail/${store.animeId}.html'),
           ),
 
           // options
