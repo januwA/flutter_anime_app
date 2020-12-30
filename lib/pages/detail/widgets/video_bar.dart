@@ -31,6 +31,10 @@ class VideoBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final iconColor = Colors.grey;
     return Positioned(
       left: 0,
       top: 0,
@@ -61,6 +65,7 @@ class VideoBar extends StatelessWidget {
             onPressed: () {
               showModalBottomSheet<void>(
                 context: context,
+                backgroundColor: backgroundColor,
                 builder: (context) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
@@ -69,20 +74,32 @@ class VideoBar extends StatelessWidget {
                           stream: playbackSpeedService.speed$,
                           builder: (context, snap) {
                             return ListTile(
-                              leading: Icon(Icons.slow_motion_video),
-                              title: Text('播放速度'),
+                              leading: Icon(
+                                Icons.slow_motion_video,
+                                color: Colors.grey,
+                              ),
+                              title: Text(
+                                '播放速度',
+                                style: TextStyle(color: textColor),
+                              ),
                               onTap: () {
                                 showModalBottomSheet<double>(
                                   context: context,
+                                  backgroundColor: backgroundColor,
                                   builder: (context) {
                                     return ListView(
                                       children: speeds
                                           .map((e) => ListTile(
                                                 dense: true,
                                                 leading: snap.data == e
-                                                    ? Icon(Icons.done)
+                                                    ? Icon(Icons.done,
+                                                        color: iconColor)
                                                     : SizedBox(),
-                                                title: Text('$e倍'),
+                                                title: Text(
+                                                  '$e倍',
+                                                  style: TextStyle(
+                                                      color: textColor),
+                                                ),
                                                 onTap: () =>
                                                     Navigator.of(context)
                                                         .pop(e),

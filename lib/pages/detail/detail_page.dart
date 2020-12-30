@@ -11,7 +11,6 @@ import 'package:video_box/video_box.dart';
 import 'package:flutter_video_app/service/nicotv.service.dart';
 import 'widgets/detail_text.dart';
 import 'widgets/network_image_placeholder.dart';
-import 'widgets/tab_Indicator.dart';
 import 'widgets/video_bar.dart';
 import 'widgets/wrap_text.dart';
 
@@ -184,12 +183,12 @@ class _DetailPageState extends State<DetailPage>
     final tabs = store.detail.tabs.toList();
     tabs.add('其他方式打开');
     return Container(
+      color: theme.primaryColor,
+      width: double.infinity,
       child: TabBar(
         isScrollable: true,
-        unselectedLabelColor: Colors.grey,
-        labelColor: theme.primaryColor,
         controller: store.tabController,
-        indicator: TabIndicator(),
+        indicatorColor: Colors.white,
         tabs: tabs.map<Widget>((el) => Tab(child: Text(el))).toList(),
       ),
     );
@@ -203,28 +202,31 @@ class _DetailPageState extends State<DetailPage>
         Center(
           child: SourceButton(
             child: Text('bilibili App'),
-            onPressed: () => openBrowser('bilibili://search?keyword=$name'),
+            onPressed: () =>
+                openBrowser('bilibili://search?keyword=$name', context),
           ),
         ),
         Center(
           child: SourceButton(
             child: Text('bilibili'),
             onPressed: () => openBrowser(
-                'https://search.bilibili.com/bangumi?keyword=$name'),
+                'https://search.bilibili.com/bangumi?keyword=$name', context),
           ),
         ),
         Center(
           child: SourceButton(
             child: Text('dilidili3'),
             onPressed: () => openBrowser(
-                'http://www.dilidili3.com/public/api.php?app=video&do=search&q=$name'),
+                'http://www.dilidili3.com/public/api.php?app=video&do=search&q=$name',
+                context),
           ),
         ),
         Center(
           child: SourceButton(
             child: Text('youku'),
             onPressed: () => openBrowser(
-                'https://so.youku.com/search_video/q_$name?searchfrom=1'),
+                'https://so.youku.com/search_video/q_$name?searchfrom=1',
+                context),
           ),
         ),
         // Center(

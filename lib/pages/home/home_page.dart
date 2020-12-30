@@ -57,6 +57,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     actions: _buildActions(),
                     bottom: TabBar(
                       isScrollable: true,
+                      indicatorColor: Colors.white,
                       controller: store.tabController,
                       tabs: tabs,
                     ),

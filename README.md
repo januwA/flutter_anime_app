@@ -1,10 +1,10 @@
 ## how run the app?
-```
-$ git clone https://github.com/januwA/flutter_anime_app.git
-$ flutter pub get
-$ flutter packages pub run build_runner watch --delete-conflicting-outputs 
-$ flutter run
-```
+  1. `git clone https://github.com/januwA/flutter_anime_app.git`
+  2. Comment "generate: true" in "pubspec.yaml"
+  3. `flutter pub get`
+  4. `flutter packages pub run build_runner watch --delete-conflicting-outputs`
+  5. `flutter pub get`
+  6. `flutter run`
 
 ## mobx build
 ```
@@ -20,7 +20,6 @@ flutter packages pub run build_runner watch --delete-conflicting-outputs  // 删
 
 ## build apk
 ```
-$ flutter build apk
 $ flutter build apk --split-per-abi
 ```
 

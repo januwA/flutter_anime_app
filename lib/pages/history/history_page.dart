@@ -79,78 +79,61 @@ class _HistoryPageState extends State<HistoryPage> {
               router.pushNamed('/anime-detail/${h.animeId}');
             },
             child: Card(
-              child: Container(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    /// left image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4.0),
-                      child: AspectRatio(
-                        aspectRatio: 5 / 5,
-                        child: AjanuwImage(
-                          image: AjanuwNetworkImage(h.cover),
-                          fit: BoxFit.fitWidth,
-                          frameBuilder: AjanuwImage.defaultFrameBuilder,
-                        ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  /// left image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4.0),
+                    child: AspectRatio(
+                      aspectRatio: 5 / 5,
+                      child: AjanuwImage(
+                        image: AjanuwNetworkImage(h.cover),
+                        fit: BoxFit.fitWidth,
+                        frameBuilder: AjanuwImage.defaultFrameBuilder,
                       ),
                     ),
+                  ),
 
-                    /// right
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(h.title,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText2),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              '${h.playCurrent.isEmpty ? "第0集" : h.playCurrent}'),
-                                      TextSpan(text: '  '),
-                                      TextSpan(
-                                          text: durationString(
-                                              Duration(seconds: h.position))),
-                                      TextSpan(text: ' / '),
-                                      TextSpan(
-                                          text: durationString(
-                                              Duration(seconds: h.duration)))
-                                    ],
-                                  ),
-                                  style: _textRichStyle,
-                                ),
+                  /// right
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4.0, horizontal: 12.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(h.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodyText2),
+                          Spacer(),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                    text:
+                                        '${h.playCurrent.isEmpty ? "第0集" : h.playCurrent}'),
+                                TextSpan(text: '  '),
+                                TextSpan(
+                                    text: durationString(
+                                        Duration(seconds: h.position))),
+                                TextSpan(text: ' / '),
+                                TextSpan(
+                                    text: durationString(
+                                        Duration(seconds: h.duration)))
                               ],
                             ),
-                            Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(text: historyTimeOffset(h.time)),
-                                  TextSpan(text: ' '),
-                                ],
-                              ),
-                              style: _textRichStyle,
-                            ),
-                          ],
-                        ),
+                            style: _textRichStyle,
+                          ),
+                          Text(historyTimeOffset(h.time),
+                              style: _textRichStyle),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

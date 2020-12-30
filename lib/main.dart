@@ -41,6 +41,9 @@ class _MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Anime",
       theme: myTheme,
+      darkTheme: ThemeData.dark().copyWith(
+        accentColor: Colors.pink,
+      ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       navigatorKey: router.navigatorKey,

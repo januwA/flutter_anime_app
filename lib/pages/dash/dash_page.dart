@@ -65,30 +65,34 @@ class _DashPageState extends State<DashPage> {
       onWillPop: onWillPop,
       child: Scaffold(
         bottomNavigationBar: Observer(
-          builder: (_) => BubbleBottomBar(
-            opacity: 0.2,
-            currentIndex: store.index,
-            onTap: store.controller.jumpToPage,
-            borderRadius: BorderRadius.circular(16),
-            hasNotch: true,
-            hasInk: true,
-            inkColor: Colors.black12,
-            items: <BubbleBottomBarItem>[
-              for (var e in navList)
-                BubbleBottomBarItem(
-                  backgroundColor: e.color,
-                  icon: Icon(
-                    e.icon,
-                    color: Colors.black,
+          builder: (_) {
+            final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+            return BubbleBottomBar(
+              opacity: 0.2,
+              currentIndex: store.index,
+              onTap: store.controller.jumpToPage,
+              borderRadius: BorderRadius.circular(16),
+              backgroundColor: isDark ? Colors.black : Colors.white,
+              hasNotch: true,
+              hasInk: true,
+              inkColor: isDark ? Colors.white : Colors.black12,
+              items: <BubbleBottomBarItem>[
+                for (var e in navList)
+                  BubbleBottomBarItem(
+                    backgroundColor: e.color,
+                    icon: Icon(
+                      e.icon,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    activeIcon: Icon(
+                      e.icon,
+                      color: e.color,
+                    ),
+                    title: Text(e.title),
                   ),
-                  activeIcon: Icon(
-                    e.icon,
-                    color: e.color,
-                  ),
-                  title: Text(e.title),
-                ),
-            ],
-          ),
+              ],
+            );
+          },
         ),
         body: PageView(
           controller: store.controller,
