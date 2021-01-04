@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_video_app/dto/detail/detail.dto.dart';
@@ -74,106 +77,126 @@ class _DetailPageState extends State<DetailPage>
         builder: (context) => Scaffold(
           body: store.loading
               ? Center(child: CircularProgressIndicator())
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: _createVideoBox(),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        controller: store.controller,
-                        children: <Widget>[
-                          // 信息区
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  _detailInfo(),
-                                  SizedBox(height: 8),
-                                  DetailText(store.detail.plot),
-                                ],
-                              ),
-                            ),
+              : Platform.isWindows
+                  ? Scaffold(
+                      appBar: AppBar(title: Text(store.detail.videoName)),
+                      body: Center(
+                        child: Container(
+                          constraints: BoxConstraints(
+                            maxWidth: 1200,
                           ),
-
-                          // 资源区
-                          Card(
-                            child: Column(
-                              children: <Widget>[
-                                _createTabbar(),
-                                Container(
-                                  height: 90,
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 12.0),
-                                  child: TabBarView(
-                                    controller: store.tabController,
-                                    children: <Widget>[
-                                      for (var tv in store.detail.tabsValues)
-                                        _createTabBarViewItem(tv),
-                                      _otherOpenMethods(),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          ...store.detail.listUnstyled
-                              .map((ListUnstyledItem item) {
-                            return Card(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          store.detail.listUnstyledTitle[store
-                                              .detail.listUnstyled
-                                              .indexOf(item)],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 220,
-                                    child: ListView.builder(
-                                      itemCount: item.item.length,
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (_, index) {
-                                        var anime = item.item[index];
-                                        return AspectRatio(
-                                          aspectRatio: AnimeCard.aspectRatio,
-                                          child: AnimeCard(
-                                            key: ValueKey(anime.id),
-                                            animeData: anime,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ],
+                          child: _body(),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    )
+                  : Scaffold(body: _body()),
         ),
       ),
+    );
+  }
+
+  Widget _body() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        if (Platform.isAndroid || Platform.isIOS)
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: _createVideoBox(),
+          ),
+        Expanded(
+          child: CupertinoScrollbar(
+            child: ListView(
+              controller: store.controller,
+              children: <Widget>[
+                if (Platform.isWindows)
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: _createVideoBox(),
+                  ),
+
+                // 信息区
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _detailInfo(),
+                        SizedBox(height: 8),
+                        DetailText(store.detail.plot),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // 资源区
+                Card(
+                  child: Column(
+                    children: <Widget>[
+                      _createTabbar(),
+                      Container(
+                        height: 90,
+                        margin: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: TabBarView(
+                          controller: store.tabController,
+                          children: <Widget>[
+                            for (var tv in store.detail.tabsValues)
+                              _createTabBarViewItem(tv),
+                            _otherOpenMethods(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                ...store.detail.listUnstyled.map((ListUnstyledItem item) {
+                  return Card(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                store.detail.listUnstyledTitle[
+                                    store.detail.listUnstyled.indexOf(item)],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 220,
+                          child: ListView.builder(
+                            itemCount: item.item.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (_, index) {
+                              var anime = item.item[index];
+                              return AspectRatio(
+                                aspectRatio: AnimeCard.aspectRatio,
+                                child: AnimeCard(
+                                  key: ValueKey(anime.id),
+                                  animeData: anime,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

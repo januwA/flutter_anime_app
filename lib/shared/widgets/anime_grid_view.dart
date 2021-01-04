@@ -30,11 +30,13 @@ class AnimeGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final int crossAxisCount = Breakpoints.isXs(width)
+    final int crossAxisCount = width.isXs
         ? 2
-        : Breakpoints.isSm(width)
+        : width.isSm
             ? 3
-            : 4; // 每行显示几列
+            : width.isMd
+                ? 5
+                : 8;
     final double mainAxisSpacing = 2.0; // 每行的上下间距
     final double crossAxisSpacing = 2.0; // 每列的间距
 

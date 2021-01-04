@@ -25,7 +25,7 @@ class _ListResultsState extends State<ListResults> {
 
     return FutureBuilder(
       future: nicoTvService.getSearch(query),
-      initialData: List<LiData>(),
+      initialData: <LiData>[],
       builder: (context, AsyncSnapshot<List<LiData>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:

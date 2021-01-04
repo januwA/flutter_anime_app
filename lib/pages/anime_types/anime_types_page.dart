@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -45,7 +46,6 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
 
   @override
   Widget build(BuildContext context) {
-
     // anime 类型
     var types = [
       AppLocalizations.of(context).all,
@@ -100,79 +100,82 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
       child: Scaffold(
         body: NotificationListener(
           onNotification: store.onNotification,
-          child: CustomScrollView(
-            controller: store.scrollCtrl,
-            key: PageStorageKey('anime_types'),
-            slivers: <Widget>[
-              SliverSafeArea(
-                sliver: SliverAppBar(
-                  automaticallyImplyLeading: false,
-                  expandedHeight: 230,
-                  floating: true,
-                  backgroundColor: Colors.grey[100],
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _createTab(
-                          store.tabTypesCtrl,
-                          types,
-                          onTap: debounce(store.setTypesCurrent),
-                        ),
-                        SizedBox(height: 10),
-                        _createTab(
-                          store.tabAreasCtrl,
-                          areas,
-                          onTap: debounce(store.setAreasCurrent),
-                        ),
-                        SizedBox(height: 10),
-                        _createTab(
-                          store.tabErasCtrl,
-                          yras,
-                          onTap: debounce(store.setErasCurrent),
-                        ),
-                        SizedBox(height: 10),
-                        _createTab(
-                          store.tabClassifyCtrl,
-                          classify,
-                          onTap: debounce(store.setClassifyCurrent),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Observer(
-                builder: (_) => store.loading && store.animeData.isEmpty
-                    ? SliverToBoxAdapter()
-                    : store.animeData.isEmpty
-                        ? SliverToBoxAdapter(
-                            child: Center(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(AppLocalizations.of(context).notData),
-                            )),
-                          )
-                        : AnimeGridView(
-                            key: ValueKey('anime_types'),
-                            sliver: true,
-                            animes: store.animeData,
+          child: CupertinoScrollbar(
+            child: CustomScrollView(
+              controller: store.scrollCtrl,
+              key: PageStorageKey('anime_types'),
+              slivers: <Widget>[
+                SliverSafeArea(
+                  sliver: SliverAppBar(
+                    automaticallyImplyLeading: false,
+                    expandedHeight: 230,
+                    floating: true,
+                    backgroundColor: Colors.grey[100],
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _createTab(
+                            store.tabTypesCtrl,
+                            types,
+                            onTap: debounce(store.setTypesCurrent),
                           ),
-              ),
-              Observer(
-                builder: (_) => SliverToBoxAdapter(
-                  child: Opacity(
-                    opacity: store.loading ? 1 : 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: CircularProgressIndicator(),
+                          SizedBox(height: 10),
+                          _createTab(
+                            store.tabAreasCtrl,
+                            areas,
+                            onTap: debounce(store.setAreasCurrent),
+                          ),
+                          SizedBox(height: 10),
+                          _createTab(
+                            store.tabErasCtrl,
+                            yras,
+                            onTap: debounce(store.setErasCurrent),
+                          ),
+                          SizedBox(height: 10),
+                          _createTab(
+                            store.tabClassifyCtrl,
+                            classify,
+                            onTap: debounce(store.setClassifyCurrent),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                Observer(
+                  builder: (_) => store.loading && store.animeData.isEmpty
+                      ? SliverToBoxAdapter()
+                      : store.animeData.isEmpty
+                          ? SliverToBoxAdapter(
+                              child: Center(
+                                  child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child:
+                                    Text(AppLocalizations.of(context).notData),
+                              )),
+                            )
+                          : AnimeGridView(
+                              key: ValueKey('anime_types'),
+                              sliver: true,
+                              animes: store.animeData,
+                            ),
+                ),
+                Observer(
+                  builder: (_) => SliverToBoxAdapter(
+                    child: Opacity(
+                      opacity: store.loading ? 1 : 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

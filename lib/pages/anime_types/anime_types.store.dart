@@ -63,7 +63,7 @@ abstract class _AnimeTypesStore with Store {
   @observable
   bool loading = true;
   @observable
-  List<LiData> animeData = List<LiData>();
+  List<LiData> animeData = <LiData>[];
 
   /// 类型
   List<String> _types = [

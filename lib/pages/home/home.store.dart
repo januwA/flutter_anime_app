@@ -51,7 +51,7 @@ abstract class _HomeStore with Store {
   }
 
   @observable
-  List<WeekData> weekData = List<WeekData>();
+  List<WeekData> weekData = <WeekData>[];
 
   @action
   Future<void> _getWeekData() async {

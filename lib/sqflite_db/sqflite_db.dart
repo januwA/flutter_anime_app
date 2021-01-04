@@ -1,8 +1,10 @@
 /// https://flutter.cn/docs/cookbook/persistence/sqlite
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:path/path.dart' as p;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'model/collection.dart';
@@ -29,7 +31,13 @@ class AnimeDB {
 
   /// 打开数据库并存储引用。
   _openDB() async {
-    print('init database.');
+    if (Platform.isWindows || Platform.isLinux) {
+      // Initialize FFI
+      sqfliteFfiInit();
+      // Change the default factory
+      databaseFactory = databaseFactoryFfi;
+    }
+
     database = openDatabase(
       // 设置数据库的路径。
       p.join(await getDatabasesPath(), 'anime_ajanuw.db'),

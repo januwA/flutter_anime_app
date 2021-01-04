@@ -240,7 +240,7 @@ class NicoTvService {
     final document = await $document('/video/play/$videoId.html');
     String scriptSrc = _findScript($$(document, 'script'));
     printf("[[ script src ]] %s", scriptSrc);
-    var jsonMap = _parseResponseToMap(await nicotvHttp.read(scriptSrc) );
+    var jsonMap = _parseResponseToMap(await nicotvHttp.read(scriptSrc));
 
     printf('[[ Get Anime Source JsonMap ]] %o', jsonMap);
 
@@ -284,39 +284,41 @@ class NicoTvService {
 
         var result = await showDialog<AnimeSource>(
           context: context,
-          child: Center(
-            child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8),
-                    Text('获取视频资源中.',
-                        style: Theme.of(context).textTheme.subtitle2),
-                    SizedBox(
-                      height: 10,
-                      width: 10,
-                      child: WebView(
-                        initialUrl: res.src,
-                        javascriptMode: JavascriptMode.unrestricted,
-                        onRequest: (url) {
-                          printf('Webview onRequest [[ %s ]]', url);
+          builder: (BuildContext context) {
+            return Center(
+              child: Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 8),
+                      Text('获取视频资源中.',
+                          style: Theme.of(context).textTheme.subtitle2),
+                      SizedBox(
+                        height: 10,
+                        width: 10,
+                        child: WebView(
+                          initialUrl: res.src,
+                          javascriptMode: JavascriptMode.unrestricted,
+                          onRequest: (url) {
+                            printf('Webview onRequest [[ %s ]]', url);
 
-                          if (url.contains('m3u8')) {
-                            Navigator.of(context).pop(AnimeSource(
-                                type: AnimeVideoType.m3u8, src: url));
-                          }
-                        },
+                            if (url.contains('m3u8')) {
+                              Navigator.of(context).pop(AnimeSource(
+                                  type: AnimeVideoType.m3u8, src: url));
+                            }
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
 
         printf('Source Src: %s', result.src);
@@ -352,13 +354,13 @@ class NicoTvService {
     if (pageCount > allPageCount) {
       /// 分页已经达到最大
       // print('超过最大分页');
-      return List<LiData>();
+      return <LiData>[];
     }
 
     /// 获取页面数据
     var listUnstyledLi = $$(document, '.list-unstyled li');
     if (listUnstyledLi.isEmpty) {
-      return List<LiData>();
+      return <LiData>[];
     }
 
     return _createAnimeList(listUnstyledLi);

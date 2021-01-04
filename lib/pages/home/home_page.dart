@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_video_app/pages/home/home.store.dart';
@@ -42,44 +43,46 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       builder: (_) {
         return Scaffold(
           drawer: HomeDrawer(),
-          body: NestedScrollView(
-            floatHeaderSlivers: true,
-            headerSliverBuilder: (context, bool innerBoxIsScrolled) {
-              return <Widget>[
-                SliverOverlapAbsorber(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                  sliver: SliverAppBar(
-                    // pinned: true,
-                    floating: true,
-                    forceElevated: innerBoxIsScrolled,
-                    title: Text(AppLocalizations.of(context).homeTitle),
-                    actions: _buildActions(),
-                    bottom: TabBar(
-                      isScrollable: true,
-                      indicatorColor: Colors.white,
-                      controller: store.tabController,
-                      tabs: tabs,
+          body: CupertinoScrollbar(
+            child: NestedScrollView(
+              floatHeaderSlivers: true,
+              headerSliverBuilder: (context, bool innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverOverlapAbsorber(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context),
+                    sliver: SliverAppBar(
+                      // pinned: true,
+                      floating: true,
+                      forceElevated: innerBoxIsScrolled,
+                      title: Text(AppLocalizations.of(context).homeTitle),
+                      actions: _buildActions(),
+                      bottom: TabBar(
+                        isScrollable: true,
+                        indicatorColor: Colors.white,
+                        controller: store.tabController,
+                        tabs: tabs,
+                      ),
                     ),
                   ),
-                ),
-              ];
-            },
-            body: store.isLoading
-                ? Center(child: CircularProgressIndicator())
-                : TabBarView(
-                    controller: store.tabController,
-                    children: [
-                      for (var data in store.weekData)
-                        RefreshIndicator(
-                          onRefresh: store.refresh,
-                          child: AnimeGridView(
-                            key: PageStorageKey<int>(data.index),
-                            animes: data.liData.toList(),
+                ];
+              },
+              body: store.isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : TabBarView(
+                      controller: store.tabController,
+                      children: [
+                        for (var data in store.weekData)
+                          RefreshIndicator(
+                            onRefresh: store.refresh,
+                            child: AnimeGridView(
+                              key: PageStorageKey<int>(data.index),
+                              animes: data.liData.toList(),
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
+                      ],
+                    ),
+            ),
           ),
         );
       },
