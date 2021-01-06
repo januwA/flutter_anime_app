@@ -3,7 +3,7 @@ library list_search_dto;
 import 'dart:convert';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:flutter_video_app/dto/list_search/serializers.dart';
+import 'serializers.dart';
 
 part 'list_search.dto.g.dart';
 

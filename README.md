@@ -3,8 +3,9 @@
   2. Comment "generate: true" in "pubspec.yaml"
   3. `flutter pub get`
   4. `flutter packages pub run build_runner watch --delete-conflicting-outputs`
-  5. `flutter pub get`
-  6. `flutter run`
+  5. Uncomment "generate: true"
+  6. `flutter pub get`
+  7. `flutter run`
 
 ## mobx build
 ```

@@ -6,6 +6,7 @@ import 'package:flutter_video_app/pages/detail/detail_page.dart';
 import 'package:flutter_video_app/pages/history/history_page.dart';
 import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
 import 'package:flutter_video_app/pages/not_found/not_found.page.dart';
+import 'package:flutter_video_app/pages/settings/settings_page.dart';
 
 AjanuwRouter router = AjanuwRouter();
 final List<AjanuwRoute> routes = [
@@ -29,6 +30,10 @@ final List<AjanuwRoute> routes = [
   AjanuwRoute(
     path: 'anime-detail/:id',
     builder: (c, r) => DetailPage(animeId: r.paramMap['id']),
+  ),
+  AjanuwRoute(
+    path: 'settings',
+    builder: (c, r) => SettingsPage(),
   ),
   AjanuwRoute(
     path: 'nicotv',

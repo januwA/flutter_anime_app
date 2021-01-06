@@ -96,6 +96,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   )
                 : SizedBox(),
           ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text("设置"),
+            onTap: () => Navigator.of(context).popAndPushNamed('/settings'),
+          ),
           FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder: (context, snap) => snap.hasData
@@ -104,7 +109,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     applicationName: "Anime",
                     applicationIcon: Icon(Icons.copyright),
                     applicationVersion: snap.data.version,
-                    applicationLegalese: AppLocalizations.of(context).appDescription,
+                    applicationLegalese:
+                        AppLocalizations.of(context).appDescription,
                     aboutBoxChildren: <Widget>[
                       ListTile(
                         onTap: () => openBrowser(githubAddress),

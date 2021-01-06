@@ -9,6 +9,7 @@ import 'package:flutter_video_app/service/playback_speed.service.dart';
 import 'package:flutter_video_app/theme/theme.dart';
 import 'package:get_it/get_it.dart';
 
+import 'service/settings.service.dart';
 import 'shared/globals.dart';
 
 GetIt getIt = GetIt.instance;
@@ -16,6 +17,7 @@ GetIt getIt = GetIt.instance;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   getIt
+    ..registerSingleton<SettingsService>(SettingsService())
     ..registerSingleton<NicoTvService>(NicoTvService())
     ..registerSingleton<GithubReleasesService>(
       GithubReleasesService(

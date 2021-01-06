@@ -1,12 +1,16 @@
 import 'package:ajanuw_http/ajanuw_http.dart';
+import 'package:flutter_video_app/service/settings.service.dart';
+
+import '../main.dart';
 
 class HeaderInterceptor extends AjanuwHttpInterceptors {
+  final settings = getIt<SettingsService>();
+
+  get url => 'http://${settings.proxyAddress.trim()}/api/nicotv?url=';
+
   @override
   Future<AjanuwHttpConfig> request(AjanuwHttpConfig config) async {
-    // printf('[[ request url ]] %s', config.url.toString());
-    config.url = Uri.parse('http://96.45.181.208:8888/api/nicotv?url=' +
-        Uri.encodeComponent(config.url.toString()));
-    // printf('[[ request redirect to]] %s', config.url.toString());
+    config.url = Uri.parse(url + Uri.encodeComponent(config.url.toString()));
     return config;
   }
 
