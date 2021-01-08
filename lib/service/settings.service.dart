@@ -3,10 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsService {
   static final String _key = 'proxyAddress';
 
-  /// 'http://96.45.181.208:6677/api/nicotv?url='
-  /// 小黄鸡服务器: 'http://47.93.223.14:6677/api/nicotv?url='
   /// 默认代理地址
-  final _dProxyAddress = '47.93.223.14:6677';
+  final _dProxyAddress = '96.45.181.208:6677';
 
   SettingsService() {
     proxyAddress = _dProxyAddress;
