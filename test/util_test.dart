@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_video_app/utils/get_extraction_code.dart';
+import 'package:anime_app/utils/get_extraction_code.dart';
 
 void main() {
   group('util Test', () {

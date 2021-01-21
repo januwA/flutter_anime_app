@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_github_releases_service/flutter_github_releases_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_video_app/service/collections.service.dart';
-import 'package:flutter_video_app/service/history.service.dart';
-import 'package:flutter_video_app/router/router.dart';
-import 'package:flutter_video_app/service/nicotv.service.dart';
-import 'package:flutter_video_app/service/playback_speed.service.dart';
-import 'package:flutter_video_app/theme/theme.dart';
+import 'package:anime_app/service/collections.service.dart';
+import 'package:anime_app/service/history.service.dart';
+import 'package:anime_app/router/router.dart';
+import 'package:anime_app/service/nicotv.service.dart';
+import 'package:anime_app/service/playback_speed.service.dart';
+import 'package:anime_app/theme/theme.dart';
 import 'package:get_it/get_it.dart';
 
 import 'service/settings.service.dart';

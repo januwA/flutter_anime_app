@@ -5,8 +5,8 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:flutter_video_app/dto/detail/serializers.dart';
-import 'package:flutter_video_app/dto/li_data/li_data.dart';
+import 'package:anime_app/dto/detail/serializers.dart';
+import 'package:anime_app/dto/li_data/li_data.dart';
 
 part 'detail.dto.g.dart';
 

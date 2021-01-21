@@ -1,5 +1,5 @@
-import 'package:flutter_video_app/sqflite_db/model/history.dart';
-import 'package:flutter_video_app/sqflite_db/sqflite_db.dart';
+import 'package:anime_app/sqflite_db/model/history.dart';
+import 'package:anime_app/sqflite_db/sqflite_db.dart';
 
 /// 历史记录服务
 class HistoryService {

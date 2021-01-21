@@ -1,8 +1,8 @@
 import 'package:dart_printf/dart_printf.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/dto/li_data/li_data.dart';
-import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/service/nicotv.service.dart';
+import 'package:anime_app/dto/li_data/li_data.dart';
+import 'package:anime_app/main.dart';
+import 'package:anime_app/service/nicotv.service.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
 part 'anime_types.store.g.dart';

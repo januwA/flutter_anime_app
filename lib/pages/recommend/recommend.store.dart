@@ -1,6 +1,6 @@
-import 'package:flutter_video_app/dto/li_data/li_data.dart';
-import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/service/nicotv.service.dart';
+import 'package:anime_app/dto/li_data/li_data.dart';
+import 'package:anime_app/main.dart';
+import 'package:anime_app/service/nicotv.service.dart';
 import 'package:mobx/mobx.dart';
 part 'recommend.store.g.dart';
 

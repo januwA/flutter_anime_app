@@ -1,12 +1,12 @@
 import 'package:flutter_ajanuw_router/ajanuw_route.dart';
 import 'package:flutter_ajanuw_router/flutter_ajanuw_router.dart';
-import 'package:flutter_video_app/pages/collections/collections_page.dart';
-import 'package:flutter_video_app/pages/dash/dash_page.dart';
-import 'package:flutter_video_app/pages/detail/detail_page.dart';
-import 'package:flutter_video_app/pages/history/history_page.dart';
-import 'package:flutter_video_app/pages/nicotv/nicotv_page.dart';
-import 'package:flutter_video_app/pages/not_found/not_found.page.dart';
-import 'package:flutter_video_app/pages/settings/settings_page.dart';
+import 'package:anime_app/pages/collections/collections_page.dart';
+import 'package:anime_app/pages/dash/dash_page.dart';
+import 'package:anime_app/pages/detail/detail_page.dart';
+import 'package:anime_app/pages/history/history_page.dart';
+import 'package:anime_app/pages/nicotv/nicotv_page.dart';
+import 'package:anime_app/pages/not_found/not_found.page.dart';
+import 'package:anime_app/pages/settings/settings_page.dart';
 
 AjanuwRouter router = AjanuwRouter();
 final List<AjanuwRoute> routes = [

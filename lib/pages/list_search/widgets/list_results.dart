@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/dto/li_data/li_data.dart';
-import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/pages/list_search/widgets/search_list_placeholder.dart';
-import 'package:flutter_video_app/service/nicotv.service.dart';
-import 'package:flutter_video_app/shared/widgets/anime_card.dart';
+import 'package:anime_app/dto/li_data/li_data.dart';
+import 'package:anime_app/main.dart';
+import 'package:anime_app/pages/list_search/widgets/search_list_placeholder.dart';
+import 'package:anime_app/service/nicotv.service.dart';
+import 'package:anime_app/shared/widgets/anime_card.dart';
 
 class ListResults extends StatefulWidget {
   final String query;

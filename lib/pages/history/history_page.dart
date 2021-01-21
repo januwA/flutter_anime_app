@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/service/history.service.dart';
-import 'package:flutter_video_app/router/router.dart';
-import 'package:flutter_video_app/sqflite_db/model/history.dart';
+import 'package:anime_app/main.dart';
+import 'package:anime_app/service/history.service.dart';
+import 'package:anime_app/router/router.dart';
+import 'package:anime_app/sqflite_db/model/history.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_video_app/utils/duration_string.dart';
-import 'package:flutter_video_app/utils/history_time_offset.dart';
+import 'package:anime_app/utils/duration_string.dart';
+import 'package:anime_app/utils/history_time_offset.dart';
 
 class HistoryPage extends StatefulWidget {
   @override

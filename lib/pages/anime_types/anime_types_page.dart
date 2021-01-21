@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_video_app/pages/anime_types/anime_types.store.dart';
-import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
-import 'package:flutter_video_app/utils/debounce.dart';
+import 'package:anime_app/pages/anime_types/anime_types.store.dart';
+import 'package:anime_app/shared/widgets/anime_grid_view.dart';
+import 'package:anime_app/utils/debounce.dart';
 
 class AnimeTypesPage extends StatefulWidget {
   @override

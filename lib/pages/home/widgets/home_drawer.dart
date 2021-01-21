@@ -3,8 +3,8 @@ import 'package:flutter_github_releases_service/flutter_github_releases_service.
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:package_info/package_info.dart';
 
-import 'package:flutter_video_app/shared/globals.dart';
-import 'package:flutter_video_app/utils/open_browser.dart';
+import 'package:anime_app/shared/globals.dart';
+import 'package:anime_app/utils/open_browser.dart';
 
 import '../../../main.dart';
 

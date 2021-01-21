@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:dart_printf/dart_printf.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/dto/detail/detail.dto.dart';
-import 'package:flutter_video_app/dto/li_data/li_data.dart';
-import 'package:flutter_video_app/dto/list_search/list_search.dto.dart';
-import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
-import 'package:flutter_video_app/shared/nicotv_http.dart';
+import 'package:anime_app/dto/detail/detail.dto.dart';
+import 'package:anime_app/dto/li_data/li_data.dart';
+import 'package:anime_app/dto/list_search/list_search.dto.dart';
+import 'package:anime_app/dto/week_data/week_data_dto.dart';
+import 'package:anime_app/shared/nicotv_http.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html;
 import 'package:webview_flutter/webview_flutter.dart';
@@ -18,7 +18,6 @@ List<dom.Element> $$(parent /*Element|Document*/, String select) =>
 
 Future<dom.Document> $document(String url) async {
   var r = await nicotvHttp.get(url);
-  printf('\$document status(%d) %s', r.statusCode, url);
   return html.parse(r.body);
 }
 

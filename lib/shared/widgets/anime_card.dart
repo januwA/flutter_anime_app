@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_imagenetwork/flutter_imagenetwork.dart';
-import 'package:flutter_video_app/dto/li_data/li_data.dart';
-import 'package:flutter_video_app/router/router.dart';
+import 'package:anime_app/dto/li_data/li_data.dart';
+import 'package:anime_app/router/router.dart';
 import './new_tag.dart';
 
 /// 每个anime的展示卡片

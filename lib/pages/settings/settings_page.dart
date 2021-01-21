@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/service/settings.service.dart';
-import 'package:flutter_video_app/utils/open_browser.dart';
+import 'package:anime_app/main.dart';
+import 'package:anime_app/service/settings.service.dart';
+import 'package:anime_app/utils/open_browser.dart';
 import 'package:toast/toast.dart';
 
 class SettingsPage extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/service/collections.service.dart';
-import 'package:flutter_video_app/service/playback_speed.service.dart';
-import 'package:flutter_video_app/sqflite_db/model/collection.dart';
-import 'package:flutter_video_app/utils/show_snackbar.dart';
+import 'package:anime_app/service/collections.service.dart';
+import 'package:anime_app/service/playback_speed.service.dart';
+import 'package:anime_app/sqflite_db/model/collection.dart';
+import 'package:anime_app/utils/show_snackbar.dart';
 
 import '../../../main.dart';
 import '../detail.store.dart';

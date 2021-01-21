@@ -92,10 +92,10 @@ BEGIN
             VALUE "CompanyName", "com.ajanuw" "\0"
             VALUE "FileDescription", "A new Flutter project." "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "flutter_anime_app" "\0"
+            VALUE "InternalName", "anime_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2021 com.ajanuw. All rights reserved." "\0"
-            VALUE "OriginalFilename", "flutter_anime_app.exe" "\0"
-            VALUE "ProductName", "flutter_anime_app" "\0"
+            VALUE "OriginalFilename", "anime_app.exe" "\0"
+            VALUE "ProductName", "anime_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

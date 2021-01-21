@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_video_app/pages/anime_types/anime_types_page.dart';
-import 'package:flutter_video_app/pages/dash/dash.store.dart';
-import 'package:flutter_video_app/pages/home/home_page.dart';
+import 'package:anime_app/pages/anime_types/anime_types_page.dart';
+import 'package:anime_app/pages/dash/dash.store.dart';
+import 'package:anime_app/pages/home/home_page.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_video_app/pages/recently_updated/recently_updated_page.dart';
-import 'package:flutter_video_app/pages/recommend/recommend_page.dart';
+import 'package:anime_app/pages/recently_updated/recently_updated_page.dart';
+import 'package:anime_app/pages/recommend/recommend_page.dart';
 import 'package:toast/toast.dart';
 
 class DashPage extends StatefulWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/service/collections.service.dart';
-import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
-import 'package:flutter_video_app/sqflite_db/model/collection.dart';
+import 'package:anime_app/main.dart';
+import 'package:anime_app/service/collections.service.dart';
+import 'package:anime_app/shared/widgets/anime_grid_view.dart';
+import 'package:anime_app/sqflite_db/model/collection.dart';
 
 /// 我的收藏页面
 class CollectionsPage extends StatefulWidget {

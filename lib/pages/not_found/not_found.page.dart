@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/shared/globals.dart';
-import 'package:flutter_video_app/utils/open_browser.dart';
+import 'package:anime_app/shared/globals.dart';
+import 'package:anime_app/utils/open_browser.dart';
 
 class NotFoundPage extends StatefulWidget {
   @override

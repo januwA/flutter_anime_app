@@ -1,4 +1,3 @@
-import 'package:dart_printf/dart_printf.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,7 +10,6 @@ class PlaybackSpeedService {
     SharedPreferences.getInstance().then((value) {
       _prefs ??= value;
       _speed = _prefs.getDouble(PlaybackSpeedService._key) ?? 1.0;
-      printf('Playback Speed [[ %f ]]', _speed);
       _speedSink.add(_speed);
     });
   }

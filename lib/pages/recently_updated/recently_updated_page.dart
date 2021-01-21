@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_video_app/pages/recently_updated/recently_updated.store.dart';
-import 'package:flutter_video_app/shared/widgets/anime_grid_view.dart';
+import 'package:anime_app/pages/recently_updated/recently_updated.store.dart';
+import 'package:anime_app/shared/widgets/anime_grid_view.dart';
 
 class RecentlyUpdatedPage extends StatelessWidget {
   final store = RecentlyUpdatedStore();

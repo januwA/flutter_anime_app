@@ -11,7 +11,7 @@ class SettingsService {
     SharedPreferences.getInstance().then((value) {
       _prefs ??= value;
       String cache = _prefs.getString(_key);
-      if (cache.isNotEmpty) proxyAddress = cache;
+      if (cache != null && cache.isNotEmpty) proxyAddress = cache;
     });
   }
 

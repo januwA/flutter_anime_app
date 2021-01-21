@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_video_app/dto/week_data/week_data_dto.dart';
-import 'package:flutter_video_app/main.dart';
-import 'package:flutter_video_app/service/nicotv.service.dart';
+import 'package:anime_app/dto/week_data/week_data_dto.dart';
+import 'package:anime_app/main.dart';
+import 'package:anime_app/service/nicotv.service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'home.store.g.dart';
