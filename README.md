@@ -1,11 +1,8 @@
 ## how run the app?
   1. `git clone https://github.com/januwA/flutter_anime_app.git`
-  2. Comment "generate: true" in "pubspec.yaml"
-  3. `flutter pub get`
-  4. `flutter packages pub run build_runner watch --delete-conflicting-outputs`
-  5. Uncomment "generate: true"
-  6. `flutter pub get`
-  7. `flutter run`
+  2. `flutter pub get`
+  3. `flutter packages pub run build_runner watch --delete-conflicting-outputs`
+  4. `flutter run`
 
 ## mobx build
 ```

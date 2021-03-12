@@ -69,6 +69,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
     // 年代
     List<String> yras = [
       AppLocalizations.of(context).all,
+      "2021",
       "2020",
       "2019",
       "2018",

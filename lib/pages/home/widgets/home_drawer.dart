@@ -32,13 +32,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text(
                 MaterialLocalizations.of(context).okButtonLabel,
                 style: TextStyle(color: Colors.white),

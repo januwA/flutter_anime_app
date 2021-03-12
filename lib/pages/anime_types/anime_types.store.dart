@@ -91,6 +91,7 @@ abstract class _AnimeTypesStore with Store {
   /// 年代
   List<String> _yras = [
     "全部",
+    "2021",
     "2020",
     "2019",
     "2018",

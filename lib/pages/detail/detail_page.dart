@@ -12,6 +12,7 @@ import 'package:anime_app/utils/open_browser.dart';
 import 'package:video_box/video_box.dart';
 
 import 'package:anime_app/service/nicotv.service.dart';
+import '../../utils/duration_string.dart';
 import 'widgets/detail_text.dart';
 import 'widgets/network_image_placeholder.dart';
 import 'widgets/video_bar.dart';
@@ -367,7 +368,40 @@ class _DetailPageState extends State<DetailPage>
               ),
             ),
           )
-        : NetworkImagePlaceholder(store.detail.cover);
+        : Stack(
+            children: [
+              Center(
+                child: NetworkImagePlaceholder(store.detail.cover),
+              ),
+              if (store.hasHistory)
+                Positioned(
+                  left: 0,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.black45,
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          '播放到 ${durationString(Duration(seconds: store.history.position))}',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        SizedBox(
+                          height: 30,
+                          child: ElevatedButton(
+                            onPressed: () => store.playHistory(context),
+                            child: Text('播放'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+            ],
+          );
   }
 
   /// prev and next button

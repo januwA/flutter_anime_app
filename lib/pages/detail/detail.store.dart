@@ -44,6 +44,7 @@ abstract class _DetailStore with Store {
     loading = false;
 
     history = await historyService.findOneByAnimeId(animeId);
+    hasHistory = history != null && history.position != 0;
     history ??=
         await historyService.create(animeId, detail.cover, detail.videoName);
 
@@ -56,11 +57,6 @@ abstract class _DetailStore with Store {
 
     _cancel = playbackSpeedService.speed$
         .listen((value) => vc?.setPlaybackSpeed(value));
-
-    // 网盘地址不自动打开
-    if (history.playCurrent.isNotEmpty && currentPlayVideo.boxUrl.isEmpty) {
-      tabClick(currentPlayVideo, context);
-    }
   }
 
   ScrollController controller = ScrollController();
@@ -88,6 +84,9 @@ abstract class _DetailStore with Store {
 
   History history;
 
+  @observable
+  bool hasHistory = false;
+
   @action
   nextPlay(BuildContext context) {
     var pis = _parseCurentPlay();
@@ -99,6 +98,12 @@ abstract class _DetailStore with Store {
       TabsValueDto next = pv.tabs[prevIndex];
       tabClick(next, context);
     }
+  }
+
+  /// 点击播放历史记录按钮
+  @action
+  playHistory(BuildContext context) {
+    tabClick(currentPlayVideo, context);
   }
 
   @computed
@@ -179,6 +184,7 @@ abstract class _DetailStore with Store {
   /// 点击播放每一集
   @action
   Future<void> tabClick(TabsValueDto t, BuildContext context) async {
+    hasHistory = false;
     currentPlayVideo = t;
     if (t.boxUrl.isNotEmpty) {
       // 网盘资源, 将网盘提取密码写入粘贴板

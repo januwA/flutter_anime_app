@@ -66,14 +66,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 SizedBox(width: 4),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
+                ElevatedButton(
+                  style: ButtonStyle(
+                    textStyle: MaterialStateProperty.all(
+                        TextStyle(color: Theme.of(context).primaryColor)),
+                  ),
                   onPressed: _setProxy,
                   child: Text('确定'),
                 ),
                 SizedBox(width: 4),
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
+                ElevatedButton(
+                  style: ButtonStyle(
+                    textStyle: MaterialStateProperty.all(
+                        TextStyle(color: Theme.of(context).primaryColor)),
+                  ),
                   onPressed: _resetProxy,
                   child: Text('重置'),
                 ),

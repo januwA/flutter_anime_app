@@ -19,7 +19,7 @@ class _NotFoundPageState extends State<NotFoundPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('页面丢失.'),
-            FlatButton(
+            TextButton(
               child: Text('提交问题'),
               onPressed: () => openBrowser(githubIssuesUrl),
             ),
