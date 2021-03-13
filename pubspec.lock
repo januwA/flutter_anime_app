@@ -908,10 +908,10 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: c403c72c870b434960e5adff0dbc93d07e9c6fa3
-      url: "git@github.com:januwA/webview_flutter-1.0.3.git"
+      resolved-ref: "002ba6c95ebab9b8b5b7a532b89ec03037259bd2"
+      url: "git@github.com:januwA/webview_flutter-2.0.2.git"
     source: git
-    version: "1.0.4"
+    version: "2.0.2"
   win32:
     dependency: transitive
     description:

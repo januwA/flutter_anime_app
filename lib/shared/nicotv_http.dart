@@ -1,6 +1,5 @@
 import 'package:ajanuw_http/ajanuw_http.dart';
 import 'package:anime_app/service/settings.service.dart';
-import 'package:dart_printf/dart_printf.dart';
 
 import '../main.dart';
 
@@ -19,7 +18,6 @@ class HeaderInterceptor extends AjanuwHttpInterceptors {
 
     config.url =
         Uri.parse(url + _uri.toString().replaceFirst(RegExp(r'/*'), ''));
-    printf('proxy url: %o', config.url);
     return config;
   }
 
@@ -31,3 +29,5 @@ class HeaderInterceptor extends AjanuwHttpInterceptors {
 }
 
 var nicotvHttp = AjanuwHttp()..interceptors.add(HeaderInterceptor());
+
+var request = AjanuwHttp();

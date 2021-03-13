@@ -16,8 +16,8 @@ dom.Element $(parent, String select) => parent.querySelector(select);
 List<dom.Element> $$(parent /*Element|Document*/, String select) =>
     parent.querySelectorAll(select);
 
-Future<dom.Document> $document(String url) async {
-  var r = await nicotvHttp.get(url);
+Future<dom.Document> $document(String url, [bool needProxy = true]) async {
+  var r = needProxy ? await nicotvHttp.get(url) : await request.get(url);
   return html.parse(r.body);
 }
 
@@ -238,42 +238,33 @@ class NicoTvService {
     final res = AnimeSource(type: AnimeVideoType.none, src: '');
     final document = await $document('/video/play/$videoId.html');
     String scriptSrc = _findScript($$(document, 'script'));
-    printf("[[ script src ]] %s", scriptSrc);
     var jsonMap = _parseResponseToMap(await nicotvHttp.read(scriptSrc));
 
     printf('[[ Get Anime Source JsonMap ]] %o', jsonMap);
 
-    // 解码url字段
-    final jsonUrl = Uri.decodeFull(jsonMap['url']);
-    var name = jsonMap['name'];
-    //TODO: 解析 name=leapp, http://www.nicotv.club/video/play/11266-2-1.html
-
     final iframeUrl =
         "${jsonMap['url']}&time=${jsonMap['time']}&auth_key=${jsonMap['auth_key']}";
     final jiexiUrl = jsonMap['jiexi'] + iframeUrl;
-    printf('[[ Source Name ]] %o', name);
 
-    // 策略: 获取MP4 -> 在iframe中获取MP4 -> 使用webview获取m3u8 -> 使用webview播放
+    // 策略: 获取MP4 -> 在iframe中获取MP4 -> 使用webview获取m3u8
     try {
-      // 获取MP4
-      if (!name.contains('haokan_baidu')) throw 'next';
-
+      final jsonUrl = Uri.decodeFull(jsonMap['url']);
       final videoUrl = Uri.parse(jsonUrl).queryParameters['url'];
       if (videoUrl == null) throw 'next';
 
-      printf('[[ MP4 Source ]] %s', videoUrl);
+      // var r = await request.head(videoUrl);
+      // if (r.headers['content-type'].indexOf('video') < 0) throw 'next';
       res.type = AnimeVideoType.mp4;
       res.src = videoUrl;
     } catch (e) {
-      printf('[[ Iframe Url ]] %s', iframeUrl);
       try {
         // iframe中获取MP4
-        var iframeDoc = await $document(iframeUrl);
+        printf("iframeUrl: %o", iframeUrl);
+        var iframeDoc = await $document(iframeUrl, false);
         var scriptText = $$(iframeDoc, 'script').last.text;
         var m = RegExp(r'''src="([^"]+)"\s''').firstMatch(scriptText);
         var mp4Src = m[1];
         if (mp4Src?.trim()?.isEmpty ?? true) throw 'next';
-        printf('[[ MP4 Source ]] %s', mp4Src);
         res.src = mp4Src;
         res.type = AnimeVideoType.mp4;
       } catch (_) {
@@ -303,11 +294,14 @@ class NicoTvService {
                           initialUrl: res.src,
                           javascriptMode: JavascriptMode.unrestricted,
                           onRequest: (url) {
-                            printf('Webview onRequest [[ %s ]]', url);
-
                             if (url.contains('m3u8')) {
+                              printf('Video m3u8: %s', url);
                               Navigator.of(context).pop(AnimeSource(
                                   type: AnimeVideoType.m3u8, src: url));
+                            } else if (url.contains('.mp4')) {
+                              printf('Video mp4: %s', url);
+                              Navigator.of(context).pop(AnimeSource(
+                                  type: AnimeVideoType.mp4, src: url));
                             }
                           },
                         ),
@@ -319,8 +313,6 @@ class NicoTvService {
             );
           },
         );
-
-        printf('Source Src: %s', result.src);
 
         // 用户手动返回
         if (result == null) {

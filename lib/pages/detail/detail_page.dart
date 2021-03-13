@@ -383,7 +383,7 @@ class _DetailPageState extends State<DetailPage>
                     child: Row(
                       children: [
                         Text(
-                          '播放到 ${durationString(Duration(seconds: store.history.position))}',
+                          '播放到 ${store.history.playCurrent} ${durationString(Duration(seconds: store.history.position))}',
                           style: TextStyle(
                             color: Colors.white,
                           ),
