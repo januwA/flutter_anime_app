@@ -145,7 +145,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "notData": "Not Data!!!",
+  "notData": "Empty!!!",
   "@notData": {
     "type": "text",
     "placeholders": {}
@@ -155,18 +155,18 @@
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsRecentlyBroadcasted": "Recent hot broadcast",
-  "@classifyTabsRecentlyBroadcasted": {
+  "hits": "hits",
+  "@hits": {
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsNewest": "Newest",
-  "@classifyTabsNewest": {
+  "newest": "newest",
+  "@newest": {
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsHighestScore": "Highest Score",
-  "@classifyTabsHighestScore": {
+  "gold": "gold",
+  "@gold": {
     "type": "text",
     "placeholders": {}
   },

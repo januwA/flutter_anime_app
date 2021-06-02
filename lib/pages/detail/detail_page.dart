@@ -223,36 +223,14 @@ class _DetailPageState extends State<DetailPage>
     return ListView(
       scrollDirection: Axis.horizontal,
       children: [
-        Center(
-          child: SourceButton(
-            child: Text('bilibili App'),
-            onPressed: () =>
-                openBrowser('bilibili://search?keyword=$name', context),
-          ),
-        ),
-        Center(
-          child: SourceButton(
-            child: Text('bilibili'),
-            onPressed: () => openBrowser(
-                'https://search.bilibili.com/bangumi?keyword=$name', context),
-          ),
-        ),
-        Center(
-          child: SourceButton(
-            child: Text('dilidili3'),
-            onPressed: () => openBrowser(
-                'http://www.dilidili3.com/public/api.php?app=video&do=search&q=$name',
-                context),
-          ),
-        ),
-        Center(
-          child: SourceButton(
-            child: Text('youku'),
-            onPressed: () => openBrowser(
-                'https://so.youku.com/search_video/q_$name?searchfrom=1',
-                context),
-          ),
-        ),
+        _otherItem('bilibili App', 'bilibili://search?keyword=$name'),
+        _otherItem(
+            'bilibili', 'https://search.bilibili.com/bangumi?keyword=$name'),
+        _otherItem('dilidili3',
+            'http://www.dilidili3.com/public/api.php?app=video&do=search&q=$name'),
+        _otherItem(
+            'AcFun', 'https://www.acfun.cn/search?type=bgm&keyword=$name'),
+
         // Center(
         //   child: SourceButton(
         //     child: Text('源地址'),
@@ -261,6 +239,15 @@ class _DetailPageState extends State<DetailPage>
         //   ),
         // ),
       ],
+    );
+  }
+
+  Widget _otherItem(String name, String addr) {
+    return Center(
+      child: SourceButton(
+        child: Text(name),
+        onPressed: () => openBrowser(addr, context),
+      ),
     );
   }
 

@@ -100,6 +100,7 @@ abstract class _AnimeTypesStore with Store {
     "2015",
     "2014",
     "2013",
+    "2012",
     "20002010",
     "19901999",
     "18001989"
@@ -143,10 +144,7 @@ abstract class _AnimeTypesStore with Store {
   String get cify => _classify[classifyCurrent].url;
 
   @computed
-  String get pageUrl => pageCount == 1 ? '' : '-$pageCount';
-
-  @computed
-  String get url => '/video/type3/$type-$area-$era----$cify$pageUrl.html';
+  String get url => '/video/type3/$type-$area-$era----$cify-$pageCount.html';
 
   /// 滚动到底部，加载下一页数据
   @action

@@ -295,13 +295,16 @@ class NicoTvService {
                           javascriptMode: JavascriptMode.unrestricted,
                           onRequest: (url) {
                             if (url.contains('m3u8')) {
-                              printf('Video m3u8: %s', url);
+                              // printf('Video m3u8: %s', url);
                               Navigator.of(context).pop(AnimeSource(
                                   type: AnimeVideoType.m3u8, src: url));
-                            } else if (url.contains('.mp4')) {
-                              printf('Video mp4: %s', url);
+                              return;
+                            }
+                            if (url.contains('.mp4')) {
+                              // printf('Video mp4: %s', url);
                               Navigator.of(context).pop(AnimeSource(
                                   type: AnimeVideoType.mp4, src: url));
+                              return;
                             }
                           },
                         ),

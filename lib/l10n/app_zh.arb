@@ -155,18 +155,18 @@
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsRecentlyBroadcasted": "最近热播",
-  "@classifyTabsRecentlyBroadcasted": {
+  "hits": "最近热播",
+  "@hits": {
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsNewest": "最新",
-  "@classifyTabsNewest": {
+  "newest": "最新",
+  "@newest": {
     "type": "text",
     "placeholders": {}
   },
-  "classifyTabsHighestScore": "评分最高",
-  "@classifyTabsHighestScore": {
+  "gold": "评分最高",
+  "@gold": {
     "type": "text",
     "placeholders": {}
   },

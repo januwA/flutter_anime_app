@@ -78,6 +78,7 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
       "2015",
       "2014",
       "2013",
+      "2012",
       "2010-2000",
       "90年代",
       AppLocalizations.of(context).earlier
@@ -93,9 +94,9 @@ class _AnimeTypesPageState extends State<AnimeTypesPage>
     ];
 
     List<String> classify = [
-      AppLocalizations.of(context).classifyTabsRecentlyBroadcasted,
-      AppLocalizations.of(context).classifyTabsNewest,
-      AppLocalizations.of(context).classifyTabsHighestScore,
+      AppLocalizations.of(context).hits,
+      AppLocalizations.of(context).newest,
+      AppLocalizations.of(context).gold,
     ];
     return SafeArea(
       child: Scaffold(

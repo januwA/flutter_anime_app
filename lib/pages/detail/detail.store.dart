@@ -11,8 +11,8 @@ import 'package:anime_app/service/playback_speed.service.dart';
 import 'package:anime_app/sqflite_db/model/history.dart';
 import 'package:anime_app/utils/get_extraction_code.dart';
 import 'package:anime_app/utils/open_browser.dart';
-import 'package:anime_app/utils/show_snackbar.dart';
 import 'package:mobx/mobx.dart';
+import 'package:toast/toast.dart';
 import 'package:video_box/video_box.dart';
 import 'package:flutter_screen/flutter_screen.dart';
 import 'package:flutter_ajanuw_android_pip/flutter_ajanuw_android_pip.dart';
@@ -200,7 +200,7 @@ abstract class _DetailStore with Store {
     if (isDispose) return; // 避免获取资源速度过慢时，用户退出页面后视频还处于播放状态
 
     if (animeVideoType == AnimeVideoType.none || vSrc == null || vSrc.isEmpty) {
-      return showSnackbar(context, '获取播放地址错误');
+      return Toast.show('获取播放地址错误', context);
     }
 
     // 在历史记录中存在，并且是相同的一集，才初始化播放时间
