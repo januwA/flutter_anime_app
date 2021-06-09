@@ -66,7 +66,8 @@ class _DashPageState extends State<DashPage> {
       child: Scaffold(
         bottomNavigationBar: Observer(
           builder: (_) {
-            final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+            var isDark =
+                MediaQuery.of(context).platformBrightness == Brightness.dark;
             return BubbleBottomBar(
               opacity: 0.2,
               currentIndex: store.index,
@@ -75,15 +76,11 @@ class _DashPageState extends State<DashPage> {
               backgroundColor: isDark ? Colors.black : Colors.white,
               hasNotch: true,
               hasInk: true,
-              inkColor: isDark ? Colors.white : Colors.black12,
               items: <BubbleBottomBarItem>[
                 for (var e in navList)
                   BubbleBottomBarItem(
                     backgroundColor: e.color,
-                    icon: Icon(
-                      e.icon,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
+                    icon: Icon(e.icon),
                     activeIcon: Icon(
                       e.icon,
                       color: e.color,

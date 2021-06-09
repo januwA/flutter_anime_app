@@ -16,7 +16,6 @@ class _DetailTextState extends State<DetailText> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
@@ -46,9 +45,7 @@ class _DetailTextState extends State<DetailText> {
               showMore
                   ? AppLocalizations.of(context).less
                   : AppLocalizations.of(context).more,
-              style: theme.textTheme.caption.copyWith(
-                color: isDark ? Colors.white : theme.primaryColor,
-              ),
+              style: theme.textTheme.caption,
             ),
           ),
         ),

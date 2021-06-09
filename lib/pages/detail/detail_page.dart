@@ -253,7 +253,6 @@ class _DetailPageState extends State<DetailPage>
 
   Widget _createTabBarViewItem(TabsDto tv) {
     var theme = Theme.of(context);
-    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Builder(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -271,7 +270,6 @@ class _DetailPageState extends State<DetailPage>
                         builder: (context) {
                           return Container(
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.black : Colors.white,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15),

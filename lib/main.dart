@@ -7,6 +7,7 @@ import 'package:anime_app/router/router.dart';
 import 'package:anime_app/service/nicotv.service.dart';
 import 'package:anime_app/service/playback_speed.service.dart';
 import 'package:anime_app/theme/theme.dart';
+import 'package:anime_app/theme/dark-theme.dart';
 import 'package:get_it/get_it.dart';
 
 import 'service/settings.service.dart';
@@ -43,9 +44,7 @@ class _MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Anime",
       theme: myTheme,
-      darkTheme: ThemeData.dark().copyWith(
-        accentColor: Colors.pink,
-      ),
+      darkTheme: myDarkTheme,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       navigatorKey: router.navigatorKey,

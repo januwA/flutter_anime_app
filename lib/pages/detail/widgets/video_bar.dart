@@ -31,10 +31,6 @@ class VideoBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
-    final backgroundColor = isDark ? Colors.black : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black;
-    final iconColor = Colors.grey;
     return Positioned(
       left: 0,
       top: 0,
@@ -65,7 +61,6 @@ class VideoBar extends StatelessWidget {
             onPressed: () {
               showModalBottomSheet<void>(
                 context: context,
-                backgroundColor: backgroundColor,
                 builder: (context) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
@@ -80,12 +75,10 @@ class VideoBar extends StatelessWidget {
                               ),
                               title: Text(
                                 '播放速度',
-                                style: TextStyle(color: textColor),
                               ),
                               onTap: () {
                                 showModalBottomSheet<double>(
                                   context: context,
-                                  backgroundColor: backgroundColor,
                                   builder: (context) {
                                     return ListView(
                                       children: speeds
@@ -93,13 +86,9 @@ class VideoBar extends StatelessWidget {
                                                 dense: true,
                                                 leading: snap.data == e
                                                     ? Icon(Icons.done,
-                                                        color: iconColor)
+                                                        color: Colors.grey)
                                                     : SizedBox(),
-                                                title: Text(
-                                                  '$e倍',
-                                                  style: TextStyle(
-                                                      color: textColor),
-                                                ),
+                                                title: Text('$e倍'),
                                                 onTap: () =>
                                                     Navigator.of(context)
                                                         .pop(e),
