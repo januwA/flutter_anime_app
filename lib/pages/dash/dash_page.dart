@@ -42,55 +42,10 @@ class _DashPageState extends State<DashPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<NavItem> navList = [
-      NavItem(
-        title: AppLocalizations.of(context).dashHome,
-        icon: Icons.home,
-        color: Colors.pink,
-      ),
-      NavItem(
-          title: AppLocalizations.of(context).dashRecent,
-          icon: Icons.fiber_new,
-          color: Colors.deepPurple),
-      NavItem(
-          title: AppLocalizations.of(context).dashRecommend,
-          icon: Icons.thumb_up,
-          color: Colors.orange),
-      NavItem(
-          title: AppLocalizations.of(context).dashClassification,
-          icon: Icons.toys,
-          color: Colors.green),
-    ];
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
-        bottomNavigationBar: Observer(
-          builder: (_) {
-            var isDark =
-                MediaQuery.of(context).platformBrightness == Brightness.dark;
-            return BubbleBottomBar(
-              opacity: 0.2,
-              currentIndex: store.index,
-              onTap: store.controller.jumpToPage,
-              borderRadius: BorderRadius.circular(16),
-              backgroundColor: isDark ? Colors.black : Colors.white,
-              hasNotch: true,
-              hasInk: true,
-              items: <BubbleBottomBarItem>[
-                for (var e in navList)
-                  BubbleBottomBarItem(
-                    backgroundColor: e.color,
-                    icon: Icon(e.icon),
-                    activeIcon: Icon(
-                      e.icon,
-                      color: e.color,
-                    ),
-                    title: Text(e.title),
-                  ),
-              ],
-            );
-          },
-        ),
+        bottomNavigationBar: _bottomNavigationBar(),
         body: PageView(
           controller: store.controller,
           onPageChanged: store.onPageChanged,
@@ -102,6 +57,61 @@ class _DashPageState extends State<DashPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _bottomNavigationBar() {
+    List<NavItem> navList = [
+      NavItem(
+        title: AppLocalizations.of(context).dashHome,
+        icon: Icons.home,
+        color: Colors.pink,
+      ),
+      NavItem(
+        title: AppLocalizations.of(context).dashRecent,
+        icon: Icons.fiber_new,
+        color: Colors.deepPurple,
+      ),
+      NavItem(
+        title: AppLocalizations.of(context).dashRecommend,
+        icon: Icons.thumb_up,
+        color: Colors.orange,
+      ),
+      NavItem(
+        title: AppLocalizations.of(context).dashClassification,
+        icon: Icons.toys,
+        color: Colors.green,
+      ),
+    ];
+    return Observer(
+      builder: (_) {
+        var isDark =
+            MediaQuery.of(context).platformBrightness == Brightness.dark;
+        return BubbleBottomBar(
+          opacity: 0.2,
+          currentIndex: store.index,
+          onTap: store.controller.jumpToPage,
+          borderRadius: BorderRadius.circular(16),
+          backgroundColor: isDark ? Colors.black : Colors.white,
+          hasNotch: true,
+          hasInk: true,
+          items: <BubbleBottomBarItem>[
+            for (var e in navList)
+              BubbleBottomBarItem(
+                backgroundColor: e.color,
+                icon: Icon(
+                  e.icon,
+                  color: isDark ? Colors.white60 : Colors.grey[700],
+                ),
+                activeIcon: Icon(
+                  e.icon,
+                  color: e.color,
+                ),
+                title: Text(e.title),
+              ),
+          ],
+        );
+      },
     );
   }
 }

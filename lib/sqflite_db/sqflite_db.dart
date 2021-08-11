@@ -13,8 +13,8 @@ import 'model/history.dart';
 class AnimeDB {
   static AnimeDB _o;
 
-  static final String historyTable = 'historys';
-  static final String collectionTable = 'collections';
+  static final String HISTORY_TABLE = 'historys';
+  static final String COLLECTION_TABLE = 'collections';
 
   Future<Database> database;
 
@@ -47,7 +47,7 @@ class AnimeDB {
           // 历史记录表
           await db.execute(
             '''
-          CREATE TABLE ${historyTable} (
+          CREATE TABLE ${HISTORY_TABLE} (
               id                INTEGER PRIMARY KEY AUTOINCREMENT,
               animeId           TEXT    NOT NULL,
               cover             TEXT    NOT NULL,
@@ -61,9 +61,9 @@ class AnimeDB {
           );
          ''',
           );
-          // 搜藏表
+          // 收藏表
           await db.execute('''
-          CREATE TABLE ${collectionTable} (
+          CREATE TABLE ${COLLECTION_TABLE} (
               id      INTEGER PRIMARY KEY AUTOINCREMENT, 
               animeId TEXT NOT NULL
             );
@@ -79,7 +79,7 @@ class AnimeDB {
   /// 返回所有的收藏记录
   Future<List<Collection>> getAllCollections() async {
     final Database db = await database;
-    final List<Map<String, dynamic>> datas = await db.query(collectionTable);
+    final List<Map<String, dynamic>> datas = await db.query(COLLECTION_TABLE);
     return List.generate(datas.length, (i) {
       return Collection.from(datas[i]);
     });
@@ -89,7 +89,7 @@ class AnimeDB {
   Future<bool> existCollection(String animeId) async {
     final Database db = await database;
     var datas = await db
-        .query(collectionTable, where: "animeId = ?", whereArgs: [animeId]);
+        .query(COLLECTION_TABLE, where: "animeId = ?", whereArgs: [animeId]);
     return datas.isNotEmpty;
   }
 
@@ -97,7 +97,7 @@ class AnimeDB {
   Future<int> insertCollection(Collection collection) async {
     final Database db = await database;
     return await db.insert(
-      collectionTable,
+      COLLECTION_TABLE,
       collection.toMap(),
       // conflictAlgorithm: ConflictAlgorithm.replace, // 如果存在则替换
     );
@@ -107,7 +107,7 @@ class AnimeDB {
   Future<int> deleteCollection(String animeId) async {
     final Database db = await database;
     return await db.delete(
-      collectionTable,
+      COLLECTION_TABLE,
       where: "animeId = ?",
       whereArgs: [animeId],
     );
@@ -117,7 +117,7 @@ class AnimeDB {
   Future<List<History>> findAllHistorys() async {
     final Database db = await database;
     final List<Map<String, dynamic>> datas =
-        await db.query(historyTable, orderBy: "time desc");
+        await db.query(HISTORY_TABLE, orderBy: "time desc");
     return datas.map((e) => History.from(e)).toList();
   }
 
@@ -125,7 +125,7 @@ class AnimeDB {
   Future<History> findOneByAnimeId(String animeId) async {
     final Database db = await database;
     var datas = await db.query(
-      historyTable,
+      HISTORY_TABLE,
       where: "animeId = ?",
       whereArgs: [animeId],
     );
@@ -136,7 +136,7 @@ class AnimeDB {
   Future<History> findOneById(int id) async {
     final Database db = await database;
     var datas = await db.query(
-      historyTable,
+      HISTORY_TABLE,
       where: "id = ?",
       whereArgs: [id],
     );
@@ -146,7 +146,7 @@ class AnimeDB {
 
   Future<History> createHistory(History history) async {
     final Database db = await database;
-    int id = await db.insert(historyTable, history.toMap());
+    int id = await db.insert(HISTORY_TABLE, history.toMap());
     if (id != null) return findOneById(id);
     return null;
   }
@@ -154,7 +154,7 @@ class AnimeDB {
   Future<int> updateHistory(History history) async {
     final Database db = await database;
     return db.update(
-      historyTable,
+      HISTORY_TABLE,
       history.toMap(),
       where: 'id = ?',
       whereArgs: [history.id],
@@ -164,6 +164,6 @@ class AnimeDB {
 
   Future<int> deleteHistory(History history) async {
     final Database db = await database;
-    return db.delete(historyTable, where: "id = ?", whereArgs: [history.id]);
+    return db.delete(HISTORY_TABLE, where: "id = ?", whereArgs: [history.id]);
   }
 }
